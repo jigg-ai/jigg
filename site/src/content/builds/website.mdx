@@ -1,0 +1,106 @@
+---
+title: "Building Jigg.AI itself, with Claude Code and Astro"
+category: "websites"
+tool: "Claude Code + Astro"
+tool_version: "Astro 7.1"
+runs_on_site: true
+status: "verified"
+summary: "Claude Code took this site from an empty folder to a live, four-view build-log engine where publishing a new post is adding one markdown file. The build itself went smoothly — the one caveat is that the real time sink wasn't the code at all, it was the Git and GitHub auth setup around it."
+test_score: ""
+repro_pack: true
+published: 2026-07-17
+last_verified: 2026-07-17
+pricing_as_of: 2026-07-17
+featured: true
+meta_line: "one collection → four views"
+tool_summary: "AI pair-builder in the terminal · Astro is free and open-source"
+tool_verdict: "Empty folder to a live, four-view content engine in one sitting. The code was the easy part; the Git and GitHub auth setup around it was the real friction — none of it the tool's fault."
+accessibility: "Some setup"
+---
+
+import ShortVersion from '../../components/post/ShortVersion.astro';
+import ProcessStep from '../../components/post/ProcessStep.astro';
+import StatTiles from '../../components/post/StatTiles.astro';
+import ReproPack from '../../components/post/ReproPack.astro';
+import ToolVerdict from '../../components/post/ToolVerdict.astro';
+
+<ShortVersion>
+The first build is the site you're reading. Claude Code scaffolded an Astro
+project where the whole site is driven by **one content collection** — home,
+archive, each build log, and the tools index all read from the same markdown
+files, so adding a build is adding one file, not editing four pages. That
+architecture came together cleanly. The honest caveat: the part that ate the
+most time had nothing to do with building — it was untangling a chain of Git and
+GitHub auth mistakes, all of them mine.
+</ShortVersion>
+
+## The honest process
+
+The site scaffold and the four page templates were the smooth part. Getting the
+repository onto GitHub was not — and every snag traced back to my own setup, not
+to Claude Code or GitHub. Tagged honestly:
+
+<ProcessStep result="fail" title="Pushed over HTTPS with a password" tag="my-setup">
+The first push used HTTPS with a plain account password. GitHub retired that path
+for Git operations years ago — it needs a token or an SSH key. Dead on arrival.
+</ProcessStep>
+
+<ProcessStep result="fail" title="Registered the SSH key as a read-only deploy key" tag="my-setup">
+Switching to SSH, I added the key as a repo **deploy key**. Those default to
+read-only, so the handshake succeeded and the push was still denied. Recreating
+the repo didn't help — the fix was never the repo, it was the key's scope.
+</ProcessStep>
+
+<ProcessStep result="fail" title="Wrong Git identity, and two keys in the agent" tag="my-setup">
+The first commit landed under a leftover global `user.email` from another
+project. On top of that, `ssh-add -l` showed the old and new keys both loaded, so
+which one GitHub actually accepted was ambiguous — it kept authenticating through
+the stale, read-only entry.
+</ProcessStep>
+
+<ProcessStep result="pass" title="What worked">
+A repo-local Git identity (`git config --local`), a single account-level SSH key
+(not a deploy key, so there's no read/write toggle to fight), and clearing the
+agent down to just that one key. Clean first commit, correct author, full
+scaffold pushed. Boring, but honest.
+</ProcessStep>
+
+## The test
+
+For a site build the check isn't a question set — it's whether the foundation
+actually holds. What's verified so far:
+
+<StatTiles variant="metric" stats={[
+  { value: "1", label: "collection drives the whole site", tone: "ok" },
+  { value: "4", label: "views from that one source", tone: "ok" },
+  { value: "0", label: "page edits to add a build", tone: "ok" },
+]} />
+
+Adding a markdown file lights up the home page, the archive, its own detail page,
+and the tools index with no page-code changes — the core invariant passes. The
+"Runs on this site" badge and the freshness states render straight from
+frontmatter. Still pending, and logged as pending rather than claimed: a live
+deploy and a Lighthouse performance pass.
+
+<ReproPack items={[
+  "The content-collection schema",
+  "One collection → four views diagram",
+  "The prompts that drove the build",
+  "This scaffold as a starter",
+]} />
+
+<StatTiles variant="fact" stats={[
+  { value: "$0", label: "Hosting (static, free tier)" },
+  { value: "1 file", label: "To publish a new build" },
+  { value: "Astro 7.1", label: "Framework version" },
+]} />
+
+## The tool
+
+<ToolVerdict tool="Claude Code + Astro" toolSummary="AI pair-builder in the terminal · Astro is free and open-source">
+Claude Code is genuinely good at this kind of greenfield scaffold: it held the
+whole four-views-from-one-collection idea in its head and wrote the schema, the
+templates, and a reusable component kit to match. Astro's content collections are
+the right backbone for it. Neither tool caused the friction here — that was all
+local Git config. If you can get past the auth setup once, the build loop is fast.
+</ToolVerdict>
