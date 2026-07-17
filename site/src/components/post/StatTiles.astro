@@ -1,0 +1,65 @@
+---
+// A row of tiles. Two shapes:
+//   'metric' — big number on top, label under, centred (test-score breakdown).
+//   'fact'   — small label on top, big value under, left (time / coding / cost).
+// tone 'ok' tints a value green (a good outcome); default is neutral ink.
+interface Stat {
+  value: string;
+  label: string;
+  tone?: 'ok' | 'default';
+}
+interface Props {
+  stats: Stat[];
+  variant?: 'metric' | 'fact';
+}
+const { stats, variant = 'metric' } = Astro.props;
+---
+
+<dl class:list={['tiles', variant]}>
+  {
+    stats.map((s) => (
+      <div class="tile">
+        {variant === 'fact' ? (
+          <>
+            <dt class="label">{s.label}</dt>
+            <dd class:list={['value', s.tone]}>{s.value}</dd>
+          </>
+        ) : (
+          <>
+            <dd class:list={['value', s.tone]}>{s.value}</dd>
+            <dt class="label">{s.label}</dt>
+          </>
+        )}
+      </div>
+    ))
+  }
+</dl>
+
+<style>
+  .tiles {
+    display: grid;
+    gap: 0.7rem;
+    margin: 0;
+  }
+  .metric { grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr)); }
+  .fact { grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr)); }
+  .tile {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    padding: 1.1rem 1.15rem;
+  }
+  .metric .tile { text-align: center; }
+  .value {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    margin: 0;
+    color: var(--ink);
+  }
+  .value.ok { color: var(--ok); }
+  .metric .value { font-size: 2.1rem; line-height: 1; }
+  .fact .value { font-size: 1.6rem; line-height: 1.1; margin-top: 0.35rem; }
+  .label { color: var(--ink-muted); font-size: 0.85rem; }
+  .metric .label { margin-top: 0.45rem; }
+</style>

@@ -1,0 +1,72 @@
+---
+// "The tool" — plain verdict + disclosed affiliate CTA, placed AFTER the proof
+// (STYLE.md). Verdict body is authored as MDX children.
+interface Props {
+  tool: string;
+  toolSummary?: string;
+  affiliateUrl?: string;
+  ctaLabel?: string;
+}
+const { tool, toolSummary, affiliateUrl, ctaLabel } = Astro.props;
+const initials = tool.replace(/[^a-zA-Z0-9 ]/g, '').slice(0, 2);
+const cta = ctaLabel ?? `Build with ${tool}`;
+---
+
+<aside class="tool">
+  <div class="head">
+    <span class="avatar" aria-hidden="true">{initials}</span>
+    <div>
+      <p class="name">{tool}</p>
+      {toolSummary && <p class="summary">{toolSummary}</p>}
+    </div>
+  </div>
+
+  <div class="verdict"><slot /></div>
+
+  {
+    affiliateUrl && (
+      <p class="cta-row">
+        <a class="btn btn--primary" href={affiliateUrl} target="_blank" rel="sponsored nofollow noopener">
+          {cta}
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 16L16 8M9 8h7v7" /></svg>
+        </a>
+        <span class="disclosure mono">Affiliate link · costs you nothing extra</span>
+      </p>
+    )
+  }
+</aside>
+
+<style>
+  .tool {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    padding: 1.5rem 1.6rem;
+    box-shadow: var(--shadow-sm);
+  }
+  .head { display: flex; align-items: center; gap: 0.9rem; }
+  .avatar {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 2.9rem;
+    height: 2.9rem;
+    border-radius: 10px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--ink-muted);
+  }
+  .name { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 520; }
+  .summary { color: var(--ink-muted); font-size: 0.92rem; margin-top: 0.1rem; }
+  .verdict { margin-top: 1rem; line-height: 1.55; }
+  .cta-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem 1rem;
+    flex-wrap: wrap;
+    margin-top: 1.35rem;
+  }
+  .disclosure { color: var(--ink-faint); }
+</style>

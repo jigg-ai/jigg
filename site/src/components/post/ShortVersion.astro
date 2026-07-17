@@ -1,0 +1,36 @@
+---
+// The citation hook. A self-contained summary near the top of every build:
+// what it is, whether it's worth it, the one caveat. Written so an answer engine
+// can quote it. Body is authored as MDX children.
+---
+
+<aside class="short-version">
+  <p class="kicker">
+    <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true">
+      <path d="M13 2L4.5 13.5H11l-1 8.5L19.5 10H13z" />
+    </svg>
+    The short version
+  </p>
+  <div class="body"><slot /></div>
+</aside>
+
+<style>
+  .short-version {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    padding: 1.4rem 1.5rem;
+    box-shadow: var(--shadow-sm);
+  }
+  .kicker {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--brand);
+    font-weight: 560;
+    font-size: 0.95rem;
+    margin-bottom: 0.7rem;
+  }
+  .body { font-size: 1.12rem; line-height: 1.55; }
+  .body :global(p + p) { margin-top: 0.7em; }
+</style>

@@ -1,0 +1,55 @@
+---
+// One step in "The honest process". Each failure is fault-tagged so tool limits
+// and my-own-setup mistakes are never conflated (STYLE.md). Body = MDX children.
+interface Props {
+  result: 'pass' | 'fail';
+  title: string;
+  tag?: 'my-setup' | 'tool-limit';
+}
+const { result, title, tag } = Astro.props;
+const tagLabel = tag === 'my-setup' ? 'My setup' : tag === 'tool-limit' ? 'Tool limit' : null;
+---
+
+<div class="step">
+  <span class:list={['icon', result]} aria-hidden="true">
+    {
+      result === 'pass' ? (
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7" /></svg>
+      ) : (
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
+      )
+    }
+  </span>
+  <div class="body">
+    <p class="head">
+      <span class="title">{title}</span>
+      {tagLabel && <span class:list={['tag', tag]}>{tagLabel}</span>}
+    </p>
+    <div class="desc"><slot /></div>
+  </div>
+</div>
+
+<style>
+  .step {
+    display: flex;
+    gap: 0.85rem;
+    padding-block: 1.15rem;
+    border-top: 1px solid var(--border);
+  }
+  .icon { flex: none; padding-top: 0.1rem; }
+  .icon.pass { color: var(--ok); }
+  .icon.fail { color: var(--fault); }
+  .head { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+  .title { font-weight: 600; font-size: 1.05rem; }
+  .tag {
+    font-size: 0.72rem;
+    font-weight: 540;
+    padding: 0.24em 0.6em;
+    border-radius: var(--radius-pill);
+    line-height: 1;
+  }
+  .tag.my-setup { background: var(--fault-tint); color: var(--fault); }
+  .tag.tool-limit { background: var(--surface-2); color: var(--ink-muted); }
+  .desc { color: var(--ink-muted); margin-top: 0.3rem; line-height: 1.55; }
+  .desc :global(p + p) { margin-top: 0.5em; }
+</style>
