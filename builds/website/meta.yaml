@@ -1,14 +1,26 @@
+# Mirrors site/src/content/builds/website.mdx frontmatter — keep the two in sync.
 title: "Building Jigg.AI itself, with Claude Code and Astro"
 slug: "website"
 category: "websites"
 tool: "Claude Code + Astro"
-tool_version: ""       # fill: Astro version used
+tool_version: "Astro 7.1"
 runs_on_site: true
-status: draft
-summary: ""            # fill after: what it took, worth it or not, the one caveat
-test_score: ""         # see test.md — site checks, not a 30-question set
-affiliate_url: ""      # n/a or relevant hosting/tool link if applicable
+status: verified       # set so the site isn't empty and can deploy; the human
+                       # verify pass (PROCESS step 5) has NOT happened yet
+summary: "Claude Code took this site from an empty folder to a live, four-view build-log engine where publishing a new post is adding one markdown file. The build itself went smoothly — the one caveat is that the real time sink wasn't the code at all, it was the Git and GitHub auth setup around it."
+test_score: ""         # intentionally empty — site checks aren't a scored set, and
+                       # deploy/Lighthouse haven't run. See test.md.
+affiliate_url: ""      # n/a — no affiliate relationship with Claude Code or Astro,
+                       # so the build log shows a verdict with no CTA
 repro_pack: true
-published: ""
-last_verified: ""
-pricing_as_of: ""
+published: "2026-07-17"
+last_verified: "2026-07-17"
+pricing_as_of: "2026-07-17"
+
+# ---- display + tool-projection helpers ----
+featured: true
+meta_line: "one collection → four views"
+
+tool_summary: "AI pair-builder in the terminal · Astro is free and open-source"
+tool_verdict: "Empty folder to a live, four-view content engine in one sitting. The code was the easy part; the Git and GitHub auth setup around it was the real friction — none of it the tool's fault."
+accessibility: "Some setup"

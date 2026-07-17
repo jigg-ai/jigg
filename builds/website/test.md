@@ -5,21 +5,35 @@ For a site build the check set isn't Q&A — it's whether the foundation actuall
 
 ## Method
 - Check set: build/deploy health, schema-driven rendering, performance, accessibility.
-- Run date:
+  Decided before building; unchanged since.
+- Run date: 2026-07-17 (scaffold stage — checks 2 and 7 deliberately not yet run)
+- Stack under test: Astro 7.1, `@astrojs/mdx`, `@astrojs/sitemap`, one self-hosted
+  variable serif. Verified against a local `astro build` + dev server at :4321.
+- Check 4 was run with a throwaway second entry (different category, different tool,
+  `runs_on_site: false`, `status: recheck-due`, June date), then deleted. That one
+  fixture also exercised checks 5 and 6.
 
 ## Checks
 | # | Check | Outcome | Notes |
 |---|-------|---------|-------|
-| 1 | Site builds with no errors | | |
-| 2 | Deploys to a live URL | | |
-| 3 | All four views render from the `builds` collection | | |
-| 4 | Adding a new markdown build updates all views, no page-code edits | | |
-| 5 | "Runs on this site" badge shows only when runs_on_site: true | | |
-| 6 | Freshness state (verified/recheck-due/archived) renders correctly | | |
-| 7 | Lighthouse performance is strong (note score) | | |
-| 8 | Basic accessibility passes (headings, alt text, contrast) | | |
-| 9 | Mobile layout holds | | |
+| 1 | Site builds with no errors | **Pass** | 6 routes + sitemap in ~2s, clean on first run. |
+| 2 | Deploys to a live URL | **Not run** | Not deployed yet. Recorded as pending, not claimed. |
+| 3 | All four views render from the `builds` collection | **Pass** | Home, /builds, /builds/website, /tools all verified in-browser. |
+| 4 | Adding a new markdown build updates all views, no page-code edits | **Pass** | Temp entry → appeared on home, archive, and /tools, and generated its own detail route. Zero page-code changes. The core invariant, measured rather than assumed. |
+| 5 | "Runs on this site" badge shows only when runs_on_site: true | **Pass** | With 2 builds (one true, one false), badge count on /builds was exactly 1. |
+| 6 | Freshness state (verified/recheck-due/archived) renders correctly | **Pass (partial)** | `verified` (green) and `recheck-due` (amber) both confirmed. `archived` not yet exercised — no archived build exists. |
+| 7 | Lighthouse performance is strong (note score) | **Not run** | Needs the live deploy first. No score to claim. |
+| 8 | Basic accessibility passes (headings, alt text, contrast) | **Partial** | Built for it — semantic landmarks, skip link, heading order, `aria-current`/`aria-pressed`, decorative SVGs `aria-hidden`, visible focus rings. But NOT formally audited: no axe/Lighthouse run, contrast ratios not measured. Not claiming a pass. |
+| 9 | Mobile layout holds | **Pass** | 375×812: header wraps, serif scales via clamp, email capture stacks full-width, no horizontal overflow. |
 
 ## Summary
-- Passed:
-- Issues found — tagged [tool limit] vs [my setup]:
+- Passed: 6 of 9 (1, 3, 4, 5, 9 fully; 6 partially — `archived` state unexercised).
+- Not run: 2 (deploy) and 7 (Lighthouse) — both blocked on deploying. 8 is built-for
+  but unaudited.
+- Issues found — tagged [tool limit] vs [my setup]: **none of either.** Nothing broke
+  in the build itself. The friction in this build was all upstream config (the Git/
+  GitHub auth chain in build-notes.md), and every item there was [my setup]. No Astro
+  or Claude Code limitation was hit.
+- Honest caveat on this test: it was run by the same agent that wrote the code, at
+  scaffold stage, before the human verify pass (PROCESS step 5). Checks 2, 7, and 8
+  are the ones that would most likely change the picture.

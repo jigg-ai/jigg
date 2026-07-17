@@ -57,9 +57,53 @@ Write as you go. Messy is correct — this is the first published build log.
   so there's no separate read/write toggle to fight). Clean first commit: 1 commit,
   correct author, full scaffold present at `github.com/jigg-ai/jigg`.
 
+- **Plan-first pass** — Read the four docs + all eight mockup slices before writing any
+  code, and got four architecture decisions ruled on up front rather than discovering
+  them mid-build: nav follows the brief (not the mockups), rich post content lives in
+  MDX-body components (not extended frontmatter), the tools index is a *projection* of
+  the builds collection (not a second collection), and one self-hosted variable serif.
+  Cheap step, and it's why the build itself had almost no rework.
+- **The stack was newer than the model's training** — `npm view` showed Astro at
+  **7.1.0**; Claude Code's knowledge cuts off at Astro 5. Rather than trust memory, it
+  verified the content-collections API against the actually-installed package
+  (`glob({pattern, base})` and `defineCollection` confirmed in
+  `node_modules/astro/dist/content/loaders/glob.d.ts`) and let `astro build` validate
+  the rest. Worth noting as a repeatable move: when the tool is ahead of the model,
+  check the installed source, don't guess. No API drift found — the v5 Content Layer
+  API still holds in v7.
+- **Build passed first try** — 6 routes + sitemap in ~2s, no errors. Logging this
+  because "it just worked" is as honest as a failure, and the pattern is clear: the
+  friction in this build was never the code, it was the config around it (see the
+  auth saga above).
+- **Deviations from the mockups, made on purpose** (mockups are reference, not source):
+  - [my setup] Mockup nav shows category names (Chatbots/Video/…); the brief and
+    CONTEXT §5/§7 say `Builds · Tools · About · Subscribe` with categories as filters.
+    Followed the brief — the mockup predates that decision.
+  - [my setup] Mockup's "Reproduce this exactly" callout is **light blue** — a fourth
+    hue carrying no status meaning. Under the colour ruling (brand + muted status set
+    only) it's rendered in the brand peach tint instead.
+  - [my setup] Mockup's home subhead reads "pairs a **popular** AI tool" — STYLE.md
+    explicitly forbids "popular" ("an AI tool worth your time"). Rewrote the copy.
+    A good catch for why the mockups can't be treated as source for text.
+  - **Home artifact preview omitted, deliberately.** The mockup features a live
+    Botpress chatbot demo — but that's build #2 and it doesn't exist yet. Putting a
+    fake chatbot on the flagship page of a site whose entire thesis is "here's the
+    tested proof" would undercut the product. The `DemoStub` component is built and
+    ready for the moment build #2 lands; the home hero is text-forward until then.
+- **Honest gaps at scaffold time** — `test_score` left empty and the deploy/Lighthouse
+  checks are recorded as *pending* rather than claimed (see test.md). The one entry is
+  marked `status: verified` so the site isn't empty and can deploy, but the human
+  edit/verify pass (PROCESS step 5) has NOT happened yet — the post copy is a first
+  honest draft, not a published-quality edit.
+
 ## Artifacts
 <!-- screenshots of each view; the deploy URL; a short screen recording if useful -->
 - Repo: https://github.com/jigg-ai/jigg (scaffold checked in, 1 commit on `main`)
+- Astro site scaffolded at `site/` — Astro 7.1, `@astrojs/mdx`, `@astrojs/sitemap`,
+  `@fontsource-variable/fraunces` (self-hosted, no Google Fonts network call). 4 deps.
+- All four views verified rendering from the single collection at `localhost:4321`
+  (home, /builds, /builds/website, /tools), mobile (375px) checked, no console errors.
+- Deploy URL: **pending** — not yet deployed.
 
 ## Dead ends
 <!-- keep these — they're the honest part of the story -->
@@ -70,3 +114,10 @@ Write as you go. Messy is correct — this is the first published build log.
 - Deleting and recreating the repo to fix the wrong-author commit — didn't fix it by
   itself. The actual fix was the local `git config`, not the repo. Worth remembering
   next time: reset the config, not the repo.
+- Built the `DemoStub` artifact-preview component before anything actually needed it.
+  It's correct and build #2 (the Botpress bot) will use it immediately — but it ships
+  unused in build #1, which is building ahead of the requirement. Small, but it's the
+  honest kind of thing this log exists to record.
+- Drafted the build detail with a `## Reproduce this` heading directly above a callout
+  titled "Reproduce this exactly" — read as a stutter. Dropped the heading and let the
+  callout title carry the section, which is what the mockup did all along.

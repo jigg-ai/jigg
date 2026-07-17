@@ -1,16 +1,33 @@
 # Content-collection fields. Perishable facts (version, pricing, verified date)
 # are kept separate from the evergreen narrative so they update in one place.
+# This file is CANONICAL: site/src/content.config.ts mirrors it exactly. If you
+# add a field in one, add it in the other — they must not drift.
 title: ""
-slug: ""
-category: ""          # chatbots | video | websites | automation | writing | ...
+slug: ""              # the .mdx filename under site/src/content/builds/ IS the slug
+category: ""          # chatbots | video | websites | automation | writing | research | design | agents
 tool: ""
 tool_version: ""
 runs_on_site: false   # true => shows the "Runs on this site" trust badge
 status: draft         # draft | verified | recheck-due | archived
 summary: ""           # the short version / citation hook
-test_score: ""        # e.g. "25/30"
+test_score: ""        # e.g. "25/30" — leave empty rather than claim an unrun test
 affiliate_url: ""
 repro_pack: false     # is a downloadable pack available?
 published: ""         # YYYY-MM-DD
 last_verified: ""     # YYYY-MM-DD
 pricing_as_of: ""     # YYYY-MM-DD
+
+# ---- display + tool-projection helpers (rendered by the site) ----
+featured: false       # pins this build as the home hero
+meta_line: ""         # short mono detail on index rows, e.g. "3 evenings · 2 rebuilds"
+
+# /tools is a PROJECTION of the builds collection — there is no separate tools
+# source of truth, so a tool's own facts live on the build. When several builds
+# share a tool, the most-recent build's tool_* values win (see site/src/lib/builds.ts).
+tool_summary: ""      # e.g. "Chatbot builder · free tier available"
+tool_verdict: ""      # the plain one-line verdict shown on /tools
+accessibility: ""     # Beginner-friendly | Some setup | Advanced
+
+# Anything richer than these flat facts — the honest-process steps, test-stat
+# tiles, the reproduce pack, the tool verdict card — is authored in the .mdx BODY
+# using the kit in site/src/components/post/ (see its README.md).
