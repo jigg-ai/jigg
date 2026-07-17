@@ -2,3 +2,9 @@ node_modules/
 dist/
 .env
 .DS_Store
+
+# Astro generated types / cache
+.astro/
+
+# Machine-local Claude Code settings (launch.json is shared and committed)
+.claude/settings.local.json
