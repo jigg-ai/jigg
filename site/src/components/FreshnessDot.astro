@@ -1,0 +1,32 @@
+---
+// Freshness state as a muted status dot (archive timeline). Status colour only:
+// green = verified, amber = recheck-due. Archived/draft read as neutral. Never
+// imply an old build still works just because the page exists (CONTEXT.md §9).
+interface Props {
+  status: 'draft' | 'verified' | 'recheck-due' | 'archived';
+}
+const { status } = Astro.props;
+
+const label: Record<Props['status'], string> = {
+  draft: 'Draft',
+  verified: 'Verified recently',
+  'recheck-due': 'Getting old — recheck due',
+  archived: 'Archived',
+};
+---
+
+<span class:list={['dot', status]} role="img" aria-label={label[status]} title={label[status]}></span>
+
+<style>
+  .dot {
+    display: inline-block;
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 50%;
+    background: var(--ink-faint);
+    flex: none;
+  }
+  .verified { background: var(--ok); }
+  .recheck-due { background: var(--warn); }
+  .archived { background: var(--border-strong); }
+</style>

@@ -1,0 +1,44 @@
+---
+// Archive filter chips. Built ONLY from categories that have real builds
+// (passed in) so there are never thin/empty category views. Behaviour is wired
+// by the small script in /builds — chips carry data-filter, rows carry
+// data-category. Works as plain links to nowhere harmful if JS is off (the
+// default "All" state simply shows everything).
+interface Props {
+  categories: string[];
+}
+const { categories } = Astro.props;
+const label = (c: string) => c[0].toUpperCase() + c.slice(1);
+---
+
+<div class="chips" role="group" aria-label="Filter builds by category">
+  <button type="button" class="chip active" data-filter="all" aria-pressed="true">All</button>
+  {
+    categories.map((c) => (
+      <button type="button" class="chip" data-filter={c} aria-pressed="false">
+        {label(c)}
+      </button>
+    ))
+  }
+</div>
+
+<style>
+  .chips { display: flex; flex-wrap: wrap; gap: 0.55rem; }
+  .chip {
+    font: inherit;
+    font-size: 0.92rem;
+    padding: 0.42em 0.95em;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border-strong);
+    background: var(--surface);
+    color: var(--ink-muted);
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+  .chip:hover { color: var(--ink); border-color: var(--ink-muted); }
+  .chip.active {
+    background: var(--btn);
+    border-color: var(--btn);
+    color: var(--ink-inverse);
+  }
+</style>

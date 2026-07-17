@@ -1,0 +1,79 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container inner">
+    <div class="col">
+      <a class="brand" href="/" aria-label="Jigg.AI — home">
+        <span class="tile" aria-hidden="true">J</span>
+        <span class="wordmark">Jigg.AI</span>
+      </a>
+      <p class="tagline">
+        Real things built with AI, documented honestly. This site is built with
+        the tools it reviews.
+      </p>
+    </div>
+
+    <nav class="links" aria-label="Footer">
+      <a href="/builds">Builds</a>
+      <a href="/tools">Tools</a>
+      <a href="/about">About</a>
+      <a href="/subscribe">Subscribe</a>
+    </nav>
+  </div>
+
+  <div class="container base">
+    <p class="mono">© {year} Jigg.AI</p>
+    <p class="mono disclosure">Narration is AI-generated and disclosed. A human directs the tools.</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--border);
+    margin-top: 5rem;
+    padding-block: 2.75rem 2rem;
+  }
+  .inner {
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem 3rem;
+    flex-wrap: wrap;
+  }
+  .col { max-width: 26rem; }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    text-decoration: none;
+    color: var(--ink);
+  }
+  .tile {
+    display: grid;
+    place-items: center;
+    width: 1.7rem;
+    height: 1.7rem;
+    border-radius: 7px;
+    background: var(--brand-tint);
+    color: var(--brand);
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .wordmark { font-family: var(--font-serif); font-weight: 560; font-size: 1.15rem; }
+  .tagline { color: var(--ink-muted); font-size: 0.95rem; margin-top: 0.85rem; }
+  .links { display: flex; flex-wrap: wrap; gap: 0.4rem 1.4rem; align-items: flex-start; }
+  .links a { text-decoration: none; color: var(--ink-muted); font-size: 0.95rem; }
+  .links a:hover { color: var(--ink); }
+  .base {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem 1.5rem;
+    flex-wrap: wrap;
+    margin-top: 2.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border);
+  }
+  .disclosure { color: var(--ink-faint); }
+</style>

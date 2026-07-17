@@ -1,0 +1,116 @@
+---
+import type { Build } from '../lib/builds';
+import { monShort } from '../lib/builds';
+import CategoryIcon from './CategoryIcon.astro';
+import RunsOnSiteBadge from './RunsOnSiteBadge.astro';
+import FreshnessDot from './FreshnessDot.astro';
+
+// A bordered-list row — the journal-index primitive, deliberately NOT a card
+// grid. Two shapes:
+//   'recent'   — home "Recent builds": artifact thumbnail + title + meta_line.
+//   'timeline' — /builds archive: freshness dot + title + version/verified stamp.
+interface Props {
+  build: Build;
+  variant?: 'recent' | 'timeline';
+}
+const { build, variant = 'recent' } = Astro.props;
+const { data, id } = build;
+const href = `/builds/${id}`;
+const categoryLabel = data.category[0].toUpperCase() + data.category.slice(1);
+
+const stamp = [
+  data.tool_version || data.tool,
+  data.last_verified ? `verified ${monShort(data.last_verified)}` : null,
+  data.meta_line,
+]
+  .filter(Boolean)
+  .join('  ·  ');
+---
+
+{
+  variant === 'timeline' ? (
+    <li class="row timeline" data-category={data.category}>
+      <span class="rail">
+        <FreshnessDot status={data.status} />
+      </span>
+      <div class="body">
+        <p class="title-line">
+          <a class="title" href={href}>{data.title}</a>
+          <span class="cat">{categoryLabel}</span>
+          {data.runs_on_site && <RunsOnSiteBadge size="sm" />}
+        </p>
+        <p class="stamp mono">{stamp}</p>
+      </div>
+    </li>
+  ) : (
+    <li class="row recent" data-category={data.category}>
+      <a class="thumb" href={href} tabindex="-1" aria-hidden="true">
+        <CategoryIcon category={data.category} />
+      </a>
+      <div class="body">
+        <p class="title-line">
+          <a class="title" href={href}>{data.title}</a>
+          <span class="cat">{categoryLabel}</span>
+          {data.runs_on_site && <RunsOnSiteBadge size="sm" />}
+        </p>
+        {data.meta_line && <p class="stamp mono">{data.meta_line}</p>}
+      </div>
+    </li>
+  )
+}
+
+<style>
+  .row {
+    list-style: none;
+    padding-block: 1.15rem;
+    border-top: 1px solid var(--border);
+  }
+  .title-line {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem 0.7rem;
+    flex-wrap: wrap;
+  }
+  .title {
+    font-family: var(--font-serif);
+    font-size: 1.28rem;
+    font-weight: 480;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .title:hover { text-decoration: underline; text-decoration-color: var(--brand); }
+  .cat { color: var(--ink-faint); font-size: 0.85rem; }
+  .stamp { margin-top: 0.3rem; }
+
+  /* recent (home) */
+  .recent { display: flex; gap: 1.1rem; align-items: flex-start; }
+  .thumb {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 3.1rem;
+    height: 3.1rem;
+    border-radius: 10px;
+    background: var(--surface-2);
+    color: var(--ink-muted);
+    border: 1px solid var(--border);
+  }
+
+  /* timeline (archive) — the parent <ol> draws the vertical line at the rail's
+     centre (0.625rem); the dot sits centred in this fixed-width rail over it. */
+  .timeline { display: flex; gap: 1rem; align-items: flex-start; }
+  .timeline .rail {
+    flex: none;
+    display: flex;
+    justify-content: center;
+    width: 1.25rem;
+    padding-top: 0.55rem;
+    background: var(--bg); /* mask the line behind the dot */
+  }
+
+  @media (max-width: 34rem) {
+    .thumb { width: 2.6rem; height: 2.6rem; }
+    .title { font-size: 1.15rem; }
+  }
+</style>

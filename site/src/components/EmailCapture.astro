@@ -1,0 +1,86 @@
+---
+// Stubbed subscribe form. No provider is wired yet (deferred in the BRIEF), so
+// submit is intercepted and acknowledged locally rather than pretending to store
+// an address. Swap the handler for a real Kit/Buttondown endpoint later.
+interface Props {
+  cta?: string;
+  note?: string;
+  placeholder?: string;
+  variant?: 'default' | 'onBrand';
+}
+const {
+  cta = 'Get the builds',
+  note = 'One honest build in your inbox — prompts, costs, and files included. One email per new build, no filler.',
+  placeholder = 'you@email.com',
+  variant = 'default',
+} = Astro.props;
+---
+
+<form class:list={['capture', variant]} data-email-capture>
+  <label class="sr-only" for="ec-email">Email address</label>
+  <input
+    id="ec-email"
+    type="email"
+    name="email"
+    inputmode="email"
+    autocomplete="email"
+    placeholder={placeholder}
+    required
+  />
+  <button type="submit" class="btn btn--primary">{cta}</button>
+  <p class="note" data-note>{note}</p>
+</form>
+
+<script>
+  // Progressive enhancement: acknowledge without collecting (stub).
+  document.querySelectorAll<HTMLFormElement>('[data-email-capture]').forEach((form) => {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const note = form.querySelector<HTMLParagraphElement>('[data-note]');
+      form.querySelector('input')?.setAttribute('disabled', 'true');
+      form.querySelector('button')?.setAttribute('disabled', 'true');
+      if (note) note.textContent = "Thanks! Subscribe goes live with the newsletter backend — you're not stored yet.";
+    });
+  });
+</script>
+
+<style>
+  .capture {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.6rem;
+    align-items: start;
+  }
+  .capture input {
+    font: inherit;
+    padding: 0.75em 0.9em;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--ink);
+    width: 100%;
+    min-width: 0;
+  }
+  .capture input:focus-visible { outline: 2px solid var(--brand); outline-offset: 1px; }
+  .capture .btn { white-space: nowrap; }
+  .note {
+    grid-column: 1 / -1;
+    color: var(--ink-muted);
+    font-size: 0.85rem;
+    margin-top: 0.15rem;
+  }
+  .onBrand input { background: var(--surface); border-color: color-mix(in srgb, var(--brand) 30%, var(--border-strong)); }
+
+  .sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0 0 0 0);
+    white-space: nowrap; border: 0;
+  }
+
+  @media (max-width: 30rem) {
+    .capture { grid-template-columns: 1fr; }
+    .capture .btn { width: 100%; justify-content: center; }
+  }
+</style>

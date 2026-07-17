@@ -1,0 +1,62 @@
+---
+import '@fontsource-variable/fraunces';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const {
+  title,
+  description = 'Real things built with AI tools, documented honestly — tested, timed, and reproducible. Jigg.AI builds in public with the tools it reviews.',
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const siteName = 'Jigg.AI';
+const fullTitle = title === siteName ? title : `${title} · ${siteName}`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta name="generator" content={Astro.generator} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header />
+    <main id="main"><slot /></main>
+    <Footer />
+
+    <style>
+      .skip-link {
+        position: absolute;
+        left: 0.5rem;
+        top: -3.5rem;
+        background: var(--ink);
+        color: var(--ink-inverse);
+        padding: 0.6rem 0.9rem;
+        border-radius: var(--radius-sm);
+        z-index: 20;
+        transition: top 0.15s ease;
+      }
+      .skip-link:focus { top: 0.5rem; }
+    </style>
+  </body>
+</html>

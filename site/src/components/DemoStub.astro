@@ -1,0 +1,72 @@
+---
+// Static artifact preview. For build #1 the live third-party demo is deferred
+// (BRIEF), so this is a styled, non-interactive stand-in — the island SEAM.
+// Later, swap the message stack for a real embedded demo without touching the
+// pages that use it.
+interface Message {
+  from: 'user' | 'bot';
+  text: string;
+}
+interface Props {
+  label: string;
+  action?: string; // e.g. "Watch the 40s build"
+  messages: Message[];
+}
+const { label, action, messages } = Astro.props;
+---
+
+<figure class="demo">
+  <figcaption class="chrome">
+    <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span class="label mono">{label}</span>
+    {action && <span class="action mono">▷ {action}</span>}
+  </figcaption>
+  <div class="thread">
+    {
+      messages.map((m) => (
+        <p class:list={['bubble', m.from]}>{m.text}</p>
+      ))
+    }
+  </div>
+</figure>
+
+<style>
+  .demo {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+  .chrome {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.7rem 0.95rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .dots { display: inline-flex; gap: 0.35rem; }
+  .dots i { width: 0.6rem; height: 0.6rem; border-radius: 50%; background: var(--border-strong); }
+  .label { color: var(--ink-faint); }
+  .action { margin-left: auto; color: var(--ink-muted); }
+  .thread { padding: 1.25rem; display: flex; flex-direction: column; gap: 0.85rem; }
+  .bubble {
+    max-width: 82%;
+    padding: 0.7rem 0.95rem;
+    border-radius: 14px;
+    line-height: 1.45;
+    font-size: 0.98rem;
+  }
+  .bubble.user {
+    align-self: flex-start;
+    background: var(--surface-2);
+    border-bottom-left-radius: 5px;
+  }
+  .bubble.bot {
+    align-self: flex-end;
+    background: var(--ok-tint);
+    color: var(--ink);
+    border-bottom-right-radius: 5px;
+  }
+</style>

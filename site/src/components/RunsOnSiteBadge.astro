@@ -1,0 +1,35 @@
+---
+// The dogfooding signal — this build is actually in production on Jigg.AI.
+// One of the two sanctioned accent colours (green). Keep it meaningful: only
+// render where runs_on_site is genuinely true.
+interface Props {
+  size?: 'sm' | 'md';
+}
+const { size = 'md' } = Astro.props;
+---
+
+<span class:list={['badge', size]}>
+  <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" fill="none">
+    <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.4"></circle>
+    <path d="M5 8.2l2 2L11 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+  </svg>
+  Runs on this site
+</span>
+
+<style>
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+    color: var(--ok);
+    background: var(--ok-tint);
+    border-radius: var(--radius-pill);
+    font-size: 0.8rem;
+    font-weight: 540;
+    line-height: 1;
+    padding: 0.36em 0.7em 0.36em 0.55em;
+    white-space: nowrap;
+  }
+  .sm { font-size: 0.72rem; padding: 0.3em 0.6em 0.3em 0.48em; }
+  .sm svg { width: 12px; height: 12px; }
+</style>

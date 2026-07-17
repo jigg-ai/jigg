@@ -1,0 +1,84 @@
+---
+import type { ToolView } from '../lib/builds';
+import RunsOnSiteBadge from './RunsOnSiteBadge.astro';
+
+// Tools index row. Leads with what was actually built + a plain verdict + an
+// accessibility read. No star ratings, ever (CONTEXT.md §6).
+interface Props {
+  tool: ToolView;
+}
+const { tool } = Astro.props;
+const initials = tool.name.replace(/[^a-zA-Z0-9 ]/g, '').slice(0, 2);
+const categoryLabel = tool.category[0].toUpperCase() + tool.category.slice(1);
+const href = `/builds/${tool.primary.id}`;
+const meta = [
+  `${tool.buildCount} build${tool.buildCount === 1 ? '' : 's'}`,
+  tool.accessibility,
+]
+  .filter(Boolean)
+  .join('  ·  ');
+---
+
+<li class="tool-row">
+  <span class="avatar" aria-hidden="true">{initials}</span>
+  <div class="body">
+    <p class="head">
+      <a class="name" href={href}>{tool.name}</a>
+      <span class="cat">{categoryLabel}</span>
+      {tool.runs_on_site && <RunsOnSiteBadge size="sm" />}
+    </p>
+    {tool.verdict && <p class="verdict">{tool.verdict}</p>}
+    <p class="meta mono">
+      <span>{meta}</span>
+      <a class="see" href={href}>See the build →</a>
+    </p>
+  </div>
+</li>
+
+<style>
+  .tool-row {
+    list-style: none;
+    display: flex;
+    gap: 1.1rem;
+    align-items: flex-start;
+    padding-block: 1.6rem;
+    border-top: 1px solid var(--border);
+  }
+  .avatar {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 2.9rem;
+    height: 2.9rem;
+    border-radius: 10px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    font-weight: 600;
+    color: var(--ink-muted);
+  }
+  .head { display: flex; align-items: center; gap: 0.55rem 0.75rem; flex-wrap: wrap; }
+  .name {
+    font-family: var(--font-serif);
+    font-size: 1.32rem;
+    font-weight: 500;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .name:hover { text-decoration: underline; text-decoration-color: var(--brand); }
+  .cat { color: var(--ink-faint); font-size: 0.85rem; }
+  .verdict { margin-top: 0.5rem; line-height: 1.5; max-width: 46rem; }
+  .meta {
+    margin-top: 0.7rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.1rem;
+    align-items: center;
+  }
+  .see { color: var(--ink); text-decoration: none; }
+  .see:hover { text-decoration: underline; text-decoration-color: var(--brand); }
+
+  @media (max-width: 34rem) {
+    .avatar { width: 2.5rem; height: 2.5rem; }
+    .name { font-size: 1.18rem; }
+  }
+</style>
