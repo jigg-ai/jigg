@@ -96,14 +96,24 @@ Write as you go. Messy is correct — this is the first published build log.
   edit/verify pass (PROCESS step 5) has NOT happened yet — the post copy is a first
   honest draft, not a published-quality edit.
 
+- **Deploy** — Connected the `jigg-ai/jigg` repo to Netlify (git-based continuous
+  deploy from `main`). The subdirectory layout (`site/`) was the only thing to get
+  right: `netlify.toml` with `base = "site"`, `command = "npm run build"`, and
+  `publish = "dist"` — publish is relative to `base`, so `dist` not `site/dist`
+  (verified against Netlify's docs first; `site/dist` would double-nest and fail the
+  deploy). Node pinned to 22. First build succeeded with no errors; verified the home
+  page, all four views, the dynamic build-detail route, the self-hosted font, and CSS
+  all render live with no console errors. Custom domain (jigg.ai) not connected yet, so
+  `astro.config.mjs` `site` points at the Netlify URL for now (correct canonical/sitemap).
+
 ## Artifacts
 <!-- screenshots of each view; the deploy URL; a short screen recording if useful -->
-- Repo: https://github.com/jigg-ai/jigg (scaffold checked in, 1 commit on `main`)
+- Repo: https://github.com/jigg-ai/jigg — build #1 scaffold pushed to `main`.
+- Live site: https://candid-gingersnap-6c4b87.netlify.app (Netlify, static, auto-deploys on push to `main`)
 - Astro site scaffolded at `site/` — Astro 7.1, `@astrojs/mdx`, `@astrojs/sitemap`,
   `@fontsource-variable/fraunces` (self-hosted, no Google Fonts network call). 4 deps.
 - All four views verified rendering from the single collection at `localhost:4321`
   (home, /builds, /builds/website, /tools), mobile (375px) checked, no console errors.
-- Deploy URL: **pending** — not yet deployed.
 
 ## Dead ends
 <!-- keep these — they're the honest part of the story -->
