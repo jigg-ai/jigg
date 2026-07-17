@@ -1,0 +1,97 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPublishedBuilds, monShort, isoDate } from '../../lib/builds';
+import RunsOnSiteBadge from '../../components/RunsOnSiteBadge.astro';
+
+export async function getStaticPaths() {
+  const builds = await getPublishedBuilds();
+  return builds.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { data } = entry;
+const { Content } = await render(entry);
+
+const categoryLabel = data.category[0].toUpperCase() + data.category.slice(1);
+
+const builtWith = data.tool_version
+  ? `Built with ${data.tool_version}`
+  : `Built with ${data.tool}`;
+const buildStamps = [builtWith];
+if (data.pricing_as_of) buildStamps.push(`pricing as of ${monShort(data.pricing_as_of)}`);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: data.title,
+  description: data.summary,
+  ...(data.published && { datePublished: isoDate(data.published) }),
+  ...(data.last_verified && { dateModified: isoDate(data.last_verified) }),
+  author: { '@type': 'Organization', name: 'Jigg.AI' },
+  publisher: { '@type': 'Organization', name: 'Jigg.AI' },
+  mainEntityOfPage: new URL(Astro.url.pathname, Astro.site).toString(),
+};
+---
+
+<BaseLayout title={data.title} description={data.summary}>
+  <Fragment slot="head">
+    <meta property="og:type" content="article" />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </Fragment>
+
+  <article class="container container--prose build">
+    <nav class="crumb mono" aria-label="Breadcrumb">
+      <a href="/builds">{categoryLabel}</a>
+      <span aria-hidden="true">›</span>
+      <a href="/tools">{data.tool}</a>
+    </nav>
+
+    <div class="topline">
+      {data.runs_on_site && <RunsOnSiteBadge />}
+      {data.meta_line && <span class="mono">{data.meta_line}</span>}
+    </div>
+
+    <h1>{data.title}</h1>
+
+    <p class="stamps mono">
+      <span>{buildStamps.join('  ·  ')}</span>
+      {data.last_verified && <span class="verified-stamp">Last verified {monShort(data.last_verified)}</span>}
+    </p>
+
+    <div class="prose body stack"><Content /></div>
+  </article>
+</BaseLayout>
+
+<style>
+  .build { padding-top: clamp(1.5rem, 4vw, 2.75rem); }
+  .crumb {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    color: var(--ink-muted);
+  }
+  .crumb a { text-decoration: none; color: var(--ink-muted); }
+  .crumb a:hover { color: var(--ink); }
+  .topline {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    flex-wrap: wrap;
+    margin-top: 1.25rem;
+  }
+  h1 {
+    font-size: var(--step-h1);
+    font-weight: 460;
+    margin-top: 0.85rem;
+    max-width: 20ch;
+  }
+  .stamps {
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 1.25rem;
+    color: var(--ink-faint);
+  }
+  .body { margin-top: 2rem; }
+</style>

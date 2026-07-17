@@ -1,0 +1,135 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPublishedBuilds, groupByMonth, activeCategories, monShort } from '../../lib/builds';
+import BuildRow from '../../components/BuildRow.astro';
+import CategoryChips from '../../components/CategoryChips.astro';
+
+const builds = await getPublishedBuilds();
+const months = groupByMonth(builds);
+const categories = activeCategories(builds);
+---
+
+<BaseLayout
+  title="All build logs"
+  description="Every Jigg.AI build, newest first — with tool versions and verified dates, so you always know what's current."
+>
+  <div class="container">
+    <header class="page-head">
+      <h1>All build logs</h1>
+      <p class="section-lead">
+        Every build, newest first. Versions and verified dates shown so you know
+        what's current.
+      </p>
+    </header>
+
+    <div class="controls">
+      <CategoryChips categories={categories} />
+      <p class="legend" aria-hidden="true">
+        <span class="key"><span class="dot verified"></span> Verified recently</span>
+        <span class="key"><span class="dot recheck"></span> Getting old — recheck due</span>
+      </p>
+    </div>
+
+    <ol class="timeline" data-timeline>
+      {
+        months.map((group) => (
+          <>
+            <li class="month-row">
+              <span class="rail" aria-hidden="true" />
+              <span class="month mono">{group.label.toLowerCase()}</span>
+            </li>
+            {group.items.map((b) => (
+              <BuildRow build={b} variant="timeline" />
+            ))}
+          </>
+        ))
+      }
+    </ol>
+
+    {builds.length === 0 && <p class="empty">No builds published yet.</p>}
+  </div>
+</BaseLayout>
+
+<script>
+  // Category filtering. Chips carry data-filter; rows carry data-category.
+  // Month headers hide when they have no visible builds under the active filter.
+  const root = document.querySelector('[data-timeline]');
+  const chips = Array.from(document.querySelectorAll<HTMLButtonElement>('.chip'));
+  if (root) {
+    const apply = (filter: string) => {
+      const children = Array.from(root.children) as HTMLElement[];
+      let currentMonth: HTMLElement | null = null;
+      let monthHasVisible = false;
+      const flush = () => {
+        if (currentMonth) currentMonth.hidden = !monthHasVisible;
+      };
+      for (const el of children) {
+        if (el.classList.contains('month-row')) {
+          flush();
+          currentMonth = el;
+          monthHasVisible = false;
+        } else {
+          const show = filter === 'all' || el.dataset.category === filter;
+          el.hidden = !show;
+          if (show) monthHasVisible = true;
+        }
+      }
+      flush();
+    };
+    chips.forEach((chip) => {
+      chip.addEventListener('click', () => {
+        chips.forEach((c) => {
+          const active = c === chip;
+          c.classList.toggle('active', active);
+          c.setAttribute('aria-pressed', String(active));
+        });
+        apply(chip.dataset.filter || 'all');
+      });
+    });
+  }
+</script>
+
+<style>
+  .page-head { padding-top: clamp(2rem, 5vw, 3.5rem); }
+  .section-lead { margin-top: 0.7rem; }
+  .controls {
+    margin-top: 1.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 2rem;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .legend { display: flex; flex-wrap: wrap; gap: 0.4rem 1.25rem; }
+  .key { display: inline-flex; align-items: center; gap: 0.45rem; color: var(--ink-muted); font-size: 0.85rem; }
+  .dot { width: 0.6rem; height: 0.6rem; border-radius: 50%; display: inline-block; }
+  .dot.verified { background: var(--ok); }
+  .dot.recheck { background: var(--warn); }
+
+  .timeline {
+    list-style: none;
+    padding: 0;
+    margin: 2rem 0 0;
+    position: relative;
+  }
+  /* the continuous vertical line, centred under the 1.25rem rail */
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0.625rem;
+    top: 1.6rem;
+    bottom: 1rem;
+    width: 1px;
+    background: var(--border-strong);
+  }
+  .month-row {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    padding-top: 1.6rem;
+    padding-bottom: 0.2rem;
+  }
+  .month-row .rail { flex: none; width: 1.25rem; }
+  .month { color: var(--ink-faint); background: var(--bg); }
+  .empty { margin-top: 2rem; color: var(--ink-muted); }
+</style>

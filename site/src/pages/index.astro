@@ -1,0 +1,114 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getPublishedBuilds, pickFeatured } from '../lib/builds';
+import BuildRow from '../components/BuildRow.astro';
+import EmailCapture from '../components/EmailCapture.astro';
+import RunsOnSiteBadge from '../components/RunsOnSiteBadge.astro';
+
+const builds = await getPublishedBuilds();
+const featured = pickFeatured(builds);
+const recent = builds.filter((b) => b.id !== featured?.id).slice(0, 4);
+const featCat = featured
+  ? featured.data.category[0].toUpperCase() + featured.data.category.slice(1)
+  : '';
+---
+
+<BaseLayout title="Jigg.AI">
+  <section class="hero container">
+    <p class="eyebrow">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M14.5 5.5a3.5 3.5 0 00-4.9 4.2l-6 6 2.7 2.7 6-6a3.5 3.5 0 004.2-4.9l-2 2-1.8-1.8z" />
+      </svg>
+      Build-in-public · one tool at a time
+    </p>
+    <h1 class="display">Anyone can build real things with AI. Here's the proof.</h1>
+    <p class="lead">
+      Each post pairs an AI tool worth your time with a real thing I built using
+      it — tested, timed, and documented. Mistakes and all. Including this website.
+    </p>
+    <div class="capture-wrap"><EmailCapture /></div>
+  </section>
+
+  {
+    featured && (
+      <section class="featured container" aria-labelledby="featured-title">
+        <p class="feat-eyebrow">
+          <span class="cat">{featCat}</span>
+          {featured.data.runs_on_site && <RunsOnSiteBadge />}
+        </p>
+        <h2 id="featured-title" class="feat-title">
+          <a href={`/builds/${featured.id}`}>{featured.data.title}</a>
+        </h2>
+        <p class="feat-summary">{featured.data.summary}</p>
+        {featured.data.test_score && (
+          <p class="mono feat-stat">
+            {featured.data.test_score}
+            {featured.data.meta_line ? `  ·  ${featured.data.meta_line}` : ''}
+          </p>
+        )}
+        <p class="feat-cta">
+          <a class="btn" href={`/builds/${featured.id}`}>Read the build →</a>
+        </p>
+      </section>
+    )
+  }
+
+  {
+    recent.length > 0 && (
+      <section class="recent container">
+        <div class="sec-head">
+          <h2>Recent builds</h2>
+          <a class="view-all mono" href="/builds">View all →</a>
+        </div>
+        <ul class="rows">
+          {recent.map((b) => <BuildRow build={b} variant="recent" />)}
+        </ul>
+      </section>
+    )
+  }
+</BaseLayout>
+
+<style>
+  .hero { padding-top: clamp(2.5rem, 6vw, 4.5rem); padding-bottom: 2.5rem; }
+  .eyebrow { color: var(--ink-muted); }
+  .display {
+    font-size: var(--step-display);
+    font-weight: 460;
+    max-width: 15ch;
+    margin-top: 0.9rem;
+  }
+  .lead {
+    color: var(--ink-muted);
+    font-size: clamp(1.1rem, 1rem + 0.5vw, 1.35rem);
+    line-height: 1.5;
+    max-width: 34rem;
+    margin-top: 1.25rem;
+  }
+  .capture-wrap { margin-top: 2rem; max-width: 34rem; }
+
+  .featured {
+    padding-block: 2.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .feat-eyebrow { display: flex; align-items: center; gap: 0.7rem; }
+  .feat-eyebrow .cat { color: var(--ink-muted); font-size: 0.9rem; }
+  .feat-title { font-size: clamp(1.7rem, 1.4rem + 1.4vw, 2.3rem); margin-top: 0.7rem; }
+  .feat-title a { color: var(--ink); text-decoration: none; }
+  .feat-title a:hover { text-decoration: underline; text-decoration-color: var(--brand); }
+  .feat-summary { color: var(--ink-muted); max-width: 42rem; margin-top: 0.7rem; font-size: 1.08rem; }
+  .feat-stat { margin-top: 0.8rem; }
+  .feat-cta { margin-top: 1.4rem; }
+
+  .recent { padding-top: 2.5rem; }
+  .sec-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 0.4rem;
+  }
+  .view-all { text-decoration: none; color: var(--ink-muted); }
+  .view-all:hover { color: var(--ink); }
+  .rows { list-style: none; padding: 0; margin: 0; }
+  .rows :global(.row:last-child) { border-bottom: 1px solid var(--border); }
+</style>

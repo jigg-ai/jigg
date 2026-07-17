@@ -1,0 +1,42 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPublishedBuilds, toolsFromBuilds } from '../../lib/builds';
+import ToolRow from '../../components/ToolRow.astro';
+
+// A PROJECTION of the builds collection — no separate tools source of truth.
+const builds = await getPublishedBuilds();
+const tools = toolsFromBuilds(builds);
+---
+
+<BaseLayout
+  title="Tools I've actually used"
+  description="No star ratings — just what I built with each AI tool, how hard it was, and whether I'd reach for it again."
+>
+  <div class="container">
+    <header class="page-head">
+      <h1>Tools I've actually used</h1>
+      <p class="section-lead">
+        No star ratings — just what I built with each one, how hard it was, and
+        whether I'd reach for it again.
+      </p>
+    </header>
+
+    <ul class="tools">
+      {tools.map((tool) => <ToolRow tool={tool} />)}
+    </ul>
+
+    {tools.length === 0 && <p class="empty">No tools covered yet.</p>}
+  </div>
+</BaseLayout>
+
+<style>
+  .page-head { padding-top: clamp(2rem, 5vw, 3.5rem); }
+  .section-lead { margin-top: 0.7rem; }
+  .tools {
+    list-style: none;
+    padding: 0;
+    margin: 2rem 0 0;
+  }
+  .tools :global(.tool-row:last-child) { border-bottom: 1px solid var(--border); }
+  .empty { margin-top: 2rem; color: var(--ink-muted); }
+</style>

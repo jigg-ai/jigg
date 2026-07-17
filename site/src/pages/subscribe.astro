@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import EmailCapture from '../components/EmailCapture.astro';
+---
+
+<BaseLayout
+  title="Subscribe"
+  description="One honest build in your inbox — prompts, costs, and files included. One email per new build, no filler."
+>
+  <section class="container container--prose subscribe">
+    <h1>One honest build in your inbox</h1>
+    <p class="lead">
+      Every new build log, sent once — with the prompts, the real costs, the test
+      results, and the reproducible files. One email per build. No filler, no
+      drip sequence.
+    </p>
+    <div class="capture"><EmailCapture cta="Subscribe" /></div>
+  </section>
+</BaseLayout>
+
+<style>
+  .subscribe { padding-top: clamp(2.5rem, 6vw, 4.5rem); }
+  .subscribe h1 { font-size: var(--step-h1); font-weight: 460; max-width: 16ch; }
+  .lead { color: var(--ink-muted); font-size: 1.2rem; line-height: 1.5; margin-top: 1rem; max-width: 36rem; }
+  .capture { margin-top: 2rem; max-width: 34rem; }
+</style>
