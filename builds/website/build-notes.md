@@ -103,13 +103,27 @@ Write as you go. Messy is correct — this is the first published build log.
   (verified against Netlify's docs first; `site/dist` would double-nest and fail the
   deploy). Node pinned to 22. First build succeeded with no errors; verified the home
   page, all four views, the dynamic build-detail route, the self-hosted font, and CSS
-  all render live with no console errors. Custom domain (jigg.ai) not connected yet, so
-  `astro.config.mjs` `site` points at the Netlify URL for now (correct canonical/sitemap).
+  all render live with no console errors. (Custom domain jigg.ai was wired up shortly
+  after — see the next entry.)
+- **Custom domain (jigg.ai)** — The domain runs on Cloudflare DNS (authoritative NS
+  `dan`/`mary.ns.cloudflare.com`, confirmed with `dig` — the `registrar-servers.com` NS
+  rows in the panel were harmless leftover cruft), and was proxied to a Namecheap parking
+  page. Pointed it at Netlify by editing exactly two records and turning the orange cloud
+  OFF (DNS only): apex `A` → `75.2.60.5`, `www` `CNAME` → the Netlify subdomain. Left the
+  MX / SPF / google-site-verification TXT records untouched, so Google email kept working.
+  Grey-cloud (not proxied) is the load-bearing detail — it lets Netlify serve and provision
+  its own SSL directly, and sidesteps the Cloudflare-proxy → Netlify redirect loop.
+  Netlify's first Let's Encrypt attempt failed ("could not provision") because it fired
+  before the ACME challenge path had fully settled; a retry issued the cert cleanly
+  (covers `jigg.ai` + `www.jigg.ai`). Live over HTTPS at https://jigg.ai; repointed
+  `astro.config.mjs` `site` there so canonicals/sitemap follow.
 
 ## Artifacts
 <!-- screenshots of each view; the deploy URL; a short screen recording if useful -->
 - Repo: https://github.com/jigg-ai/jigg — build #1 scaffold pushed to `main`.
-- Live site: https://candid-gingersnap-6c4b87.netlify.app (Netlify, static, auto-deploys on push to `main`)
+- Live site: https://jigg.ai (custom domain, HTTPS) — served by Netlify (static,
+  auto-deploys on push to `main`); the `candid-gingersnap-6c4b87.netlify.app` subdomain
+  also still resolves.
 - Astro site scaffolded at `site/` — Astro 7.1, `@astrojs/mdx`, `@astrojs/sitemap`,
   `@fontsource-variable/fraunces` (self-hosted, no Google Fonts network call). 4 deps.
 - All four views verified rendering from the single collection at `localhost:4321`

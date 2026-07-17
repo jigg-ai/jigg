@@ -17,7 +17,7 @@ For a site build the check set isn't Q&A — it's whether the foundation actuall
 | # | Check | Outcome | Notes |
 |---|-------|---------|-------|
 | 1 | Site builds with no errors | **Pass** | 6 routes + sitemap in ~2s, clean on first run. |
-| 2 | Deploys to a live URL | **Pass** | Live on Netlify at candid-gingersnap-6c4b87.netlify.app. Home, archive, build detail (dynamic route), tools, and About all render; self-hosted font + CSS shipped; no console errors on the live site. |
+| 2 | Deploys to a live URL | **Pass** | Live at https://jigg.ai (custom domain on Netlify, HTTPS via Let's Encrypt covering apex + www). Home, archive, build detail (dynamic route), tools, and About all render; self-hosted font + CSS shipped; no console errors. |
 | 3 | All four views render from the `builds` collection | **Pass** | Home, /builds, /builds/website, /tools all verified in-browser. |
 | 4 | Adding a new markdown build updates all views, no page-code edits | **Pass** | Temp entry → appeared on home, archive, and /tools, and generated its own detail route. Zero page-code changes. The core invariant, measured rather than assumed. |
 | 5 | "Runs on this site" badge shows only when runs_on_site: true | **Pass** | With 2 builds (one true, one false), badge count on /builds was exactly 1. |
