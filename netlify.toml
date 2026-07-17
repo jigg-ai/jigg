@@ -1,0 +1,12 @@
+# Netlify build configuration.
+# The site lives in site/, not the repo root, so `base` points Netlify there:
+# `command` runs inside site/, and `publish` is resolved RELATIVE TO base
+# (i.e. site/dist). Astro static output — no adapter needed.
+[build]
+  base = "site"
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  # Pin the Node version for reproducible builds (Astro 7 needs a current Node).
+  NODE_VERSION = "22"
