@@ -1,0 +1,14 @@
+title: "Building Jigg.AI itself, with Claude Code and Astro"
+slug: "website"
+category: "websites"
+tool: "Claude Code + Astro"
+tool_version: ""       # fill: Astro version used
+runs_on_site: true
+status: draft
+summary: ""            # fill after: what it took, worth it or not, the one caveat
+test_score: ""         # see test.md — site checks, not a 30-question set
+affiliate_url: ""      # n/a or relevant hosting/tool link if applicable
+repro_pack: true
+published: ""
+last_verified: ""
+pricing_as_of: ""

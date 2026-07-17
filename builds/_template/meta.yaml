@@ -1,0 +1,16 @@
+# Content-collection fields. Perishable facts (version, pricing, verified date)
+# are kept separate from the evergreen narrative so they update in one place.
+title: ""
+slug: ""
+category: ""          # chatbots | video | websites | automation | writing | ...
+tool: ""
+tool_version: ""
+runs_on_site: false   # true => shows the "Runs on this site" trust badge
+status: draft         # draft | verified | recheck-due | archived
+summary: ""           # the short version / citation hook
+test_score: ""        # e.g. "25/30"
+affiliate_url: ""
+repro_pack: false     # is a downloadable pack available?
+published: ""         # YYYY-MM-DD
+last_verified: ""     # YYYY-MM-DD
+pricing_as_of: ""     # YYYY-MM-DD
