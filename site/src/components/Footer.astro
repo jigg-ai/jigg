@@ -15,12 +15,18 @@ const year = new Date().getFullYear();
       </p>
     </div>
 
-    <nav class="links" aria-label="Footer">
-      <a href="/builds">Builds</a>
-      <a href="/tools">Tools</a>
-      <a href="/about">About</a>
-      <a href="/subscribe">Subscribe</a>
-    </nav>
+    <div class="link-groups">
+      <nav class="links" aria-label="Explore">
+        <a href="/builds">Builds</a>
+        <a href="/tools">Tools</a>
+        <a href="/subscribe">Subscribe</a>
+      </nav>
+      <nav class="links" aria-label="Site info">
+        <a href="/about">About</a>
+        <a href="/privacy">Privacy</a>
+        <a href="/affiliate-disclosure">Affiliate disclosure</a>
+      </nav>
+    </div>
   </div>
 
   <div class="container base">
@@ -63,7 +69,8 @@ const year = new Date().getFullYear();
   }
   .wordmark { font-family: var(--font-serif); font-weight: 560; font-size: 1.15rem; }
   .tagline { color: var(--ink-muted); font-size: 0.95rem; margin-top: 0.85rem; }
-  .links { display: flex; flex-wrap: wrap; gap: 0.4rem 1.4rem; align-items: flex-start; }
+  .link-groups { display: flex; gap: 1.5rem 3.5rem; flex-wrap: wrap; }
+  .links { display: flex; flex-direction: column; gap: 0.6rem; align-items: flex-start; }
   .links a { text-decoration: none; color: var(--ink-muted); font-size: 0.95rem; }
   .links a:hover { color: var(--ink); }
   .base {
