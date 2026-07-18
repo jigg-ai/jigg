@@ -12,7 +12,7 @@ Short version: the only personal information Jigg.AI collects is your email addr
 
 ## How it's used
 
-Your email is stored with [EMAIL PROVIDER] and used only to send one email per new build. You can unsubscribe from any email at any time, using the link at the bottom of it — and your address is removed.
+Your email is stored with Buttondown (the newsletter service that sends these emails) and used only to send one email per new build. You can unsubscribe from any email at any time, using the link at the bottom of it — and your address is removed.
 
 ## What's never done
 
@@ -26,4 +26,4 @@ The site is hosted on Netlify and served through Cloudflare. Like any website, t
 
 Email hello@jigg.ai and you'll get a real (human-directed) answer.
 
-*Last updated: [DATE].*
+*Last updated: July 17, 2026.*
