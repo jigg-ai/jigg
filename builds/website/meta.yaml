@@ -5,11 +5,12 @@ category: "websites"
 tool: "Claude Code + Astro"
 tool_version: "Astro 7.1"
 runs_on_site: true
-status: verified       # set so the site isn't empty and can deploy; the human
-                       # verify pass (PROCESS step 5) has NOT happened yet
+live_url: "https://jigg.ai"   # deployed on Netlify — custom domain, HTTPS
+status: verified       # built, deployed, and live at jigg.ai; core checks pass
+                       # (Lighthouse + a formal a11y audit still open — see test.md)
 summary: "Claude Code took this site from an empty folder to a live, four-view build-log engine where publishing a new post is adding one markdown file. The build itself went smoothly — the one caveat is that the real time sink wasn't the code at all, it was the Git and GitHub auth setup around it."
-test_score: ""         # intentionally empty — site checks aren't a scored set, and
-                       # deploy/Lighthouse haven't run. See test.md.
+test_score: ""         # intentionally empty — site checks aren't a scored set.
+                       # Deploy passed; Lighthouse not yet run. See test.md.
 affiliate_url: ""      # n/a — no affiliate relationship with Claude Code or Astro,
                        # so the build log shows a verdict with no CTA
 repro_pack: true
