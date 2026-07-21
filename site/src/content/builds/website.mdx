@@ -91,18 +91,35 @@ frontmatter. And it's shipped: deployed on Netlify and live at
 [jigg.ai](https://jigg.ai), on a custom domain with HTTPS. The one check still
 logged as pending rather than claimed is a Lighthouse performance pass.
 
-<ReproPack items={[
-  "The content-collection schema",
-  "One collection → four views diagram",
-  "The prompts that drove the build",
-  "This scaffold as a starter",
-]} />
-
 <StatTiles variant="fact" stats={[
   { value: "$0", label: "Hosting (static, free tier)" },
   { value: "1 file", label: "To publish a new build" },
   { value: "Astro 7.1", label: "Framework version" },
 ]} />
+
+## Reproduce this
+
+<ReproPack
+  onPage={[
+    "The simplified content schema",
+    "One complete example record",
+    "An AI workflow overview",
+    "The one-collection-to-four-views diagram",
+    "An annotated repository-tree excerpt",
+    "Several representative prompts — including one failed prompt and its correction",
+  ]}
+  packDescription="Reproduce this build — Get the complete content schema, AI workflow, architecture diagram, curated build prompts, annotated repository structure, and runnable Astro scaffold used to build Jigg.AI."
+  packContents={[
+    "Complete schema and sample dataset",
+    "Full-resolution editable diagrams",
+    "Complete curated prompt sequence",
+    "Full repository map",
+    "Runnable Astro scaffold",
+    "Setup guide",
+    "Deployment checklist",
+    "Reusable templates",
+  ]}
+/>
 
 ## The tool
 

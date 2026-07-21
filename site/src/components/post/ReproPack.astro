@@ -1,42 +1,63 @@
 ---
 import EmailCapture from '../EmailCapture.astro';
 
-// "Reproduce this exactly" — public substantiation + the gated pack (lead magnet).
-// NOTE: the mockup renders this callout in light blue; that would be a fourth,
-// meaning-less hue. Per the colour ruling we render it in the BRAND tint instead
-// (brand + status only — no decorative colour creep).
+// Two-tier "Reproduce this": public substantiation shown openly on the page (enough
+// to verify every claim without a download), plus the gated downloadable pack (the
+// lead magnet). ALL content is build-specific and passed in — there are no content
+// defaults, so nothing leaks between builds. Keep it build-agnostic; see
+// builds/_template/repro/README.md for the shape.
+//
+// Colour note: rendered in the BRAND tint, not the mockup's blue (brand + status
+// only — no decorative colour creep).
 interface Props {
-  title?: string;
-  blurb?: string;
-  items: string[];
+  /** Public items shown openly — enough to verify claims with no download. */
+  onPage: string[];
+  /** One-line description of the downloadable pack. */
+  packDescription: string;
+  /** What the pack actually contains. */
+  packContents: string[];
+  intro?: string;
 }
 const {
-  title = 'Reproduce this exactly',
-  blurb = "Everything you'd need to rebuild it: the task definition, the flow, the knowledge-base structure, every prompt, and the full test set.",
-  items,
+  onPage,
+  packDescription,
+  packContents,
+  intro = 'Enough on this page to check every claim yourself — no download required:',
 } = Astro.props;
 ---
 
-<aside class="repro">
-  <p class="kicker">
-    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true">
-      <path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z" /><path d="M4 7.5l8 4.5 8-4.5M12 12v9" />
-    </svg>
-    {title}
-  </p>
-  <p class="blurb">{blurb}</p>
-  <ul class="items">
-    {items.map((it) => <li class="mono">{it}</li>)}
+<div class="repro">
+  <p class="intro">{intro}</p>
+  <ul class="on-page">
+    {onPage.map((it) => <li>{it}</li>)}
   </ul>
-  <EmailCapture
-    cta="Get the pack"
-    variant="onBrand"
-    note="Free. The full reproducible pack, plus one honest build per new post."
-  />
-</aside>
+
+  <aside class="pack">
+    <p class="kicker">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z" /><path d="M4 7.5l8 4.5 8-4.5M12 12v9" />
+      </svg>
+      The downloadable pack
+    </p>
+    <p class="pack-desc">{packDescription}</p>
+    <p class="pack-label">In the pack</p>
+    <ul class="pack-contents">
+      {packContents.map((it) => <li>{it}</li>)}
+    </ul>
+    <EmailCapture
+      cta="Get the pack"
+      variant="onBrand"
+      note="Free. The full reproducible pack, plus one honest build per new post."
+    />
+  </aside>
+</div>
 
 <style>
-  .repro {
+  .intro { color: var(--ink-muted); }
+  .on-page { margin-top: 0.85rem; }
+
+  .pack {
+    margin-top: 1.9rem;
     background: var(--brand-tint);
     border: 1px solid color-mix(in srgb, var(--brand) 22%, var(--border));
     border-radius: var(--radius);
@@ -51,20 +72,21 @@ const {
     font-size: 1.05rem;
     margin-bottom: 0.6rem;
   }
-  .blurb { color: var(--ink); max-width: 44rem; }
-  .items {
-    list-style: none;
-    padding: 0;
-    margin: 1rem 0 1.25rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem 0.75rem;
+  .pack-desc { color: var(--ink); max-width: 46rem; }
+  .pack-label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-top: 1.15rem;
   }
-  .items li {
-    background: color-mix(in srgb, var(--surface) 70%, transparent);
-    border: 1px solid color-mix(in srgb, var(--brand) 18%, var(--border));
-    border-radius: var(--radius-pill);
-    padding: 0.35em 0.75em;
-    color: var(--ink);
+  .pack .pack-contents {
+    margin: 0.55rem 0 1.4rem;
+    padding-left: 1.2rem;
+    columns: 2;
+    column-gap: 2.5rem;
+  }
+  .pack .pack-contents li { margin-top: 0.3rem; break-inside: avoid; }
+
+  @media (max-width: 34rem) {
+    .pack .pack-contents { columns: 1; }
   }
 </style>
