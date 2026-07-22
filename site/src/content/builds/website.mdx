@@ -36,6 +36,23 @@ most time had nothing to do with building — it was untangling a chain of Git a
 GitHub auth mistakes, all of them mine.
 </ShortVersion>
 
+That claim is the whole architecture, so here it is as files — one content entry,
+and the four page files that read it:
+
+```
+site/src/
+├─ content.config.ts               the schema all four views validate against
+├─ content/builds/website.mdx      ← the one entry (this post)
+└─ pages/
+   ├─ index.astro                  → home
+   ├─ builds/index.astro           → archive
+   ├─ builds/[slug].astro          → this build log
+   └─ tools/index.astro            → tools index
+```
+
+Every page reads that same collection — none of it is bespoke to this post, so you
+could lift this structure wholesale for your own site.
+
 ## The honest process
 
 The site scaffold and the four page templates were the smooth part. Getting the
@@ -103,12 +120,11 @@ logged as pending rather than claimed is a Lighthouse performance pass.
 
 <ReproPack
   onPage={[
-    "The simplified content schema",
-    "One complete example record",
-    "An AI workflow overview",
-    "The one-collection-to-four-views diagram",
-    "An annotated repository-tree excerpt",
-    "Several representative prompts — including one failed prompt and its correction",
+    "The repository tree above — the one entry and the four files that read it",
+    "The AI workflow that made it, and which model did what",
+    "Every failure from the build, tagged my-setup vs tool-limit",
+    "The exact stack and versions, in the stamp at the top",
+    "What the test checked — and the checks still unrun",
   ]}
   packDescription="Reproduce this build — Get the complete content schema, AI workflow, architecture diagram, curated build prompts, annotated repository structure, and runnable Astro scaffold used to build Jigg.AI."
   packContents={[
