@@ -32,9 +32,16 @@ point. See `builds/website/test.md` for the per-check detail on build #1.
 
 ## Deliberate deferrals
 
-- **Astro 7.1 renders twice** on the build page — once in the stamp's `Stack` segment,
-  once as the "Framework version" fact tile. Reviewed and kept on purpose for now;
-  revisit whether the tile still earns its place.
+- **"Framework version" tile — keep or drop?** Astro 7.1 currently renders twice on the
+  build page: once in the metadata stamp's `Stack` segment, once as the **"Framework
+  version"** fact tile. Reviewed and deliberately kept for now; revisit the keep/drop
+  call. To be precise about which tile: it's the *framework-version* one. The `$0`
+  hosting tile is **not** duplicated — it carries cost, which the stamp doesn't.
+- **Email signup redirects rather than submitting on-site** — the Buttondown form is a
+  plain POST to their public embed endpoint, so subscribing opens Buttondown's
+  confirmation page in a new tab. That's deliberate (no API key in the browser, works
+  without JS), but an on-site submission with an inline success state is the known
+  improvement.
 - **Info-page routes are near-duplicates** — `/about`, `/privacy`, and
   `/affiliate-disclosure` each have their own route file with near-identical bodies. A
   single dynamic `[slug].astro` over the `pages` collection would make a new info page a

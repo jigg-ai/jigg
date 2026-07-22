@@ -1,8 +1,8 @@
 # Jigg.AI — Context
 
 The canonical "what and why." Companion files: PROCESS.md (how), STYLE.md (voice),
-site/BRIEF.md (the site build). This file is the source of truth and is mirrored
-into Claude Project knowledge.
+and a per-build BRIEF.md in each build's folder (the site build's is site/BRIEF.md).
+This file is the source of truth and is mirrored into Claude Project knowledge.
 
 ## 1. What it is
 Jigg.AI is a build-in-public project that shows what's actually achievable with
@@ -31,16 +31,21 @@ a time — and the site earns its keep from the tools it uses to prove it.
 Every build log pairs a tool with a real artifact built with it. Page anatomy:
 - Summary / citation hook up top — self-contained: what it is, worth it or not, the
   one caveat. (Written so an AI answer engine can cite it.)
+- Metadata stamp — a single compact line in fixed order: primary tool (the only
+  linked item, to its affiliate URL, carrying its version) · production AIs
+  (built_with) · stack · "pricing as of <date>" · "last verified <date>". Segments
+  with no value are omitted, not padded. Perishable facts live here, separate from the
+  evergreen narrative; an archived/superseded state applies when no longer current.
 - Artifact preview — tiered by upkeep: live embedded demo (Astro island) for a few
   flagships > short screen recording > annotated before/after screenshots.
 - The honest process — what broke, each failure tagged [tool limit] vs [my setup].
 - The test — a standardized check, scored honestly (e.g. 30 representative questions
   for a bot; adapt the check per build type).
+- Show, don't tell — where a build makes a structural claim, render the artifact
+  (repo tree, diagram) inline rather than asserting it in prose.
 - Reproduce this — public substantiation on the page (representative prompts, sample
   test questions, basic architecture) + a gated downloadable pack (full files,
   diagram, prompts, full test set).
-- Stamps — "built with <tool> v<x>, pricing as of <date>" separate from a
-  "last verified <date>"; plus an archived/superseded state when no longer current.
 - The tool — plain verdict + disclosed affiliate CTA, placed AFTER the proof
   ("Build a bot like this with <tool>").
 
@@ -59,23 +64,44 @@ Every build log pairs a tool with a real artifact built with it. Page anatomy:
   hub pages, not as a growing list in the top nav.
 - "Runs on this site" trust badge: the dogfooding signal — this build is actually in
   production on Jigg.AI right now. Stronger than a neutral "Build" label.
+- Three tool roles per build, treated differently:
+  - PRIMARY TOOL — the one thing the build reviews. Gets the verdict, accessibility
+    read, affiliate link, and the tools-index entry. Exactly one per build (two only
+    for a deliberate comparison post). Test for identifying it: which tool is this
+    build reviewing and linking?
+  - PRODUCTION AIs (built_with) — the AIs used to make the build (e.g. Claude,
+    ChatGPT, Claude Code). Display-only: shown on the build page, never a tools-index
+    entry, never an affiliate link. They recur across builds, which is exactly why
+    they never enter the index.
+  - STACK — supporting tools used to ship this build but not reviewed. Display-only,
+    same rules. List only what THIS build required; do not inherit the site's
+    permanent infrastructure onto every build. If a build needed none, omit it.
+- Only the primary tool feeds the tools index. This keeps the index a list of things
+  genuinely tested, not a directory of everything touched.
+- Versioning: version where it's pinnable and meaningful (models, frameworks —
+  "Claude Opus 4.8", "Astro 7.1"); omit versions for un-versioned hosted services
+  (GitHub, Netlify, Cloudflare). Versions are perishable — they live in the dated
+  build log, never in evergreen copy, and a major release is what trips a build into
+  recheck-due.
 - Tool selection gate: revenue potential (commission structure + real buyer intent),
   accessibility (can a beginner get a real result quickly?), and being worth your time
   — never chosen merely for being "popular." Occasionally cover overlooked / early
   tools as a low-cost hedge on being early.
 
 ## 6. The site: four views
-- Home — a featured build leading with a visible artifact preview, recent builds,
-  email capture with a concrete benefit.
-- Build log detail — the full report (section 3).
+- Home — a featured build leading with a visible artifact preview, then recent builds
+  (auto-populated: caps at 4, excludes whichever build is featured, so promoting a new
+  build to featured auto-demotes the prior one with no manual editing), email capture
+  with a concrete benefit.
+- Build log detail — the full report (section 3), opening with the metadata stamp.
 - Archive — timeline of all builds; categories as filter chips; dates, tool versions,
   and freshness state visible.
 - Tools index — no star ratings; leads with what was actually built with each tool,
   a plain verdict, an accessibility read, and "Runs on this site" where true.
 
 Design direction: editorial, not a directory grid. Clean, fast, semantic HTML
-(citation-friendly). Serif display headline, restrained palette. Playful/approachable,
-not generic SaaS.
+(citation-friendly). Serif display headline, restrained palette (one warm brand
+accent; green for status; nothing else). Playful/approachable, not generic SaaS.
 
 ## 7. Navigation
 Top nav is simple: Builds · Tools · About · Subscribe. Categories are filters/hubs
@@ -105,14 +131,17 @@ underneath, not header items.
 - Astro. Content collections = the data model (a build = one markdown entry; all four
   views read from the same collection). Islands = sandboxed interactive demos that
   can't break the core.
-- Deploy on Vercel/Netlify. Git-based, so everything is versioned, documented, and
-  transferable.
-- Later, not now: a git-based CMS (Keystatic/TinaCMS) for friendlier publishing, and
-  email backend (Kit/Buttondown). Markdown files are fine to start.
+- Deploy on Netlify (free tier; commercial use allowed). DNS on Cloudflare, set
+  DNS-only (grey cloud) for the Netlify records. Git-based, so everything is
+  versioned, documented, and transferable.
+- Later, not now: a git-based CMS (Keystatic/TinaCMS) for friendlier publishing.
+  Email backend is Buttondown (redirect-to-form for now; on-site API submission is a
+  known revisit). Markdown files are fine to start.
 
 ## 11. Repo & process
-- ONE repo for the site and all builds (this repo). Each build is an isolated folder
-  under builds/<slug>/. The repo is the source of truth; chats are transient.
+- ONE repo for the site and all builds (github.com/jigg-ai/jigg). Each build is an
+  isolated folder under builds/<slug>/. The repo is the source of truth; chats are
+  transient.
 - PROCESS.md is the repeatable pipeline; it improves itself via a retro step after
   each build.
 
@@ -121,9 +150,11 @@ underneath, not header items.
   one, but revenue isn't the story.
 - Phase 2 (later): transparent revenue reporting once there are real, defensible
   numbers.
-- Build #1: the site itself, built with Claude Code + Astro — logged as it's built,
-  and published as the first build log.
-- Build #2: a support chatbot with Botpress (embeddable; runs on the site).
+- Build #1 (shipped): the site itself, built with Claude Code + Astro — logged as it
+  was built, published as the first build log, live at jigg.ai.
+- Build #2 (next, not started): a support chatbot with Botpress (embeddable; runs on
+  the site) — the first build with a real affiliate link and the 30-question test
+  format.
 
 ## 13. Business & exit context
 - Long-term: build, make profitable, potentially sell as a well-documented asset.
