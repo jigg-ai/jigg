@@ -118,6 +118,21 @@ Write as you go. Messy is correct — this is the first published build log.
   (covers `jigg.ai` + `www.jigg.ai`). Live over HTTPS at https://jigg.ai; repointed
   `astro.config.mjs` `site` there so canonicals/sitemap follow.
 
+- **Published a version number that was never verified** — [my setup] The build stamp
+  briefly shipped `tool_version: "2.1.70"` for Claude Code. The CLI isn't on PATH (this
+  is a Claude Desktop install, not a standalone CLI), so instead of confirming with
+  `claude --version` I grepped the local config and matched a semver-shaped string. It
+  was actually `min_version` from a cached feature-flag blob
+  (`tengu_bridge_repl_v2_config`) — a minimum-version *gate*, not the installed version.
+  Caught only because the value was questioned. Removed the field rather than guess
+  again; the stamp now reads "Primary tool: Claude Code" with no version until it can be
+  confirmed. Lesson, and it's the whole point of this site: a shape-matching grep is not
+  verification, and an unverified fact should never reach a published page.
+- **Deliberate duplication, deferred** — Astro 7.1 currently renders twice on the build
+  page: once in the stamp's `Stack` segment, once as the "Framework version" fact tile.
+  Flagged it; the tile earns its place for now, so we're keeping both and revisiting
+  later. Noted here so it's a decision on the record rather than an oversight.
+
 ## Artifacts
 <!-- screenshots of each view; the deploy URL; a short screen recording if useful -->
 - Repo: https://github.com/jigg-ai/jigg — build #1 scaffold pushed to `main`.
