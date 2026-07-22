@@ -6,7 +6,9 @@ category: "websites"
 # built_with = the production AIs used to make it. stack = supporting tools.
 # built_with and stack are display-only: never indexed, never affiliate-linked.
 tool: "Claude Code"
-tool_version: "2.1.70"        # CONFIRM with `claude --version` before publishing
+# tool_version intentionally omitted: the CLI isn't on PATH (Claude Desktop install),
+# so the version can't be verified from here. Add it once confirmed — never guess a
+# version, it's a published factual claim.
 built_with: ["Claude Opus 4.8", "ChatGPT 5.6"]
 stack: ["Astro 7.1", "GitHub", "Netlify", "Cloudflare"]
 runs_on_site: true
