@@ -49,6 +49,9 @@ temporary `.mdx` under `site/src/content/builds/`, `npm run build`, and grep
 
 - `CONTEXT.md`, `PROCESS.md`, `STYLE.md` — the three governing docs (concept, pipeline,
   voice). `CONTEXT.md` is authoritative; if other docs conflict with it, it wins.
+- `BACKLOG.md` — deliberately-parked open items (verification debt, unconfirmed facts,
+  deferred decisions). Check it before starting work; several items are gated on builds
+  #2/#3 existing. Add to it rather than letting a deferral live only in a chat.
 - `builds/` — one folder per build, each an isolated unit:
   - `builds/_template/` — copy this to start a new build (`meta.yaml`, `build-notes.md`,
     `test.md`, `post.md`, `repro/README.md`).
