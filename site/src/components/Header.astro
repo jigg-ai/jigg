@@ -14,7 +14,11 @@ const links = [
 
 <header class="site-header">
   <div class="container bar">
-    <a class="brand" href="/" aria-label="Jigg.AI — home">
+    {/* Accessible name is set explicitly to exactly "Jigg.AI" — it matches the
+        visible wordmark (so WCAG 2.5.3 Label in Name holds) and doesn't depend on
+        content-derived naming. The monogram tile stays aria-hidden so it never
+        bleeds into the name as "JJigg.AI". */}
+    <a class="brand" href="/" aria-label="Jigg.AI">
       <span class="tile" aria-hidden="true">J</span>
       <span class="wordmark">Jigg.AI</span>
     </a>
