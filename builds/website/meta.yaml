@@ -2,8 +2,13 @@
 title: "Building Jigg.AI itself, with Claude Code and Astro"
 slug: "website"
 category: "websites"
-tool: "Claude Code + Astro"
-tool_version: "Astro 7.1"
+# tool = PRIMARY tool under review (the /tools key + affiliate target).
+# built_with = the production AIs used to make it. stack = supporting tools.
+# built_with and stack are display-only: never indexed, never affiliate-linked.
+tool: "Claude Code"
+tool_version: "2.1.70"        # CONFIRM with `claude --version` before publishing
+built_with: ["Claude Opus 4.8", "ChatGPT 5.6"]
+stack: ["Astro 7.1", "GitHub", "Netlify", "Cloudflare"]
 runs_on_site: true
 live_url: "https://jigg.ai"   # deployed on Netlify — custom domain, HTTPS
 status: verified       # built, deployed, and live at jigg.ai; core checks pass
@@ -16,12 +21,16 @@ affiliate_url: ""      # n/a — no affiliate relationship with Claude Code or A
 repro_pack: true
 published: "2026-07-17"
 last_verified: "2026-07-17"
-pricing_as_of: "2026-07-17"
+pricing_as_of: "2026-07-17"   # dates the Claude Code plan specifically
+
+# ---- stack & cost (detail-page metadata; free framework kept distinct from paid tool) ----
+framework: "Astro 7.1 — free and open source"
+hosting: "Netlify free tier"
 
 # ---- display + tool-projection helpers ----
 featured: true
 meta_line: "one collection → four views"
 
-tool_summary: "AI pair-builder in the terminal · Astro is free and open-source"
+tool_summary: "AI pair-builder in your terminal"
 tool_verdict: "Empty folder to a live, four-view content engine in one sitting. The code was the easy part; the Git and GitHub auth setup around it was the real friction — none of it the tool's fault."
 accessibility: "Some setup"

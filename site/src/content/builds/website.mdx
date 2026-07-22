@@ -1,8 +1,10 @@
 ---
 title: "Building Jigg.AI itself, with Claude Code and Astro"
 category: "websites"
-tool: "Claude Code + Astro"
-tool_version: "Astro 7.1"
+tool: "Claude Code"
+tool_version: "2.1.70"
+built_with: ["Claude Opus 4.8", "ChatGPT 5.6"]
+stack: ["Astro 7.1", "GitHub", "Netlify", "Cloudflare"]
 runs_on_site: true
 status: "verified"
 summary: "Claude Code took this site from an empty folder to a live, four-view build-log engine where publishing a new post is adding one markdown file. The build itself went smoothly — the one caveat is that the real time sink wasn't the code at all, it was the Git and GitHub auth setup around it."
@@ -11,9 +13,11 @@ repro_pack: true
 published: 2026-07-17
 last_verified: 2026-07-17
 pricing_as_of: 2026-07-17
+framework: "Astro 7.1 — free and open source"
+hosting: "Netlify free tier"
 featured: true
 meta_line: "one collection → four views"
-tool_summary: "AI pair-builder in the terminal · Astro is free and open-source"
+tool_summary: "AI pair-builder in your terminal"
 tool_verdict: "Empty folder to a live, four-view content engine in one sitting. The code was the easy part; the Git and GitHub auth setup around it was the real friction — none of it the tool's fault."
 accessibility: "Some setup"
 ---
@@ -123,7 +127,7 @@ logged as pending rather than claimed is a Lighthouse performance pass.
 
 ## The tool
 
-<ToolVerdict tool="Claude Code + Astro" toolSummary="AI pair-builder in the terminal · Astro is free and open-source">
+<ToolVerdict tool="Claude Code" toolSummary="AI pair-builder in your terminal">
 Claude Code is genuinely good at this kind of greenfield scaffold: it held the
 whole four-views-from-one-collection idea in its head and wrote the schema, the
 templates, and a reusable component kit to match. Astro's content collections are

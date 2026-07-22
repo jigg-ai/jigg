@@ -25,8 +25,21 @@ const builds = defineCollection({
       'chatbots', 'video', 'websites', 'automation',
       'writing', 'research', 'design', 'agents',
     ]),
+    // Three distinct roles — do not merge them:
+    //  1. `tool`        the PRIMARY tool under review. The /tools index key AND the
+    //                   affiliate target. Exactly one per build.
+    //  2. `built_with`  the production AIs used to MAKE the build.
+    //  3. `stack`       supporting tools/services the build runs on.
+    // `built_with` and `stack` are display-only: they never create a /tools entry and
+    // are never affiliate-linked. That visible link/no-link split is what shows a
+    // reader which tool is actually under review, without having to explain it.
+    // Bake versions into the strings where they're pinnable and meaningful
+    // ("Astro 7.1", "Claude Opus 4.8"); name un-versioned hosted services plainly
+    // ("Netlify", "GitHub", "Cloudflare").
     tool: z.string(),
-    tool_version: z.string().optional(),          // e.g. "Botpress v12"
+    tool_version: z.string().optional(),          // the primary tool's version for THIS build
+    built_with: z.array(z.string()).optional(),   // e.g. ["Claude Opus 4.8", "ChatGPT 5.6"]
+    stack: z.array(z.string()).optional(),        // e.g. ["Astro 7.1", "GitHub", "Netlify"]
     runs_on_site: z.boolean().default(false),      // -> "Runs on this site" badge
     status: z
       .enum(['draft', 'verified', 'recheck-due', 'archived'])
@@ -37,7 +50,14 @@ const builds = defineCollection({
     repro_pack: z.boolean().default(false),
     published: z.coerce.date().optional(),
     last_verified: z.coerce.date().optional(),
-    pricing_as_of: z.coerce.date().optional(),
+    pricing_as_of: z.coerce.date().optional(),    // dates the tool_plan cost specifically — the only perishable cost fact
+
+    // ---- stack & cost (detail-page metadata, kept separate so a free framework
+    //      is NEVER conflated with a paid tool; all optional) ----
+    tool_plan: z.string().optional(),             // the primary AI tool's plan, e.g. "Max 20x" — pricing_as_of dates this
+    framework: z.string().optional(),             // e.g. "Astro 7.1 — free and open source"
+    hosting: z.string().optional(),               // e.g. "Netlify free tier"
+    incremental_cost: z.string().optional(),      // net new out-of-pocket cost, e.g. "$0 / month"
 
     // ---- display + tool-projection helpers (required by the mockups) ----
     featured: z.boolean().default(false),          // pins the home hero

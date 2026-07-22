@@ -5,8 +5,20 @@
 title: ""
 slug: ""              # the .mdx filename under site/src/content/builds/ IS the slug
 category: ""          # chatbots | video | websites | automation | writing | research | design | agents
-tool: ""
-tool_version: ""
+# Three distinct roles — do not merge them:
+#   1. tool        the PRIMARY tool under review. The /tools index key AND the
+#                  affiliate target. Exactly one per build.
+#   2. built_with  the production AIs used to MAKE the build.
+#   3. stack       supporting tools/services the build runs on.
+# built_with and stack are DISPLAY-ONLY: they never create a /tools entry and are
+# never affiliate-linked. That visible link/no-link split is what shows a reader
+# which tool is actually under review, without having to explain it.
+# Version where it's pinnable and meaningful ("Astro 7.1", "Claude Opus 4.8");
+# name un-versioned hosted services plainly ("Netlify", "GitHub", "Cloudflare").
+tool: ""              # e.g. "Claude Code"
+tool_version: ""      # the primary tool's version for THIS build, e.g. "2.1.70"
+built_with: []        # e.g. ["Claude Opus 4.8", "ChatGPT 5.6"]
+stack: []             # e.g. ["Astro 7.1", "GitHub", "Netlify", "Cloudflare"]
 runs_on_site: false   # true => shows the "Runs on this site" trust badge
 status: draft         # draft | verified | recheck-due | archived
 summary: ""           # the short version / citation hook
@@ -15,7 +27,14 @@ affiliate_url: ""
 repro_pack: false     # is a downloadable pack available?
 published: ""         # YYYY-MM-DD
 last_verified: ""     # YYYY-MM-DD
-pricing_as_of: ""     # YYYY-MM-DD
+pricing_as_of: ""     # YYYY-MM-DD — dates the tool_plan cost specifically (the only perishable cost)
+
+# ---- stack & cost (detail-page metadata, kept separate so a free framework is
+#      NEVER conflated with a paid tool; all optional — set what applies) ----
+tool_plan: ""         # the primary AI tool's plan, e.g. "Max 20x" — pricing_as_of dates this
+framework: ""         # e.g. "Astro 7.1 — free and open source" (if the build uses one)
+hosting: ""           # e.g. "Netlify free tier"
+incremental_cost: ""  # net new out-of-pocket cost, e.g. "$0 / month"
 
 # ---- display + tool-projection helpers (rendered by the site) ----
 featured: false       # pins this build as the home hero
