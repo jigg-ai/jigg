@@ -42,6 +42,11 @@ point. See `builds/website/test.md` for the per-check detail on build #1.
   confirmation page in a new tab. That's deliberate (no API key in the browser, works
   without JS), but an on-site submission with an inline success state is the known
   improvement.
+- **Grab `jig.ai` and redirect to Jigg.AI** — CONTEXT §14 calls for it as brand-name
+  hygiene: the namespace is crowded, so the short domain should point here rather than
+  sit available for someone else to take. Cheap, one-time, and **blocked on nothing** —
+  it's open purely because it hasn't been done, not because it's waiting on anything.
+  (Do it before the brand accumulates any reach worth squatting.)
 - **Info-page routes are near-duplicates** — `/about`, `/privacy`, and
   `/affiliate-disclosure` each have their own route file with near-identical bodies. A
   single dynamic `[slug].astro` over the `pages` collection would make a new info page a
@@ -53,9 +58,12 @@ point. See `builds/website/test.md` for the per-check detail on build #1.
 - **The repro pack itself** — the build page *describes* the pack's contents, but no
   downloadable file is assembled or delivered. "Get the pack" currently just subscribes
   via Buttondown. Assemble the pack, or soften the copy, before it's promoted hard.
-- **Human verify/edit pass on build #1's post copy** — PROCESS step 5. The prose is a
-  first honest draft written by the same agent that did the build; it has not had an
-  independent editorial pass.
+- **Human verify/edit pass on build #1's post copy** — PROCESS step 5, and the item most
+  at risk of permanent deferral. The prose is a first honest draft written by the same
+  agent that did the build, with no independent editorial pass. Build #1 is currently the
+  *only* build, so it is the thing most visitors read — and the moment build #2 ships,
+  attention moves on and this quietly becomes never. **Do it before build #2 publishes**,
+  not "someday."
 
 ## Blocked on more builds
 
@@ -71,3 +79,12 @@ These are cheap to clear once builds #2/#3 land, and near-impossible before:
 - **Repro-pack copy consistency** — the post says the model-critique back-and-forth is
   "in the repro pack," but the listed pack contents don't name it. Reconcile when the
   pack is actually assembled.
+- **No view of what's due for re-verification** — CONTEXT §9 defines a cadence
+  (pricing-sensitive claims ~60–90 days, active production artifacts ~monthly, workflow
+  conclusions after major releases), and every build stores `last_verified`, but nothing
+  computes or surfaces *which* builds are now due against it. Storing a date isn't the
+  same as knowing what's stale. With one build it's trivially tracked by hand; it stops
+  being tractable as builds accumulate, and a silently-stale build log is the one
+  failure this project can least afford. Needs recheck-due derived from
+  `last_verified` + cadence — surfaced somewhere the archive or a maintenance view can
+  show it.

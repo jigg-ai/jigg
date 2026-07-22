@@ -60,6 +60,14 @@ In `build-notes.md`, write:
   the agent caused wrong-account auth). Now folded into step 2 as a standing check.
 - Decide in a planning chat, implement in Claude Code. Settle the concept (mock it if
   visual) before Claude Code writes code, so it implements once against a clear target.
+- Docs that assert repo state must be edited IN the repo, against the real tree — not
+  from an uploaded copy in a chat. Editing CONTEXT/PROCESS that way produced three
+  errors in a single pass: a per-build `BRIEF.md` was mandated that `_template/` didn't
+  contain, build #2 was described as "in progress" when no folder existed, and a second
+  backlog appeared inside this retro duplicating `BACKLOG.md`. None were careless
+  writing — the chat simply couldn't see the tree, so it described the intended repo
+  rather than the actual one. Plan in chat; make the edit where the state is verifiable,
+  and check assertions against the filesystem before they land.
 - Open items that outlived this build are tracked in `BACKLOG.md`, not here — one
   backlog in one place, so deferrals don't drift across files. This retro stays
   retrospective: what was clunky, and what changed in the process because of it.
