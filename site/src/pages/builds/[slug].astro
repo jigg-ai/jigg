@@ -1,8 +1,9 @@
 ---
 import { render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getPublishedBuilds, monShort, isoDate } from '../../lib/builds';
+import { getPublishedBuilds, isoDate } from '../../lib/builds';
 import RunsOnSiteBadge from '../../components/RunsOnSiteBadge.astro';
+import BuildStamp from '../../components/BuildStamp.astro';
 
 export async function getStaticPaths() {
   const builds = await getPublishedBuilds();
@@ -15,11 +16,8 @@ const { Content } = await render(entry);
 
 const categoryLabel = data.category[0].toUpperCase() + data.category.slice(1);
 
-const builtWith = data.tool_version
-  ? `Built with ${data.tool_version}`
-  : `Built with ${data.tool}`;
-const buildStamps = [builtWith];
-if (data.pricing_as_of) buildStamps.push(`pricing as of ${monShort(data.pricing_as_of)}`);
+// The metadata stamp itself lives in BuildStamp.astro so every build page renders
+// the same structure in the same fixed order.
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -54,10 +52,15 @@ const jsonLd = {
 
     <h1>{data.title}</h1>
 
-    <p class="stamps mono">
-      <span>{buildStamps.join('  ·  ')}</span>
-      {data.last_verified && <span class="verified-stamp">Last verified {monShort(data.last_verified)}</span>}
-    </p>
+    <BuildStamp
+      tool={data.tool}
+      toolVersion={data.tool_version}
+      affiliateUrl={data.affiliate_url}
+      builtWith={data.built_with}
+      stack={data.stack}
+      pricingAsOf={data.pricing_as_of}
+      lastVerified={data.last_verified}
+    />
 
     <div class="prose body stack"><Content /></div>
   </article>
@@ -85,13 +88,6 @@ const jsonLd = {
     font-weight: 460;
     margin-top: 0.85rem;
     max-width: 20ch;
-  }
-  .stamps {
-    margin-top: 1rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.35rem 1.25rem;
-    color: var(--ink-faint);
   }
   .body { margin-top: 2rem; }
 </style>

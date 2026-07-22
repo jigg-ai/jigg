@@ -27,14 +27,10 @@ affiliate_url: ""
 repro_pack: false     # is a downloadable pack available?
 published: ""         # YYYY-MM-DD
 last_verified: ""     # YYYY-MM-DD
-pricing_as_of: ""     # YYYY-MM-DD — dates the tool_plan cost specifically (the only perishable cost)
+pricing_as_of: ""     # YYYY-MM-DD — dates the primary tool's cost (the only perishable cost)
 
-# ---- stack & cost (detail-page metadata, kept separate so a free framework is
-#      NEVER conflated with a paid tool; all optional — set what applies) ----
-tool_plan: ""         # the primary AI tool's plan, e.g. "Max 20x" — pricing_as_of dates this
-framework: ""         # e.g. "Astro 7.1 — free and open source" (if the build uses one)
-hosting: ""           # e.g. "Netlify free tier"
-incremental_cost: ""  # net new out-of-pocket cost, e.g. "$0 / month"
+# Cost / hosting / framework detail does NOT go in the top stamp — author those as
+# fact tiles in the .mdx body so the stamp stays one compact line.
 
 # ---- display + tool-projection helpers (rendered by the site) ----
 featured: false       # pins this build as the home hero

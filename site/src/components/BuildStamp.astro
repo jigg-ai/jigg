@@ -1,0 +1,86 @@
+---
+import { monShort } from '../lib/builds';
+
+// The single metadata stamp at the top of EVERY build page, in one fixed order:
+//   Primary tool · Built with · Stack · pricing as of · last verified
+//
+// Only the primary tool is ever linked (to its affiliate URL). `built_with` and
+// `stack` are deliberately plain text — that visible link/no-link split is what
+// shows a reader which tool is actually under review, with no caption needed.
+// Empty segments are dropped entirely rather than padded.
+//
+// Cost, hosting and framework deliberately do NOT live here: they're fact tiles
+// further down the page, and repeating them would just rebuild the wall of text
+// this stamp replaced.
+interface Props {
+  tool: string;
+  toolVersion?: string;
+  affiliateUrl?: string;
+  builtWith?: string[];
+  stack?: string[];
+  pricingAsOf?: Date;
+  lastVerified?: Date;
+}
+const {
+  tool,
+  toolVersion,
+  affiliateUrl,
+  builtWith,
+  stack,
+  pricingAsOf,
+  lastVerified,
+} = Astro.props;
+
+const primary = [tool, toolVersion].filter(Boolean).join(' ');
+---
+
+<p class="stamp mono">
+  <span class="seg">
+    <span class="label">Primary tool:</span>{' '}
+    {
+      affiliateUrl ? (
+        <a href={affiliateUrl} target="_blank" rel="sponsored nofollow noopener">{primary}</a>
+      ) : (
+        <span class="value">{primary}</span>
+      )
+    }
+  </span>
+
+  {builtWith && builtWith.length > 0 && (
+    <span class="seg">
+      <span class="label">Built with:</span> <span class="value">{builtWith.join(', ')}</span>
+    </span>
+  )}
+
+  {stack && stack.length > 0 && (
+    <span class="seg">
+      <span class="label">Stack:</span> <span class="value">{stack.join(', ')}</span>
+    </span>
+  )}
+
+  {pricingAsOf && <span class="seg">pricing as of {monShort(pricingAsOf)}</span>}
+  {lastVerified && <span class="seg">last verified {monShort(lastVerified)}</span>}
+</p>
+
+<style>
+  .stamp {
+    margin-top: 1.1rem;
+    line-height: 1.8;
+    color: var(--ink-faint);
+  }
+  /* Segments flow inline and wrap naturally; separators are generated so an
+     omitted segment never leaves a dangling "·". */
+  .seg + .seg::before {
+    content: ' · ';
+    color: var(--border-strong);
+  }
+  .label { color: var(--ink-faint); }
+  .value { color: var(--ink-muted); }
+  .stamp a {
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--brand);
+    text-underline-offset: 0.15em;
+  }
+  .stamp a:hover { text-decoration-color: currentColor; }
+</style>

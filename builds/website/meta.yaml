@@ -21,11 +21,7 @@ affiliate_url: ""      # n/a — no affiliate relationship with Claude Code or A
 repro_pack: true
 published: "2026-07-17"
 last_verified: "2026-07-17"
-pricing_as_of: "2026-07-17"   # dates the Claude Code plan specifically
-
-# ---- stack & cost (detail-page metadata; free framework kept distinct from paid tool) ----
-framework: "Astro 7.1 — free and open source"
-hosting: "Netlify free tier"
+pricing_as_of: "2026-07-17"   # dates the primary tool's cost (Claude Code)
 
 # ---- display + tool-projection helpers ----
 featured: true

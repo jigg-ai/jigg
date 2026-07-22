@@ -50,14 +50,7 @@ const builds = defineCollection({
     repro_pack: z.boolean().default(false),
     published: z.coerce.date().optional(),
     last_verified: z.coerce.date().optional(),
-    pricing_as_of: z.coerce.date().optional(),    // dates the tool_plan cost specifically — the only perishable cost fact
-
-    // ---- stack & cost (detail-page metadata, kept separate so a free framework
-    //      is NEVER conflated with a paid tool; all optional) ----
-    tool_plan: z.string().optional(),             // the primary AI tool's plan, e.g. "Max 20x" — pricing_as_of dates this
-    framework: z.string().optional(),             // e.g. "Astro 7.1 — free and open source"
-    hosting: z.string().optional(),               // e.g. "Netlify free tier"
-    incremental_cost: z.string().optional(),      // net new out-of-pocket cost, e.g. "$0 / month"
+    pricing_as_of: z.coerce.date().optional(),    // dates the primary tool's cost — the only perishable cost fact
 
     // ---- display + tool-projection helpers (required by the mockups) ----
     featured: z.boolean().default(false),          // pins the home hero
