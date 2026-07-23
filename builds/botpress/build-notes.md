@@ -161,6 +161,22 @@ Holding these here so `/privacy` never describes a widget that isn't live yet
   is but won't name *where* (`/builds`, the disclosure page), and it called the "Subscribe"
   nav item "Newsletter". Fix is ours: the KB files bury routes and labels in prose.
 
+- 2026-07-22 — **Drafted the post and added the build to the site** (PROCESS §4).
+  Wrote `site/src/content/builds/botpress.mdx` — the `.mdx` IS the post, following build
+  #1's precedent, so deleted the template's unused `post.md` rather than keep two copies
+  of the same prose that would drift (flagged for the PROCESS retro in BACKLOG).
+  Set `status: draft`, which the site honours (`import.meta.env.PROD ? status !== 'draft'`)
+  — production build stays at 8 pages, so the entry is committed but not publishable
+  until flipped to `verified`. Verified the core invariant in dev: the one file lights up
+  **all four views** (home, /builds, /tools, /builds/botpress).
+  **Cleared a BACKLOG item:** the affiliate link/no-link split rendered correctly for the
+  first time — Botpress is the only anchor (`rel="sponsored nofollow noopener"`),
+  `built_with` is plain text, and the empty `stack` segment is omitted not padded.
+  Deliberately did NOT use the `ReproPack` component: it hard-requires
+  `packDescription`/`packContents` and would promise a download that doesn't exist —
+  the same overclaim already logged against build #1. Wrote the public substantiation as
+  plain markdown instead.
+
 ## Done
 - Botpress account + bot created; KB crawl + system instructions loaded; affiliate link
   obtained (in meta.yaml); embed obtained; `BotpressWebchat.astro` built + mounted

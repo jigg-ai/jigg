@@ -56,10 +56,11 @@ meta_line: ""         # short mono index-row detail — fill at draft
 # /tools is a PROJECTION of the builds collection — there is no separate tools
 # source of truth, so a tool's own facts live on the build. When several builds
 # share a tool, the most-recent build's tool_* values win (see site/src/lib/builds.ts).
-tool_summary: ""      # e.g. "Chatbot builder · free tier available" — fill after build
-tool_verdict: ""      # plain one-line /tools verdict — fill AFTER the proof (test run)
-accessibility: ""     # Beginner-friendly | Some setup | Advanced — the beginner read,
-                      # decided after actually building the bot
+tool_summary: "No-code chatbot builder, hosted"   # no pricing claim until captured
+tool_verdict: "Genuinely good at the thing that matters — it never once made an answer up, across 60 graded questions. The trap is the knowledge base: it silently indexed 2 of my 8 pages and told me nothing, which made a well-behaved bot look stupid until I checked."
+accessibility: "Some setup"   # building the bot needs no code, BUT the silent
+                      # 2-of-8 KB coverage trap is not something a beginner would
+                      # catch — they'd just conclude the bot was bad.
 
 # Anything richer than these flat facts — the honest-process steps, test-stat
 # tiles, the reproduce pack, the tool verdict card — is authored in the .mdx BODY

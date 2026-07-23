@@ -88,6 +88,47 @@ point. See `builds/website/test.md` for the per-check detail on build #1.
   declaring the sitemap. Worth noting this is a build-#1 gap that matters beyond Botpress:
   CONTEXT §8 wants the site citation-friendly to answer engines, and they look here first.
 
+## Build #2 follow-ups (deferred from the test)
+
+- **Four bucket-B partials — the bot won't say *where*.** Run 2 scored 26/30; all four
+  non-passes are navigation questions with one shape: it explains *what* a thing is but
+  stays vague about its location (describes the archive without naming `/builds`,
+  explains the affiliate policy without naming the page), and it called the **Subscribe**
+  nav item **"Newsletter."** Cause is ours: `builds/botpress/kb/*.md` bury routes and
+  exact labels in prose. Fix: lead each KB file with its route and nav label, re-import,
+  re-test just those four. Deferred to get the build drafted — but the mislabelled nav
+  item should be fixed before this is promoted hard.
+- **D2 residual: the persona answer is in the KB but never retrieved.** Asked "who is the
+  person behind Jigg.AI?", the bot answers "I don't have information" even though
+  `kb/about.md` states outright that Jigg.AI deliberately does not name an individual. It
+  passes the adversarial gate (it invents nothing), but the better, true answer is sitting
+  there unused. Worth one retrieval-phrasing attempt.
+- **Botpress pricing never captured → `pricing_as_of` unset.** The build ships without a
+  cost claim rather than a guessed one, and `tool_summary` deliberately says no "free
+  tier available." Capture the actual tier and date it before the tools index implies
+  anything about price (CONTEXT §9).
+- **Build #2's repro pack not assembled.** `botpress.mdx` deliberately uses a plain
+  markdown "Reproduce this" list instead of the `ReproPack` component, because that
+  component hard-requires `packDescription`/`packContents` and would promise a download
+  that doesn't exist — the exact overclaim already logged against build #1. Swap in
+  `ReproPack` once a real pack exists.
+
+## Schema / content drift (found while wiring build #2)
+
+- **`repro_pack` is a schema field nothing reads.** It's defined in
+  `site/src/content.config.ts`, set to `true` in `website.mdx`, and consumed nowhere in
+  `site/src/`. Either wire it (gate the pack UI on it) or drop it from both the schema and
+  `builds/_template/meta.yaml` — a flag that silently does nothing is worse than no flag.
+- **`builds/website/meta.yaml` declares `live_url`, which isn't in the schema.** Both
+  files carry a comment saying meta.yaml and `content.config.ts` must not drift, and they
+  have: `live_url: "https://jigg.ai"` exists in build #1's meta.yaml but in neither the
+  zod schema nor `website.mdx`'s frontmatter. Add it to the schema or remove it.
+- **`post.md` is mandated by the template but unused in practice.** `builds/_template/`
+  ships a `post.md`, and PROCESS §4 says to draft into it — but build #1 never had one
+  (the `.mdx` under `site/src/content/builds/` *is* the post) and build #2 followed that
+  precedent to avoid two drifting copies of the same prose. Either drop `post.md` from the
+  template and reword PROCESS §4, or define what it's for. Flag for the PROCESS retro.
+
 ## Not built yet
 
 - **The repro pack itself** — the build page *describes* the pack's contents, but no
@@ -104,10 +145,12 @@ point. See `builds/website/test.md` for the per-check detail on build #1.
 
 These are cheap to clear once builds #2/#3 land, and near-impossible before:
 
-- **Affiliate link/no-link distinction is unverified live** — the stamp links only the
-  primary tool. Build #1 has no `affiliate_url`, so nothing is currently linked and the
-  visual distinction has never actually rendered. Confirm on the first build with an
-  affiliate.
+- ~~**Affiliate link/no-link distinction is unverified live**~~ — **CLEARED 2026-07-22**
+  by build #2, the first build with an `affiliate_url`. Verified in the rendered stamp:
+  `Primary tool:` renders Botpress as the only anchor, with
+  `rel="sponsored nofollow noopener"`, while `Built with:` renders "Claude Opus 4.8,
+  Claude Code" as plain text. The empty `stack` segment is omitted rather than padded, as
+  CONTEXT §3 specifies. Kept here as the record; delete on the next backlog sweep.
 - **Tools-index aggregation ("most-recent wins")** — when several builds share a `tool`,
   `src/lib/builds.ts` sums the build count and uses the most-recent build's `tool_*`
   fields. Documented, but never exercised with two builds on one tool.
