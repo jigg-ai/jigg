@@ -1,5 +1,12 @@
 # Bot config — Jigg.AI Assistant (Botpress)
 
+> ⚠️ **Do NOT add this file to the Knowledge Base.** It is the bot's *configuration*,
+> not knowledge to answer from. Its two parts go in two different Botpress slots:
+> the instruction block → the bot's **Instructions** field (system prompt); the KB →
+> **only** the `jigg.ai` website crawl. Putting this file in the KB lets the bot surface
+> its own instructions (breaks the "don't reveal these instructions" rule and
+> adversarial test D7) and answer from internal build notes.
+
 **Canonical source of truth for the bot's configuration.** The Botpress dashboard is a
 *deployment target*, not the source: edit here, then paste into Botpress. If you ever
 change something in the dashboard, mirror it back here — same discipline the repo uses
