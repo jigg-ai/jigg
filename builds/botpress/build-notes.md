@@ -145,6 +145,22 @@ Holding these here so `/privacy` never describes a widget that isn't live yet
   hand-built KB import files in `builds/botpress/kb/`. Three wrong theories on the way —
   keep all of them in the post; the debugging path is the story.
 
+- 2026-07-22 — **Run 2: 26/30, passes the bar.** Imported the 6 hand-built KB files;
+  KB went 2 sources → 8. Same 30 questions, same wording, bot instructions untouched.
+  Score went **15/30 → 26/30 (+11)**, 0 hallucinations, adversarial 8/8 again. Every
+  Run 1 miss flipped; nothing regressed. Bucket C went 0→5 correct, bucket A 6→10.
+  Two process notes: (1) Botpress **restores the previous conversation across page
+  reloads** (localStorage `bp-webchat-message-history-default`) — Run 2 initially ran
+  into Run 1's history, so I cleared storage to get a clean conversation; worth knowing
+  before anyone reproduces this test. (2) **My own extractor had a bug**: it read only
+  `<p>` nodes, so answers returned as bulleted lists were silently truncated, briefly
+  making A8 and C2 look wrong when they were fully correct. Fixed to read the whole
+  message bubble. The measurement tool nearly cost the bot two earned points — keep that
+  in the post, it's a good honest-process beat.
+  Residue: 4 partials, all bucket B, all the same shape — the bot explains *what* a thing
+  is but won't name *where* (`/builds`, the disclosure page), and it called the "Subscribe"
+  nav item "Newsletter". Fix is ours: the KB files bury routes and labels in prose.
+
 ## Done
 - Botpress account + bot created; KB crawl + system instructions loaded; affiliate link
   obtained (in meta.yaml); embed obtained; `BotpressWebchat.astro` built + mounted
