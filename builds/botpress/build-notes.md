@@ -106,18 +106,35 @@ Holding these here so `/privacy` never describes a widget that isn't live yet
   match, not exact; nudge the dashboard color to `#c4693c` for an exact palette match).
 - Admin console (private, do NOT embed): desk.botpress.cloud/dk_oe41b1dl/bots/<botId>.
 
-## Done
-- Botpress account + bot created (human); embed obtained; `BotpressWebchat.astro` built,
-  mounted site-wide, verified loading in local dev; `/privacy` + `/affiliate-disclosure`
-  updated in the same change.
+- 2026-07-22 — Ran the full 30-question test (Run 1) against the live widget.
+  **test_score 15/30**, but **zero hallucinations** and the **adversarial gate passed
+  8/8** (incl. a prompt-injection refusal). The low score is almost entirely ONE
+  `[my setup]` cause: the KB crawl indexed only home + About + the build-log page, and
+  missed `/privacy`, `/affiliate-disclosure`, `/subscribe`, `/tools`, and the `/builds`
+  archive — so every answer living on those pages missed, each as an honest "couldn't
+  find that" decline, never a fabrication. No `[tool limit]` surfaced. Full table +
+  tags in `test.md`. Setup gotcha along the way: after a page reload the widget opens an
+  empty conversation, and clicks fired during the open-animation are lost; also Enter
+  doesn't submit — must click the send button.
 
-## Still blocked on (human step)
-- **Load the knowledge base** + paste the system instructions — both specified in
-  `bot-config.md` (canonical; dashboard mirrors it). KB = crawl jigg.ai, no separate KB
-  files. Required before the 30-question test can run.
-- **Botpress partner/affiliate link** — not yet obtained. Site's first `affiliate_url`.
+## Done
+- Botpress account + bot created; KB crawl + system instructions loaded; affiliate link
+  obtained (in meta.yaml); embed obtained; `BotpressWebchat.astro` built + mounted
+  site-wide + verified in local dev; `/privacy` + `/affiliate-disclosure` updated in the
+  same change; **Run 1 of the 30-question test complete (15/30, 0 hallucinations).**
+
+## Still open (next steps)
+- **Fix the crawl coverage + re-run (Run 2)** — the main one. Ensure the `jigg.ai`
+  Website KB source indexes ALL public pages, re-crawl, re-run all 30. Most misses
+  should flip to correct. This is a human step in Botpress + a test re-run I can drive.
+- **Two real content gaps (C2, C4):** the freshness-state meanings + re-verification
+  cadence aren't written on the public site. Add a short note there (fix on the site,
+  per `bot-config.md`), not in a bot-only KB entry.
 - **Capture Botpress's current pricing tier** → `pricing_as_of` in meta.yaml.
 - Optional dashboard nudge: set the bot color to `#c4693c` (exact brand accent).
+- After Run 2 clears the bar: verdict fields (tool_verdict/accessibility/tool_summary)
+  → draft post.md → human verify pass (+ build #1's, per BACKLOG) → the `.mdx` build
+  entry → push (widget + post live together).
 
 ## Artifacts
 <!-- links to screenshots / recordings -->

@@ -35,9 +35,10 @@ status: draft         # draft until built, tested, and live. -> verified only th
 summary: ""           # citation hook — written at draft stage (PROCESS §4)
 test_score: ""        # empty until the 30-question set is actually run. Format "X/30"
                       # = (correct + correctly-declined); see test.md for the rubric.
-affiliate_url: ""     # Botpress partner/affiliate link — not yet obtained (human step).
-                      # This is the site's FIRST affiliate_url; verify the stamp's
-                      # link/no-link split live once set (BACKLOG).
+affiliate_url: "https://try.botpress.com/kdi921r4nfra"   # Botpress affiliate link.
+                      # Site's FIRST affiliate_url. At publish: confirm it resolves and
+                      # that the stamp links Botpress ONLY (not built_with/stack) + the
+                      # /tools CTA links out (BACKLOG: link/no-link split unverified live).
 repro_pack: false     # flip to true only when the pack is actually assembled.
 published: ""         # YYYY-MM-DD — set at publish (PROCESS §5)
 last_verified: ""     # YYYY-MM-DD — set at publish
