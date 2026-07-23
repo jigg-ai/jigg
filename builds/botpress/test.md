@@ -28,12 +28,23 @@ graded on a curve. Run 1 results below.
   · wrong-or-hallucinated **0**.
 - **Adversarial gate: PASSED — 8/8 correctly declined, ZERO hallucinations** (incl. a
   prompt-injection attempt). The bot never once invented an answer.
-- **The 15/30 is almost entirely ONE `[my setup]` cause:** the crawl only indexed the
-  home page, About, and the build-log page. It did **not** retrieve `/privacy`,
-  `/affiliate-disclosure`, `/subscribe`, `/tools`, or the `/builds` archive — so every
-  question whose answer lives on those pages missed, each as an honest "I couldn't find
-  that" decline, never a fabrication. No `[tool limit]` surfaced: Botpress grounded well
-  on what it had, declined cleanly on what it didn't, and resisted the injection.
+- **The 15/30 traces to ONE cause: knowledge-base coverage.** Botpress's Website crawler
+  indexed only **2 of the site's 8 public pages** — `jigg.ai` (10 kB) and
+  `jigg.ai/builds/website` (20 kB). `/about`, `/privacy`, `/affiliate-disclosure`,
+  `/subscribe`, `/tools` and `/builds` were never crawled, so every answer living on them
+  missed — each as an honest "I couldn't find that" decline, never a fabrication. All 7
+  correct answers came from those 2 pages.
+- **Tagging this fairly — it splits both ways:**
+  - `[tool limit]` — the crawler under-discovered badly and **silently**. The site
+    publishes a valid sitemap (`/sitemap-0.xml`) listing all 8 URLs, and every missed
+    page is a nav link on the home page it *did* crawl. Botpress followed exactly one
+    deep link, stopped, and gave no warning that coverage was partial. A KB that is
+    quietly 25% of the site is the failure mode most likely to make a grounded bot look
+    stupid — and nothing in the UI flagged it.
+  - `[my setup]` — we ran the test before verifying KB coverage. Botpress does offer a
+    "Specific Web Pages" source type; we used root-domain discovery and trusted it.
+  - **Not the tool's fault:** the bot's *answering* behaviour was exactly right —
+    grounded on what it had, honest declines on what it didn't, injection resisted.
 
 ### Results
 | # | Bucket | Question (as asked) | Outcome | Notes / tag |
@@ -76,10 +87,12 @@ graded on a curve. Run 1 results below.
 - **Wrong / hallucinated:** 0
 - **test_score (correct + correctly-declined / 30): 15/30**
 - **Adversarial hallucinations (must be 0): 0 ✅**
-- **Failures, tagged:** all `[my setup]`. **No `[tool limit]`.** Two are genuine
-  public-content gaps (C2, C4 — the freshness-state meanings aren't written anywhere on
-  the site); the other nine misses + the partials are pure crawl-coverage: the content
-  exists publicly but those pages weren't indexed.
+- **Failures, tagged — the cause splits:** `[tool limit]` for Botpress's crawler indexing
+  only 2 of 8 public pages despite a valid sitemap and on-page nav links, with no
+  partial-coverage warning; `[my setup]` for running the test before verifying that
+  coverage. Two misses are *additionally* genuine public-content gaps (C2, C4 — the
+  freshness-state meanings and re-verification cadence aren't written anywhere on the
+  site). Every other miss is content that exists publicly but was never indexed.
 
 ## Verdict on Run 1 & next step
 The bot's *behavior* is exactly what was specified — grounded when it can be, an honest
@@ -88,9 +101,11 @@ prompt-injection**. It misses the 24/30 publish bar, but the cause isn't the bot
 Botpress — it's that the KB crawl indexed only ~3 of the site's pages.
 
 **Do NOT ship Run 1 as the verdict.** Fix the `[my setup]` cause and re-run (Run 2):
-1. In Botpress → Knowledge Base → the `jigg.ai` Website source: ensure it indexes ALL
-   public pages (`/privacy`, `/affiliate-disclosure`, `/subscribe`, `/tools`, `/builds`,
-   the build log), not just home/About/build-log. Re-crawl.
+1. Add the 6 missing pages as a **new Website source → "Specific Web Pages"** (the
+   existing root-domain source has no force-crawl control; re-crawling it just
+   re-discovers the same 2). Exact URLs: `https://jigg.ai/about`, `/privacy`,
+   `/affiliate-disclosure`, `/subscribe`, `/tools`, `/builds`. Then confirm the KB list
+   shows 8 entries, not 2 — verifying coverage is now a standing pre-test check.
 2. For the two real content gaps (C2, C4): add a short plain-language note to the public
    site on what the freshness states mean and the re-verification cadence — per
    `bot-config.md`, fix grounding gaps on the site, not in a bot-only file.

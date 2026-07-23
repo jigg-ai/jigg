@@ -109,13 +109,17 @@ Holding these here so `/privacy` never describes a widget that isn't live yet
 - 2026-07-22 — Ran the full 30-question test (Run 1) against the live widget.
   **test_score 15/30**, but **zero hallucinations** and the **adversarial gate passed
   8/8** (incl. a prompt-injection refusal). The low score is almost entirely ONE
-  `[my setup]` cause: the KB crawl indexed only home + About + the build-log page, and
-  missed `/privacy`, `/affiliate-disclosure`, `/subscribe`, `/tools`, and the `/builds`
-  archive — so every answer living on those pages missed, each as an honest "couldn't
-  find that" decline, never a fabrication. No `[tool limit]` surfaced. Full table +
-  tags in `test.md`. Setup gotcha along the way: after a page reload the widget opens an
-  empty conversation, and clicks fired during the open-animation are lost; also Enter
-  doesn't submit — must click the send button.
+  cause: KB coverage. Checked the Botpress KB list — it had indexed only **2 of the 8
+  public pages** (`jigg.ai` 10 kB, `jigg.ai/builds/website` 20 kB). All 7 correct answers
+  came from those two; everything living on `/about`, `/privacy`,
+  `/affiliate-disclosure`, `/subscribe`, `/tools`, `/builds` missed as an honest decline,
+  never a fabrication. Verified the missed pages were all live AND declared in
+  `/sitemap-0.xml` AND linked in the nav of the home page Botpress *did* crawl — so this
+  tags as a real `[tool limit]` (crawler silently under-discovers, no partial-coverage
+  warning) plus `[my setup]` (we tested before verifying coverage). Fix: add them as a
+  "Specific Web Pages" source. Full table + tags in `test.md`. Two widget gotchas: after
+  a page reload the widget opens an empty conversation and clicks fired during the
+  open-animation are silently lost; and Enter doesn't submit — must click the send button.
 
 ## Done
 - Botpress account + bot created; KB crawl + system instructions loaded; affiliate link
