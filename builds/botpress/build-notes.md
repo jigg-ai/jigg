@@ -129,12 +129,21 @@ Holding these here so `/privacy` never describes a widget that isn't live yet
   surface you're on before quoting its docs. (2) Suggested pasting the full page URL as
   its own Website sync source — Desk accepted `https://jigg.ai/about` and returned
   **"0 pages found."** (3) Checked the actual HTTP: `curl` shows `/about` → `301` →
-  `/about/`, and `/about/` → `200`. The crawler drops the redirect and reports it as
-  "0 pages found." Our sitemap always declared the canonical trailing-slash form; we fed
-  it the non-canonical one. **Workaround: use trailing-slash URLs.** Tagged `[tool limit]`
-  (a crawler that won't follow a standard 301, with a misleading error) + `[my setup]`
-  (we handed it non-canonical URLs and never verified coverage). Logged in BACKLOG; must
-  surface as an issue on the build page when post.md is drafted.
+  `/about/` → `200`, so I called it: the crawler drops redirects. **Wrong — and the fix
+  failed.** The human retried with the trailing slash and got "0 pages found" again, and
+  a further check killed the theory outright: `/builds/website` *also* 301s and Botpress
+  indexed it fine at 20 kB. So the crawler follows redirects; that was never the cause.
+  (4) Gathered real data instead of theorising: `/about/` is `200`, 6.4 kB, no `noindex`,
+  in the sitemap — a perfectly ordinary page the sync just won't take. **Cause never
+  determined.** Surviving hypothesis, unconfirmed: the dialog says it syncs "technical
+  docs and support articles," and the only two pages it accepted were the home page and a
+  20 kB long-form article — so it may silently filter for article-like content. Also
+  found: the site had **no `robots.txt` at all** (404), so no `Sitemap:` pointer for any
+  crawler — added one. Tagged `[tool limit]`: not "can't crawl," but **undiagnosable** —
+  a one-line "0 pages found" for a valid 200 page, and no coverage warning in the UI.
+  `[my setup]` stands for never verifying coverage before testing. **Workaround shipped:**
+  hand-built KB import files in `builds/botpress/kb/`. Three wrong theories on the way —
+  keep all of them in the post; the debugging path is the story.
 
 ## Done
 - Botpress account + bot created; KB crawl + system instructions loaded; affiliate link

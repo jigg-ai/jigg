@@ -55,25 +55,38 @@ point. See `builds/website/test.md` for the per-check detail on build #1.
 
 ## Tooling issues (build #2, Botpress)
 
-- **Botpress's KB crawler doesn't follow 301 redirects — and calls it "0 pages found."**
-  Confirmed with `curl`: `https://jigg.ai/about` → `301` → `https://jigg.ai/about/`
-  (`200`). Hand the crawler the non-trailing-slash form and it silently indexes nothing,
-  reporting a misleading "0 pages found" rather than "redirected." This is what left the
-  bot's knowledge base covering only **2 of the site's 8 public pages** (`jigg.ai` and
-  `jigg.ai/builds/website`) during test Run 1 — nothing in the Botpress UI warns that
-  coverage is partial. Known/recurring upstream: the Botpress community has a thread
-  "Knowledge Base doesn't find all pages of my website."
-  - **Workaround in use:** always add KB sources using the **canonical trailing-slash
-    URLs** exactly as `/sitemap-0.xml` declares them (`https://jigg.ai/about/`, etc.).
-  - **Second workaround, only if sync still fails:** manual document import of the page
-    content. Avoid unless necessary — an uploaded copy is a frozen second source of truth
-    that drifts from the live site, which is the one failure this project can least
-    afford. If used, it carries a standing re-sync obligation on every content change.
+- **Botpress's Website sync silently refuses valid pages — "0 pages found," no reason
+  given. Cause never determined.** `https://jigg.ai/about/` returns `200`, 6.4 kB of real
+  HTML, carries no `noindex`, and is declared in `/sitemap-0.xml` — and the sync returns
+  nothing for it, with or without a trailing slash, as a whole-domain crawl or as a
+  single explicit URL. This left the bot's knowledge base covering only **2 of the site's
+  8 public pages** (`jigg.ai`, `jigg.ai/builds/website`) through test Run 1, with nothing
+  in the UI warning that coverage was partial. Known/recurring upstream: the Botpress
+  community thread "Knowledge Base doesn't find all pages of my website."
+  - **Theories tested and killed** (don't re-run these): *partial link discovery* — no,
+    an explicit single-page sync failed too; *doesn't follow 301 redirects* — no,
+    `/builds/website` also 301s and indexed fine at 20 kB.
+  - **Surviving hypothesis, unconfirmed:** the dialog offers to sync "technical docs and
+    support articles," and the only pages accepted were the home page and a 20 kB
+    long-form article — it may silently filter for article-like content and drop short
+    utility pages. Unverifiable from outside the tool.
+  - **Workaround in use:** hand-built import files in `builds/botpress/kb/`, imported as
+    KB Documents. **This carries a standing re-sync obligation** — they're a frozen copy,
+    and stale content answering confidently is the one failure this project can least
+    afford. Re-export any file whose page changes; `kb/tools.md` and `kb/builds.md` go
+    stale every time a build is added. If Botpress ever accepts the URLs, delete
+    `kb/` and go back to a synced source.
   - **Standing check:** after any KB change, confirm the source list shows all 8 pages,
     not a subset. The tool will not tell you.
   - Note: Botpress **Desk** (`desk.botpress.cloud`) is a different surface from Botpress
     **Studio**; the Studio docs' "Specific Web Pages" option was not present in Desk.
     Check which surface you're on before following Botpress documentation.
+
+- **The site had no `robots.txt`** — `https://jigg.ai/robots.txt` returned a 404 (a
+  Netlify HTML 404 page, not a plain one), so no crawler had a `Sitemap:` pointer. Found
+  while debugging the Botpress crawl. Added `site/public/robots.txt` allowing all and
+  declaring the sitemap. Worth noting this is a build-#1 gap that matters beyond Botpress:
+  CONTEXT §8 wants the site citation-friendly to answer engines, and they look here first.
 
 ## Not built yet
 

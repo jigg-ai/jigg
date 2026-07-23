@@ -35,16 +35,21 @@ graded on a curve. Run 1 results below.
   missed — each as an honest "I couldn't find that" decline, never a fabrication. All 7
   correct answers came from those 2 pages.
 - **Tagging this fairly — it splits both ways:**
-  - `[tool limit]` — **Botpress's crawler does not follow 301 redirects, and reports the
-    failure as "0 pages found."** Confirmed directly: `https://jigg.ai/about` returns
-    `301 → https://jigg.ai/about/`, which the crawler drops; `https://jigg.ai/about/`
-    returns `200`. Feeding it the non-canonical form silently yields nothing. Following
-    redirects is table stakes for a crawler, and "0 pages found" is a misleading error
-    for "I got a 301 and gave up" — that combination is what made this take three rounds
-    to diagnose. Known/recurring: the Botpress community has a thread titled "Knowledge
-    Base doesn't find all pages of my website." Net effect: a KB quietly covering 25% of
-    the site, with nothing in the UI flagging partial coverage — the failure mode most
-    likely to make a well-behaved grounded bot look stupid.
+  - `[tool limit]` — **Botpress's Website sync refuses valid, reachable pages and reports
+    it only as "0 pages found," with no diagnostic.** `https://jigg.ai/about/` returns
+    `200`, 6.4 kB of real HTML, no `noindex`, and is declared in `/sitemap-0.xml` — and
+    the sync still returns nothing, with or without the trailing slash. **Cause never
+    determined from outside the tool.** Two hypotheses were tested and killed:
+    (a) *partial link discovery* — plausible until an explicit single-page sync also
+    failed; (b) *doesn't follow 301s* — disproved, since `/builds/website` also 301s and
+    indexed fine at 20 kB. A surviving, unconfirmed hypothesis: the sync dialog says it
+    syncs "technical docs and support articles," and the two pages it *did* take were the
+    home page and a 20 kB long-form article, so it may silently filter for article-like
+    content and drop short utility pages. Known/recurring upstream: the Botpress
+    community has a thread "Knowledge Base doesn't find all pages of my website."
+    The real defect is the **undiagnosability**: a KB quietly covering 25% of the site,
+    a one-line error that explains nothing, and no coverage warning anywhere in the UI —
+    the failure mode most likely to make a well-behaved grounded bot look stupid.
   - `[my setup]` — we ran the test before verifying KB coverage. Botpress does offer a
     "Specific Web Pages" source type; we used root-domain discovery and trusted it.
   - **Not the tool's fault:** the bot's *answering* behaviour was exactly right —
@@ -105,13 +110,11 @@ prompt-injection**. It misses the 24/30 publish bar, but the cause isn't the bot
 Botpress — it's that the KB crawl indexed only ~3 of the site's pages.
 
 **Do NOT ship Run 1 as the verdict.** Fix the `[my setup]` cause and re-run (Run 2):
-1. Add the 6 missing pages via Website sync using **trailing-slash (canonical) URLs** —
-   the form the sitemap declares, and the only form the crawler accepts:
-   `https://jigg.ai/about/`, `/privacy/`, `/affiliate-disclosure/`, `/subscribe/`,
-   `/tools/`, `/builds/`. Then confirm the KB list shows **8 entries, not 2** —
-   verifying coverage is now a standing pre-test check, since the tool won't warn you.
-   Fallback if sync still fails: manual document import (carries a re-sync obligation —
-   see BACKLOG).
+1. **Import the 6 pages manually** as KB Documents from `builds/botpress/kb/` — the
+   Website sync would not take them in any form tried. This is a workaround with a
+   standing re-sync obligation (see `kb/README.md` and BACKLOG). Then confirm the KB
+   lists all 8 pages, not 2 — verifying coverage is now a standing pre-test check, since
+   the tool will not warn you.
 2. For the two real content gaps (C2, C4): add a short plain-language note to the public
    site on what the freshness states mean and the re-verification cadence — per
    `bot-config.md`, fix grounding gaps on the site, not in a bot-only file.
