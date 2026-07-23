@@ -112,8 +112,9 @@ Holding these here so `/privacy` never describes a widget that isn't live yet
   updated in the same change.
 
 ## Still blocked on (human step)
-- **Load the knowledge base** into the bot (the KB outline above) + set the
-  decline-when-ungrounded behavior — required before the 30-question test can run.
+- **Load the knowledge base** + paste the system instructions — both specified in
+  `bot-config.md` (canonical; dashboard mirrors it). KB = crawl jigg.ai, no separate KB
+  files. Required before the 30-question test can run.
 - **Botpress partner/affiliate link** — not yet obtained. Site's first `affiliate_url`.
 - **Capture Botpress's current pricing tier** → `pricing_as_of` in meta.yaml.
 - Optional dashboard nudge: set the bot color to `#c4693c` (exact brand accent).
