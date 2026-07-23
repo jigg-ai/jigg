@@ -1,0 +1,64 @@
+# Content-collection fields. Perishable facts (version, pricing, verified date)
+# are kept separate from the evergreen narrative so they update in one place.
+# This file is CANONICAL: site/src/content.config.ts mirrors it exactly. If you
+# add a field in one, add it in the other — they must not drift.
+#
+# STATUS: Define stage (PROCESS §0–1). Structural facts are set; every perishable
+# or verdict field is left blank ON PURPOSE until the bot is actually built, tested,
+# and live — never claim an unrun test or an un-obtained link.
+title: "A support chatbot for Jigg.AI, built with Botpress"   # working title; finalize at draft (PROCESS §4)
+slug: "botpress"      # the .mdx filename under site/src/content/builds/ IS the slug
+category: "chatbots"
+# Three distinct roles — do not merge them:
+#   1. tool        the PRIMARY tool under review. The /tools index key AND the
+#                  affiliate target. Exactly one per build.
+#   2. built_with  the production AIs used to MAKE the build.
+#   3. stack       supporting tools/services the build runs on.
+# built_with and stack are DISPLAY-ONLY: they never create a /tools entry and are
+# never affiliate-linked. That visible link/no-link split is what shows a reader
+# which tool is actually under review, without having to explain it.
+tool: "Botpress"
+tool_version: ""      # omitted on purpose: Botpress is a hosted service (CONTEXT §5 —
+                      # don't pin versions on un-versioned hosted services). Note the
+                      # underlying answering model here only if Botpress surfaces it
+                      # and it's meaningful.
+built_with: ["Claude Opus 4.8", "Claude Code"]   # planning, KB copy, test set, draft
+                      # (Opus) + island & commits (Claude Code). Botpress's own LLM is
+                      # part of the primary tool, NOT a separate built_with.
+stack: []             # intentionally empty: this build required no supporting tool
+                      # beyond the primary (Botpress Cloud) and the already-built site.
+                      # Astro/GitHub/Netlify/Cloudflare are the site's permanent infra —
+                      # not inherited onto this build (CONTEXT §5).
+runs_on_site: true    # the bot runs live as the site's support widget — the real
+                      # dogfood. Only set once it's ACTUALLY live (see status).
+status: draft         # draft until built, tested, and live. -> verified only then.
+summary: ""           # citation hook — written at draft stage (PROCESS §4)
+test_score: ""        # empty until the 30-question set is actually run. Format "X/30"
+                      # = (correct + correctly-declined); see test.md for the rubric.
+affiliate_url: ""     # Botpress partner/affiliate link — not yet obtained (human step).
+                      # This is the site's FIRST affiliate_url; verify the stamp's
+                      # link/no-link split live once set (BACKLOG).
+repro_pack: false     # flip to true only when the pack is actually assembled.
+published: ""         # YYYY-MM-DD — set at publish (PROCESS §5)
+last_verified: ""     # YYYY-MM-DD — set at publish
+pricing_as_of: ""     # YYYY-MM-DD — date Botpress's pricing tier when captured (§9)
+
+# Cost / hosting / framework detail does NOT go in the top stamp — author those as
+# fact tiles in the .mdx body so the stamp stays one compact line.
+
+# ---- display + tool-projection helpers (rendered by the site) ----
+featured: false       # keep false for now; promoting this to featured at publish
+                      # auto-demotes build #1 from the home hero (CONTEXT §6).
+meta_line: ""         # short mono index-row detail — fill at draft
+
+# /tools is a PROJECTION of the builds collection — there is no separate tools
+# source of truth, so a tool's own facts live on the build. When several builds
+# share a tool, the most-recent build's tool_* values win (see site/src/lib/builds.ts).
+tool_summary: ""      # e.g. "Chatbot builder · free tier available" — fill after build
+tool_verdict: ""      # plain one-line /tools verdict — fill AFTER the proof (test run)
+accessibility: ""     # Beginner-friendly | Some setup | Advanced — the beginner read,
+                      # decided after actually building the bot
+
+# Anything richer than these flat facts — the honest-process steps, test-stat
+# tiles, the reproduce pack, the tool verdict card — is authored in the .mdx BODY
+# using the kit in site/src/components/post/ (see its README.md).
