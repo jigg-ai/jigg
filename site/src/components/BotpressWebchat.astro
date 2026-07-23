@@ -1,0 +1,31 @@
+---
+/**
+ * BotpressWebchat — the site's live support widget (build #2, "Runs on this site").
+ *
+ * The reusable config-driven seam for a third-party chat embed. It is NOT an Astro
+ * `client:*` hydrated island: Botpress's `inject.js` self-initializes and builds its
+ * own iframe widget, and that iframe is what isolates the vendor from the site — this
+ * component is just the mount point plus the two swappable script URLs. A future
+ * embeddable build changes these props, not page code.
+ *
+ * Both tags are `is:inline` so Astro emits them verbatim (no bundling/processing) and
+ * in order — the config script (which calls `window.botpress.init(...)`) must load
+ * after `inject.js` defines `window.botpress`.
+ *
+ * The bot's appearance (name, color, theme) is configured in the Botpress dashboard and
+ * baked into `configSrc`; keep it aligned with the site palette (brand accent #c4693c).
+ * Perishable embed URLs are documented in builds/botpress/build-notes.md.
+ */
+interface Props {
+  injectSrc?: string;
+  configSrc?: string;
+}
+
+const {
+  injectSrc = 'https://cdn.botpress.cloud/desk/webchat/v4.1/inject.js',
+  configSrc = 'https://files.bpcontent.cloud/2026/07/23/02/20260723024954-CBA90JJW.js',
+} = Astro.props;
+---
+
+<script is:inline src={injectSrc}></script>
+<script is:inline src={configSrc} defer></script>

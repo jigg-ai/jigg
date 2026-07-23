@@ -84,12 +84,39 @@ Holding these here so `/privacy` never describes a widget that isn't live yet
   screenshot stub; the `DemoStub` island seam was scaffolded but never wired — no
   `client:*` directive exists anywhere in site/src yet). Filled meta.yaml structural
   facts; authored this Define + the 30-question set in test.md up front.
+- 2026-07-22 — Human created the Botpress account + bot and pasted the Deploy Settings
+  embed. First pasted the *admin* console URL (desk.botpress.cloud/.../bots/<id>) — the
+  wrong link (private, behind login); asked for the Webchat embed instead. Verified the
+  bot config script is live and self-inits via `window.botpress.init(...)`.
+  Correction to my own earlier framing: Botpress webchat is NOT an Astro `client:*`
+  hydrated island — `inject.js` self-initializes into its own iframe. Built it as a thin
+  config-driven component (`BotpressWebchat.astro`, two `is:inline` script tags, URLs as
+  props) and mounted it site-wide in `BaseLayout` before `</body>`. Applied the staged
+  `/privacy` + `/affiliate-disclosure` edits in the SAME change. Verified in local dev
+  (localhost:4321): both scripts load, `window.botpress.initialized === true`, launcher
+  renders in the corner in the brand terracotta, opens the "Jigg.AI Assistant" panel
+  with a working input, zero console errors.
 
-## Blocked on (human step)
-<!-- the hard gate: Claude Code can't create the Botpress account or get the affiliate link -->
-- Botpress account + the actual bot (built in Botpress, grounded in the KB above).
-- Botpress partner/affiliate link, + capture the current pricing tier for `pricing_as_of`.
-- The bot's embed/client ID — needed before the `BotpressWebchat` island can be wired.
+## Embed facts (verified — perishable, live in build-notes not the post)
+- Deploy Settings embed:
+  - `https://cdn.botpress.cloud/desk/webchat/v4.1/inject.js`
+  - `https://files.bpcontent.cloud/2026/07/23/02/20260723024954-CBA90JJW.js`
+- botId `a1474286-79fc-4ae6-b4f7-3fcf44071141` · clientId `6307e7bf-c2fd-44c3-89d8-c1e7e2587b91`
+- botName "Jigg.AI Assistant" · color `#C2673F` (site brand accent is `#c4693c` — near
+  match, not exact; nudge the dashboard color to `#c4693c` for an exact palette match).
+- Admin console (private, do NOT embed): desk.botpress.cloud/dk_oe41b1dl/bots/<botId>.
+
+## Done
+- Botpress account + bot created (human); embed obtained; `BotpressWebchat.astro` built,
+  mounted site-wide, verified loading in local dev; `/privacy` + `/affiliate-disclosure`
+  updated in the same change.
+
+## Still blocked on (human step)
+- **Load the knowledge base** into the bot (the KB outline above) + set the
+  decline-when-ungrounded behavior — required before the 30-question test can run.
+- **Botpress partner/affiliate link** — not yet obtained. Site's first `affiliate_url`.
+- **Capture Botpress's current pricing tier** → `pricing_as_of` in meta.yaml.
+- Optional dashboard nudge: set the bot color to `#c4693c` (exact brand accent).
 
 ## Artifacts
 <!-- links to screenshots / recordings -->

@@ -13,7 +13,7 @@ bot. Ship it as one build entry (meta.yaml + post.md + repro pack) that lights u
 four views, with a single deliberate exception: build #1 deferred live third-party
 demos — its artifact preview is an inline repo-tree code block, and a `DemoStub` island
 seam was scaffolded but never wired into any page — so this build lands the site's first
-live embedded artifact AND its first hydrated island.
+live third-party embed.
 
 ## Primary tool & roles — fill meta.yaml accordingly (CONTEXT §5)
 - PRIMARY TOOL: Botpress. The one thing this build reviews — it gets the verdict, the
@@ -60,22 +60,21 @@ live embedded artifact AND its first hydrated island.
   stated in the summary up top — never quietly grade on a curve.
 
 ## The one deliberate site touch
-This is the site's first live interactive artifact AND its first hydrated island —
-there are currently no `client:*` directives anywhere in `site/src`, and the `DemoStub`
-seam from build #1 was never wired into a page. So this is genuinely first-time
-integration, not reuse: expect real work in hydrating an island, wiring it into
-`builds/[slug].astro`, and loading a third-party script under Astro's model. Do it as a
-reusable, config-driven mechanism, not bespoke per-build code, so the architecture
-principle still holds (a future embeddable build adds a meta.yaml value, not page code):
-- Build one small `BotpressWebchat` Astro island. The real isolation comes from
-  Botpress's own iframe/widget, not from the Astro island (an island is a hydration
-  boundary, not a security sandbox) — keep the island thin, just the mount point and
-  config seam, so a vendor script can't reach into the core.
-- Mount it live as the site's support widget (**site-wide** — the real dogfood behind
-  `runs_on_site: true`) and render it inline on this build's detail page as the artifact
-  preview.
-- Keep the embed styling inside the restrained palette; don't let a vendor widget clash
-  with the site.
+This is the site's first live third-party embed — build #1's `DemoStub` seam was
+scaffolded but never wired into a page, and nothing on the site currently loads a vendor
+widget. Botpress's `inject.js` self-initializes into its own iframe (it is NOT an Astro
+`client:*` hydrated island — the isolation is the vendor iframe, not Astro). Do it as a
+reusable, config-driven component, not bespoke per-build code, so the architecture
+principle still holds (a future embeddable build adds a config value, not page code):
+- Build one small `BotpressWebchat.astro` component: two `is:inline` script tags (the
+  vendor `inject.js` + the bot config script) with the two URLs as props, so the embed
+  is swappable config, not hardcoded. Keep it thin — just the mount point and the seam.
+- Mount it live as the site's support widget (**site-wide** in `BaseLayout`, before
+  `</body>` — the real dogfood behind `runs_on_site: true`) and render it inline on this
+  build's detail page as the artifact preview.
+- Keep the embed styling inside the restrained palette; the bot color must match the
+  brand accent `#c4693c` exactly (currently `#C2673F` in the dashboard — close, not
+  exact). Don't let a vendor widget clash with the site.
 
 ## Artifact preview
 Live embedded demo — the top upkeep tier in CONTEXT §3, which this build qualifies for.

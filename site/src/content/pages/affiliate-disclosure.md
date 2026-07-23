@@ -16,4 +16,8 @@ Here's what that changes about the write-ups: nothing.
 
 The commissions are what let Jigg.AI keep building in the open. But the whole project only works if you can trust the write-ups — so the proof always comes first, and the link always comes second.
 
+## The bot you can chat with
+
+The support chatbot in the corner of this site is built with Botpress. When Jigg.AI links to Botpress, that link may be an affiliate link — so the widget is both the honest proof and, indirectly, what the link points to. The same rule holds: the proof comes first (a working bot you can actually try), and the "build one yourself" link comes after.
+
 Questions? Email hello@jigg.ai.
