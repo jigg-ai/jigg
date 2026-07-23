@@ -121,6 +121,21 @@ Holding these here so `/privacy` never describes a widget that isn't live yet
   a page reload the widget opens an empty conversation and clicks fired during the
   open-animation are silently lost; and Enter doesn't submit — must click the send button.
 
+- 2026-07-22 — **Root-caused the KB coverage gap: Botpress's crawler doesn't follow 301
+  redirects.** Chased it in three rounds. (1) Assumed partial discovery, told the human
+  to add the missing pages as "Specific Web Pages" — that option is in the *Studio* docs
+  I'd read, but this bot is on Botpress **Desk** (`desk.botpress.cloud`, webchat
+  `/desk/webchat/v4.1/`), where they couldn't find it. Lesson: check which Botpress
+  surface you're on before quoting its docs. (2) Suggested pasting the full page URL as
+  its own Website sync source — Desk accepted `https://jigg.ai/about` and returned
+  **"0 pages found."** (3) Checked the actual HTTP: `curl` shows `/about` → `301` →
+  `/about/`, and `/about/` → `200`. The crawler drops the redirect and reports it as
+  "0 pages found." Our sitemap always declared the canonical trailing-slash form; we fed
+  it the non-canonical one. **Workaround: use trailing-slash URLs.** Tagged `[tool limit]`
+  (a crawler that won't follow a standard 301, with a misleading error) + `[my setup]`
+  (we handed it non-canonical URLs and never verified coverage). Logged in BACKLOG; must
+  surface as an issue on the build page when post.md is drafted.
+
 ## Done
 - Botpress account + bot created; KB crawl + system instructions loaded; affiliate link
   obtained (in meta.yaml); embed obtained; `BotpressWebchat.astro` built + mounted

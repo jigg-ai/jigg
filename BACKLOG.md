@@ -53,6 +53,28 @@ point. See `builds/website/test.md` for the per-check detail on build #1.
   one-file add, matching the invariant the `builds` collection already satisfies.
   Deferred to avoid refactoring working, deployed pages.
 
+## Tooling issues (build #2, Botpress)
+
+- **Botpress's KB crawler doesn't follow 301 redirects — and calls it "0 pages found."**
+  Confirmed with `curl`: `https://jigg.ai/about` → `301` → `https://jigg.ai/about/`
+  (`200`). Hand the crawler the non-trailing-slash form and it silently indexes nothing,
+  reporting a misleading "0 pages found" rather than "redirected." This is what left the
+  bot's knowledge base covering only **2 of the site's 8 public pages** (`jigg.ai` and
+  `jigg.ai/builds/website`) during test Run 1 — nothing in the Botpress UI warns that
+  coverage is partial. Known/recurring upstream: the Botpress community has a thread
+  "Knowledge Base doesn't find all pages of my website."
+  - **Workaround in use:** always add KB sources using the **canonical trailing-slash
+    URLs** exactly as `/sitemap-0.xml` declares them (`https://jigg.ai/about/`, etc.).
+  - **Second workaround, only if sync still fails:** manual document import of the page
+    content. Avoid unless necessary — an uploaded copy is a frozen second source of truth
+    that drifts from the live site, which is the one failure this project can least
+    afford. If used, it carries a standing re-sync obligation on every content change.
+  - **Standing check:** after any KB change, confirm the source list shows all 8 pages,
+    not a subset. The tool will not tell you.
+  - Note: Botpress **Desk** (`desk.botpress.cloud`) is a different surface from Botpress
+    **Studio**; the Studio docs' "Specific Web Pages" option was not present in Desk.
+    Check which surface you're on before following Botpress documentation.
+
 ## Not built yet
 
 - **The repro pack itself** — the build page *describes* the pack's contents, but no
