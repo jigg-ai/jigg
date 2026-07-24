@@ -105,6 +105,23 @@ point. See `builds/website/test.md` for the per-check detail on build #1.
   declaring the sitemap. Worth noting this is a build-#1 gap that matters beyond Botpress:
   CONTEXT §8 wants the site citation-friendly to answer engines, and they look here first.
 
+## Decisions taken at build #2's publish (2026-07-23) — recorded so they don't get "rediscovered" as bugs
+
+- **The stamp's affiliate link stays above the proof.** STYLE says affiliate links go
+  "always after the proof, never before it," and the metadata stamp links the primary tool
+  at the top of the page, with no visible disclosure at that position (the
+  `rel="sponsored nofollow noopener"` is machine-honest but invisible to a reader). Raised
+  at publish and **deliberately accepted** — the stamp's job is identifying which tool is
+  under review, and the link/no-link split is what communicates that. The explicit,
+  disclosed CTA still sits after the proof in the verdict card. Revisit if the stamp ever
+  starts reading as a promotion rather than a citation.
+- **Build #2 ships with no cost claim.** Botpress pricing was never captured, so
+  `pricing_as_of` is unset and `tool_summary` deliberately avoids "free tier available."
+  Chosen over estimating a price — an invented price is this project's founding example of
+  a bad AI answer. Capture it on the next Botpress touch.
+- **Build #1 keeps the home hero.** Build #2 published with `featured: false` rather than
+  demoting #1 (CONTEXT §6 auto-demotes on promotion). Revisit when #3 lands.
+
 ## Build #2 follow-ups (deferred from the test)
 
 - **Four bucket-B partials — the bot won't say *where*.** Run 2 scored 26/30; all four
@@ -164,7 +181,7 @@ point. See `builds/website/test.md` for the per-check detail on build #1.
 
 ## Not built yet
 
-- ~~**The repro pack itself**~~ — **BUILT 2026-07-22.** Build #1's pack now exists and is
+- ~~**The repro pack itself**~~ — **BUILT 2026-07-23.** Build #1's pack now exists and is
   **public in the repo** at `builds/website/repro/`: `architecture.md`, `schema.md`,
   `reproduce.md`, `deploy.md`. The email gate is gone — a pack you pay for with your
   address contradicts the site's own "no database, no lock-in" claim, and the old form was
@@ -174,18 +191,20 @@ point. See `builds/website/test.md` for the per-check detail on build #1.
   session was never recorded, and reconstructing them would be manufacturing evidence.
   The pack and the build page both say so plainly. Kept here as the record; delete on the
   next sweep.
-- **Human verify/edit pass on build #1's post copy** — PROCESS step 5, and the item most
-  at risk of permanent deferral. The prose is a first honest draft written by the same
-  agent that did the build, with no independent editorial pass. Build #1 is currently the
-  *only* build, so it is the thing most visitors read — and the moment build #2 ships,
-  attention moves on and this quietly becomes never. **Do it before build #2 publishes**,
-  not "someday."
+- ~~**Human verify/edit pass on build #1's post copy**~~ — **DONE 2026-07-23.** Cleared
+  before build #2 published, as the item required. Sequence: a claim-by-claim audit of the
+  live copy against `test.md`, `meta.yaml`, `repro/` and `git log` surfaced three
+  contradictions (an undercounted "one check still pending" when test.md recorded three; a
+  repro pack advertised with an email form but never built; a promised critique transcript
+  absent from both the delivered and planned pack). All corrected, the pack built for real,
+  then **the human reviewed and confirmed `verified` holds.** Build #2's edit pass was
+  signed off in the same pass. Kept as the record; delete on the next sweep.
 
 ## Blocked on more builds
 
 These are cheap to clear once builds #2/#3 land, and near-impossible before:
 
-- ~~**Affiliate link/no-link distinction is unverified live**~~ — **CLEARED 2026-07-22**
+- ~~**Affiliate link/no-link distinction is unverified live**~~ — **CLEARED 2026-07-23**
   by build #2, the first build with an `affiliate_url`. Verified in the rendered stamp:
   `Primary tool:` renders Botpress as the only anchor, with
   `rel="sponsored nofollow noopener"`, while `Built with:` renders "Claude Opus 4.8,
@@ -194,7 +213,7 @@ These are cheap to clear once builds #2/#3 land, and near-impossible before:
 - **Tools-index aggregation ("most-recent wins")** — when several builds share a `tool`,
   `src/lib/builds.ts` sums the build count and uses the most-recent build's `tool_*`
   fields. Documented, but never exercised with two builds on one tool.
-- ~~**Repro-pack copy consistency**~~ — **RESOLVED 2026-07-22.** The post claimed the
+- ~~**Repro-pack copy consistency**~~ — **RESOLVED 2026-07-23.** The post claimed the
   model-critique back-and-forth was "in the repro pack"; it was in neither the delivered
   pack (which didn't exist) nor the planned contents. Root cause: the session was never
   recorded. The claim is retracted on the build page with the reason stated, and PROCESS

@@ -105,7 +105,7 @@ graded on a curve. Run 1 results below.
 
 ## Run 2 — after fixing KB coverage
 
-- **Date:** 2026-07-22, same 30 questions, same wording, same live widget. Fresh
+- **Date:** 2026-07-23, same 30 questions, same wording, same live widget. Fresh
   conversation (cleared `bp-webchat-message-history-default` in localStorage — Botpress
   restores prior conversations across reloads, which would have contaminated the run).
 - **Only change:** the 6 refused pages imported manually as KB Documents from

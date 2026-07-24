@@ -121,7 +121,7 @@ Holding these here so `/privacy` never describes a widget that isn't live yet
   a page reload the widget opens an empty conversation and clicks fired during the
   open-animation are silently lost; and Enter doesn't submit — must click the send button.
 
-- 2026-07-22 — **Root-caused the KB coverage gap: Botpress's crawler doesn't follow 301
+- 2026-07-23 — **Root-caused the KB coverage gap: Botpress's crawler doesn't follow 301
   redirects.** Chased it in three rounds. (1) Assumed partial discovery, told the human
   to add the missing pages as "Specific Web Pages" — that option is in the *Studio* docs
   I'd read, but this bot is on Botpress **Desk** (`desk.botpress.cloud`, webchat
@@ -145,7 +145,7 @@ Holding these here so `/privacy` never describes a widget that isn't live yet
   hand-built KB import files in `builds/botpress/kb/`. Three wrong theories on the way —
   keep all of them in the post; the debugging path is the story.
 
-- 2026-07-22 — **Run 2: 26/30, passes the bar.** Imported the 6 hand-built KB files;
+- 2026-07-23 — **Run 2: 26/30, passes the bar.** Imported the 6 hand-built KB files;
   KB went 2 sources → 8. Same 30 questions, same wording, bot instructions untouched.
   Score went **15/30 → 26/30 (+11)**, 0 hallucinations, adversarial 8/8 again. Every
   Run 1 miss flipped; nothing regressed. Bucket C went 0→5 correct, bucket A 6→10.
@@ -161,7 +161,7 @@ Holding these here so `/privacy` never describes a widget that isn't live yet
   is but won't name *where* (`/builds`, the disclosure page), and it called the "Subscribe"
   nav item "Newsletter". Fix is ours: the KB files bury routes and labels in prose.
 
-- 2026-07-22 — **Drafted the post and added the build to the site** (PROCESS §4).
+- 2026-07-23 — **Drafted the post and added the build to the site** (PROCESS §4).
   Wrote `site/src/content/builds/botpress.mdx` — the `.mdx` IS the post, following build
   #1's precedent, so deleted the template's unused `post.md` rather than keep two copies
   of the same prose that would drift (flagged for the PROCESS retro in BACKLOG).

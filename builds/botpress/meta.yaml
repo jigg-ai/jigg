@@ -31,7 +31,9 @@ stack: []             # intentionally empty: this build required no supporting t
                       # not inherited onto this build (CONTEXT §5).
 runs_on_site: true    # the bot runs live as the site's support widget — the real
                       # dogfood. Only set once it's ACTUALLY live (see status).
-status: draft         # draft until built, tested, and live. -> verified only then.
+status: verified      # Built, tested (26/30, 0 hallucinations), human edit pass signed
+                      # off 2026-07-23. Per PROCESS §5 this flag is only set AFTER a
+                      # human says so — never on the agent's own say-so.
 summary: ""           # citation hook — written at draft stage (PROCESS §4)
 test_score: "26/30"   # Run 2. = correct (18) + correctly-declined (8); 4 partial,
                       # 0 hallucinations, adversarial gate 8/8. Run 1 scored 15/30 with
@@ -41,8 +43,8 @@ affiliate_url: "https://try.botpress.com/kdi921r4nfra"   # Botpress affiliate li
                       # that the stamp links Botpress ONLY (not built_with/stack) + the
                       # /tools CTA links out (BACKLOG: link/no-link split unverified live).
 repro_pack: false     # flip to true only when the pack is actually assembled.
-published: ""         # YYYY-MM-DD — set at publish (PROCESS §5)
-last_verified: ""     # YYYY-MM-DD — set at publish
+published: "2026-07-23"
+last_verified: "2026-07-23"
 pricing_as_of: ""     # YYYY-MM-DD — date Botpress's pricing tier when captured (§9)
 
 # Cost / hosting / framework detail does NOT go in the top stamp — author those as
