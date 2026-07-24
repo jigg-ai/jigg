@@ -1,32 +1,37 @@
-# Repro pack — <build name>
+# Repro pack — the Botpress support chatbot (build #2)
 
-Two tiers, mirroring the `<ReproPack>` component on the build page: a public part
-shown openly (feeds citations, substantiates every claim), and a gated downloadable
-pack (the lead magnet). Adapt every line to THIS build — keep it concrete.
+Everything needed to rebuild this bot and re-run its test. Public, in the repo — the
+evidence for a claim is never behind an email gate.
 
-## Public (lives on the page)
-Enough for a reader to verify the build's claims without downloading anything.
-Typical items (swap for whatever this build actually shows):
-- the simplified schema / config the build runs on
-- one complete example artifact or record
-- an overview of the AI workflow used to make it
-- the key architecture or data-flow diagram
-- an annotated excerpt of the project structure
-- several representative prompts — include at least one that failed and its fix
+## The substantiation (all already public in this repo)
 
-## Gated (the downloadable pack — the lead magnet)
-A one-line description, then the full contents. Typical contents:
-- the complete schema / config and a full sample dataset
-- full-resolution, editable diagrams
-- the complete, curated prompt sequence
-- the full project / repository map
-- the runnable project (or scaffold) itself
-- a setup guide
-- a deployment checklist
-- reusable templates
+| What | Where |
+|---|---|
+| The bot's **system instructions**, verbatim — the grounding and refusal rules that produce the behaviour in the transcript on the build page | [`../bot-config.md`](../bot-config.md) |
+| The **knowledge base**, exactly as loaded — all 6 hand-built import files | [`../kb/`](../kb/) |
+| The **full 30-question set**, the fixed bucket split, the scoring rubric, and the publish bar — all fixed *before* the bot existed | [`../test.md`](../test.md) |
+| **Both scored runs**, question by question, with every failure tagged `[my setup]` / `[tool limit]` | [`../test.md`](../test.md) |
+| The **running journal** — every wrong theory, exact errors, and the `curl` output that killed the redirect diagnosis | [`../build-notes.md`](../build-notes.md) |
+| The **embed**, and how it's mounted site-wide | [`reproduce.md`](reproduce.md), `site/src/components/BotpressWebchat.astro` |
+| Perishable facts — affiliate link, verdict, accessibility read | [`../meta.yaml`](../meta.yaml) |
 
----
-Keep this **build-agnostic**: describe artifacts by role (schema, diagram, prompts,
-scaffold, dataset), never by one build type. Words like "flow", "knowledge base",
-or "test questions" are chatbot-specific — they belong in a chatbot build's own
-pack, not in this template.
+Start with [`reproduce.md`](reproduce.md) — it's the step-by-step rebuild, including the
+two traps that cost the most time.
+
+## Provenance
+
+Everything here is **captured, not reconstructed**. The test transcripts are real replies
+read out of the live widget's DOM; the instructions and KB files are the actual ones
+loaded into Botpress; the failure log was written as it happened.
+
+Where something wasn't captured, it says so rather than being filled in after the fact —
+see PROCESS §2 on why that line is absolute.
+
+## Not included, deliberately
+
+- **No Botpress pricing.** It was never captured during the build, so `pricing_as_of` is
+  unset and no cost claim appears anywhere. An uncaptured price is not a price you get to
+  estimate — this project's founding example of a bad AI answer is an invented one.
+- **No account credentials, workspace IDs, or the admin console URL.** The bot's public
+  webchat client ID is in the embed (it has to be, it ships to every browser); the private
+  dashboard link is not.
