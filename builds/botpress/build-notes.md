@@ -177,6 +177,29 @@ Holding these here so `/privacy` never describes a widget that isn't live yet
   the same overclaim already logged against build #1. Wrote the public substantiation as
   plain markdown instead.
 
+- 2026-07-23 (post-publish) — **Root cause finally found, and it was ours: no
+  `robots.txt`.** After publishing, the human re-synced the website source and Botpress
+  reported **11 pages in 9 sections** — up from 2. The tell is in the section list: it
+  indexed `Sitemap Index.xml` and `Sitemap 0.xml` as entries, meaning it had finally
+  *fetched the sitemap*. The only new pointer to it is the `Sitemap:` line in the
+  robots.txt added earlier that day. The site has always carried
+  `<link rel="sitemap">` in every page head, and Botpress ignored it entirely.
+  So: **Botpress discovers via robots.txt, not the HTML sitemap link.** Dominant cause
+  `[my setup]`; the residual `[tool limit]` is the silent partial coverage and the
+  useless "0 pages found". **Corrected the published post**, which had blamed the tool
+  outright — STYLE requires separating tool limits from our own mistakes, and getting
+  that backwards in public is the exact failure this project claims to be better at.
+- 2026-07-23 (post-publish) — **Nearly filed a fourth wrong diagnosis.** Re-testing the
+  bot after the re-crawl returned the stale retracted-pack answer *word for word*, and I
+  was one step from reporting "the re-crawl didn't work." It had worked. The widget had
+  restored the prior conversation (5 messages), so the bot was echoing its own earlier
+  answer from context. Clearing localStorage and re-asking in a fresh conversation gave
+  the correct, corrected answer. Second time this trap produced a wrong reading in one
+  build — after changing a KB you are testing memory, not knowledge, unless you reset.
+  Also removed the now-redundant `kb/` imports from Botpress (crawl covers them; two
+  copies is a drift risk) — `kb/` stays in the repo as the record of what both scored
+  runs were measured against.
+
 ## Done
 - Botpress account + bot created; KB crawl + system instructions loaded; affiliate link
   obtained (in meta.yaml); embed obtained; `BotpressWebchat.astro` built + mounted

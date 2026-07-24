@@ -51,8 +51,11 @@ Allow: /
 Sitemap: https://jigg.ai/sitemap-index.xml
 ```
 
-Matters beyond SEO: this site wants to be citable by answer engines, and that's the first
-place they look.
+Matters beyond SEO, and more than it first appeared: this turned out to be the root cause
+of build #2's chatbot only knowing a quarter of the site. **Botpress finds your sitemap
+via `robots.txt` and ignores the `<link rel="sitemap">` in your HTML** — which this site
+had carried since day one. With the file absent its crawl reached 2 pages; with it, 11.
+Any AI crawler looking to cite this site was in exactly the same position.
 
 ## The Git/GitHub auth chain — four mistakes, all mine
 

@@ -47,16 +47,32 @@ What we tried, so you don't repeat it:
 | Adding a single page URL explicitly | `0 pages found` |
 | Same URL with a trailing slash (canonical, per our sitemap) | `0 pages found` |
 | Theory: it won't follow 301s | **Disproved** — `/builds/website` also 301s and indexed fine |
+| **Added `robots.txt` with a `Sitemap:` line, re-synced** | ✅ **2 pages → 11** |
 
-Root cause never determined from outside the tool. The page it refused is a plain `200`,
-6.4 kB, no `noindex`, listed in the sitemap. Surviving hypothesis: the sync advertises
-"technical docs and support articles" and the only two pages it accepted were the home
-page and a 20 kB long-form article, so it may silently filter for article-like content.
+## The actual cause: we had no robots.txt
 
-**The workaround that worked:** hand-build the missing pages as markdown and import them
-as KB *Documents*. Ours are in [`../kb/`](../kb/) — one file per page, each opening with
-its route. That last detail matters: our four remaining partial answers were all "explains
-*what*, won't say *where*", because the first drafts buried routes in prose.
+`jigg.ai/robots.txt` was a 404. **That is where Botpress looks for your sitemap**, and it
+**ignores the `<link rel="sitemap">` in your HTML** — this site had carried that link
+since day one and it made no difference. Add the file:
+
+```
+User-agent: *
+Allow: /
+
+Sitemap: https://your-domain/sitemap-index.xml
+```
+
+Re-sync, and it discovers everything — including the sitemap XMLs themselves, which is
+the tell: they only show up as indexed entries because it finally fetched them.
+
+**Check this first.** It's one file, it's standard hygiene, and without it a perfectly
+good bot looks broken.
+
+**If the crawler still won't take a page**, hand-build it as markdown and import it as a
+KB *Document* — that's the fallback we used to reach 26/30 before finding the real cause.
+Open each file with its route: our four remaining partial answers were all "explains
+*what*, won't say *where*," because the first drafts buried routes in prose. But prefer
+the crawl once it works: imported files are a frozen copy that drifts from the live site.
 
 ## 4. Embed it
 

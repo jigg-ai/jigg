@@ -34,26 +34,32 @@ graded on a curve. Run 1 results below.
   `/subscribe`, `/tools` and `/builds` were never crawled, so every answer living on them
   missed — each as an honest "I couldn't find that" decline, never a fabrication. All 7
   correct answers came from those 2 pages.
-- **Tagging this fairly — it splits both ways:**
-  - `[tool limit]` — **Botpress's Website sync refuses valid, reachable pages and reports
-    it only as "0 pages found," with no diagnostic.** `https://jigg.ai/about/` returns
-    `200`, 6.4 kB of real HTML, no `noindex`, and is declared in `/sitemap-0.xml` — and
-    the sync still returns nothing, with or without the trailing slash. **Cause never
-    determined from outside the tool.** Two hypotheses were tested and killed:
-    (a) *partial link discovery* — plausible until an explicit single-page sync also
-    failed; (b) *doesn't follow 301s* — disproved, since `/builds/website` also 301s and
-    indexed fine at 20 kB. A surviving, unconfirmed hypothesis: the sync dialog says it
-    syncs "technical docs and support articles," and the two pages it *did* take were the
-    home page and a 20 kB long-form article, so it may silently filter for article-like
-    content and drop short utility pages. Known/recurring upstream: the Botpress
-    community has a thread "Knowledge Base doesn't find all pages of my website."
-    The real defect is the **undiagnosability**: a KB quietly covering 25% of the site,
-    a one-line error that explains nothing, and no coverage warning anywhere in the UI —
-    the failure mode most likely to make a well-behaved grounded bot look stupid.
-  - `[my setup]` — we ran the test before verifying KB coverage. Botpress does offer a
-    "Specific Web Pages" source type; we used root-domain discovery and trusted it.
-  - **Not the tool's fault:** the bot's *answering* behaviour was exactly right —
+- **ROOT CAUSE — resolved 2026-07-23, after publication. Mostly ours.**
+  `jigg.ai` had **no `robots.txt`** (it returned a 404). That is where Botpress looks for
+  your sitemap, and it **ignores the `<link rel="sitemap">` in the HTML**, which this site
+  has always carried. Without that pointer its link-following reached only 2 pages.
+  Adding `site/public/robots.txt` with a `Sitemap:` line and re-syncing took the crawl
+  from **2 pages to 11** — the 9 site pages plus both sitemap XMLs, which is itself the
+  proof: the sitemaps appear as indexed entries only because it finally fetched them.
+  - `[my setup]` — **the dominant cause.** A missing robots.txt is standard web hygiene,
+    and we shipped without one. We also ran the test before verifying KB coverage.
+  - `[tool limit]` — **what remains genuinely the tool's**, and it's narrower than first
+    written: (a) indexing 2 of 8 pages is a *successful sync*, with no warning, no page
+    count to sanity-check, nothing in the UI to tell you the KB is a quarter of your site;
+    (b) an explicitly-supplied valid URL — `https://jigg.ai/about/`, a clean `200`, 6.4 kB,
+    no `noindex` — returned only **"0 pages found,"** which explains nothing and sent us
+    down two dead ends. Known/recurring upstream: the Botpress community thread
+    "Knowledge Base doesn't find all pages of my website."
+  - **Theories tested and killed along the way** (kept — the wrong turns are the story):
+    *partial link discovery* (an explicit single-page sync failed too); *doesn't follow
+    301s* (disproved — `/builds/website` also 301s and indexed fine at 20 kB); and a
+    since-abandoned guess that the sync filtered for "article-like" content.
+  - **Never the tool's fault:** the bot's *answering* behaviour was correct throughout —
     grounded on what it had, honest declines on what it didn't, injection resisted.
+  - **Correction note:** the first published version of the build post blamed Botpress for
+    the coverage gap outright. That was unfair and is corrected on the page. STYLE requires
+    separating tool limits from our own setup mistakes; getting that backwards in public is
+    exactly the failure this project is supposed to be better at.
 
 ### Results
 | # | Bucket | Question (as asked) | Outcome | Notes / tag |

@@ -81,6 +81,16 @@ In `build-notes.md`, write:
   - the specific decisions only a human should make (does this merit `verified`? does
     the copy overpromise? is the voice right?).
 - **Only after the human signs off:** set `published`, `last_verified`, `status`.
+- **After the deploy: re-sync anything that holds a COPY of the site's content.** Today
+  that means the support bot's knowledge base. Publishing corrected copy does not correct
+  the bot — it keeps answering from whatever it crawled last.
+  > Proven the hard way at build #2's publish. Minutes after deploying the corrected
+  > build-#1 page, the live bot was still reciting the retracted repro-pack list —
+  > "full-resolution editable diagrams", "complete curated prompt sequence" — artifacts we
+  > had just documented as non-existent. The page was honest; the bot was not, and the bot
+  > is the surface a visitor actually converses with. **A cache of a retracted claim is a
+  > retracted claim, still being made.** Re-crawl, then spot-check one question whose
+  > answer changed in the deploy.
 
 > Why this is written so hard: build #1 was published with `status: verified` while two
 > of these three sub-steps had never happened. The flag asserted a verification the

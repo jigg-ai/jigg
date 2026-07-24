@@ -72,6 +72,19 @@ point. See `builds/website/test.md` for the per-check detail on build #1.
 
 ## Tooling issues (build #2, Botpress)
 
+- ~~**Botpress's Website sync silently refuses valid pages — cause never determined**~~ —
+  **SOLVED 2026-07-23: we had no `robots.txt`.** That's where Botpress looks for the
+  sitemap, and it ignores the HTML `<link rel="sitemap">` this site always carried. Adding
+  `site/public/robots.txt` with a `Sitemap:` line took the crawl from **2 pages to 11**
+  (the sitemap XMLs showing up as indexed entries is the proof it finally fetched them).
+  Dominant cause = `[my setup]`. What remains `[tool limit]` is narrower but real: a 2-of-8
+  index is a *successful* sync with no warning or page count, and an explicitly-supplied
+  valid `200` URL returns only "0 pages found." The build post was corrected — it had
+  blamed the tool outright, which STYLE forbids and which is the exact failure this project
+  claims to be better at. Kept as the record; delete on the next sweep.
+
+<details><summary>Original entry (kept — the wrong turns are the story)</summary>
+
 - **Botpress's Website sync silently refuses valid pages — "0 pages found," no reason
   given. Cause never determined.** `https://jigg.ai/about/` returns `200`, 6.4 kB of real
   HTML, carries no `noindex`, and is declared in `/sitemap-0.xml` — and the sync returns
@@ -99,11 +112,51 @@ point. See `builds/website/test.md` for the per-check detail on build #1.
     **Studio**; the Studio docs' "Specific Web Pages" option was not present in Desk.
     Check which surface you're on before following Botpress documentation.
 
-- **The site had no `robots.txt`** — `https://jigg.ai/robots.txt` returned a 404 (a
-  Netlify HTML 404 page, not a plain one), so no crawler had a `Sitemap:` pointer. Found
-  while debugging the Botpress crawl. Added `site/public/robots.txt` allowing all and
-  declaring the sitemap. Worth noting this is a build-#1 gap that matters beyond Botpress:
-  CONTEXT §8 wants the site citation-friendly to answer engines, and they look here first.
+</details>
+
+- ~~**The site had no `robots.txt`**~~ — **FIXED 2026-07-23**, and it turned out to be the
+  root cause of the whole Botpress coverage saga above, not the footnote it looked like
+  when first logged. `https://jigg.ai/robots.txt` returned a 404, so no crawler had a
+  `Sitemap:` pointer. Added `site/public/robots.txt`. A build-#1 gap that matters well
+  beyond Botpress: CONTEXT §8 wants this site citable by answer engines, and robots.txt is
+  the first place they look — so every AI crawler was in the same position the bot was.
+
+## ~~⚠️ ACTION NEEDED — the live bot is repeating a retracted claim~~ — RESOLVED 2026-07-23
+
+Re-crawled with full coverage and the duplicate imports removed; re-verified live in a
+**fresh conversation** and the bot now answers correctly ("the pack is fully public…
+there is no email or download gate").
+
+**Testing lesson worth keeping:** the first re-test returned the stale answer word for
+word, and was one step from being reported as "the fix didn't work." It had worked — the
+widget had restored the previous conversation (5 messages), so the bot was echoing its own
+earlier answer from context. **After changing a bot's knowledge base you must reset the
+conversation, or you are testing its memory, not its knowledge.** Clear
+`bp-webchat-message-history-default` in localStorage. This is the second time that trap
+cost us a wrong reading in one build.
+
+<details><summary>Original entry (kept for the record)</summary>
+
+- **Re-crawl the bot's knowledge base. It is currently misinforming visitors.**
+  Verified live on 2026-07-23, minutes after the deploy: asked "what's in the repro pack
+  for the website build?", the bot answered with the **retracted eight-item list** —
+  "Complete schema and sample dataset", "Full-resolution editable diagrams", "Complete
+  curated prompt sequence", "Runnable Astro scaffold", "Setup guide", "Deployment
+  checklist", "Reusable templates" — and told the visitor they could get it free. Every
+  one of those was deleted from the page in this same deploy; two of them are documented
+  as artifacts that never existed.
+  - **Cause:** the KB's two *crawled* sources (`jigg.ai`, `jigg.ai/builds/website`) were
+    indexed ~18h before the corrections. The 6 hand-imported documents are current; the
+    crawled pair is not. `/builds/website` is the stale one that matters.
+  - **Fix:** re-crawl both Website sources in Botpress (or re-import `/builds/website`
+    as a document if the crawler refuses again, per the coverage issue above). Then
+    spot-check by re-asking the same question.
+  - **The general lesson, now in PROCESS §5:** publishing corrected copy does not correct
+    a bot that cached the old copy. A cache of a retracted claim is a retracted claim,
+    still being made — and it's being made conversationally, which reads as more
+    authoritative than the page it contradicts.
+
+</details>
 
 ## Decisions taken at build #2's publish (2026-07-23) — recorded so they don't get "rediscovered" as bugs
 

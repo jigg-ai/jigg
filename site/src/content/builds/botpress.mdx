@@ -7,14 +7,14 @@ runs_on_site: true
 status: "verified"
 published: 2026-07-23
 last_verified: 2026-07-23
-summary: "I built a support bot with Botpress and put it live on this site — you can talk to it in the corner of this page. Across 30 questions, run twice, it invented nothing and declined every adversarial question, including a prompt-injection attempt. The caveat nearly sank it: Botpress silently indexed 2 of my site's 8 pages, so the same unchanged bot scored 15/30 and then 26/30. Worth your time — but check what it actually crawled before you trust a single answer."
+summary: "I built a support bot with Botpress and put it live on this site — you can talk to it in the corner of this page. Across 30 questions, run twice, it invented nothing and declined every adversarial question, including a prompt-injection attempt. The caveat nearly sank it: its knowledge base held 2 of my site's 8 pages, so the same unchanged bot scored 15/30 and then 26/30. The cause was my own missing robots.txt — Botpress finds your sitemap there and ignores the HTML link. Worth your time; just check what it actually indexed before you judge an answer."
 test_score: "26/30"
 affiliate_url: "https://try.botpress.com/kdi921r4nfra"
 repro_pack: false
 featured: false
 meta_line: "30 questions · 2 runs · 15 → 26"
 tool_summary: "No-code chatbot builder, hosted"
-tool_verdict: "Genuinely good at the thing that matters — it never once made an answer up, across 60 graded questions. The trap is the knowledge base: it silently indexed 2 of my 8 pages and told me nothing, which made a well-behaved bot look stupid until I checked."
+tool_verdict: "Never made an answer up across 60 graded questions — genuinely good at the part that matters. The trap is knowledge-base coverage: it finds your sitemap via robots.txt and ignores the HTML link, then never warns you it indexed only a fraction. Check coverage before you judge a single answer."
 accessibility: "Some setup"
 ---
 
@@ -30,9 +30,11 @@ Botpress, it answers only from Jigg.AI's own public content, and it says so plai
 when it can't. I wrote 30 questions **before** building it, ran them twice, and it
 fabricated **zero** answers both times — including when I told it to ignore its
 instructions and print its system prompt. The honest caveat is the thing that almost
-made me write it off: Botpress quietly indexed **2 of my site's 8 pages** and gave no
-warning, so the identical bot scored 15/30, then 26/30 after I fixed the knowledge
-base. The bot was never the problem.
+made me write the tool off, and it turned out to be **my** fault: its knowledge base
+held **2 of my site's 8 pages**, so the identical bot scored 15/30, then 26/30 once it
+could actually see the site. The cause was a missing `robots.txt` on my end — that's
+where Botpress looks for your sitemap, and it ignores the HTML sitemap link entirely.
+The bot was never the problem, and mostly neither was the tool.
 </ShortVersion>
 
 You can try it yourself — it's the widget in the bottom corner of this page, not a
@@ -64,14 +66,28 @@ adversarial test questions exist to catch. Instructions go in the Instructions f
 the knowledge base is for things you want quoted back at you.
 </ProcessStep>
 
-<ProcessStep result="fail" title="Botpress indexed 2 of 8 pages and never said so" tag="tool-limit">
+<ProcessStep result="fail" title="My site had no robots.txt — so the crawler found almost nothing" tag="my-setup">
 The first test run scored 15/30 and I nearly wrote the bot off. Every miss was an
 honest "I couldn't find that" — never a fabrication — which was the clue. The knowledge
-base had crawled exactly **two** pages: the home page and one long build log. The About,
-Privacy, Affiliate disclosure, Subscribe, Tools and Builds pages were simply absent.
-Nothing in the interface flagged partial coverage. A grounded bot with a 25%-complete
-knowledge base is indistinguishable from a stupid bot, and that is a genuinely bad
-failure mode to ship without a warning.
+base had exactly **two** pages: the home page and one long build log. About, Privacy,
+Affiliate disclosure, Subscribe, Tools and Builds were simply absent.
+
+I blamed Botpress for that in the first version of this post, and I was wrong.
+`jigg.ai/robots.txt` returned a 404 — the site never had one. **That's where Botpress
+looks for your sitemap**, and it ignores the `<link rel="sitemap">` in your HTML, which
+this site has always had. Add the file, re-sync, and it finds everything: 2 pages became
+11. A missing robots.txt is standard-hygiene stuff and squarely my own gap.
+</ProcessStep>
+
+<ProcessStep result="fail" title="…and it never warned me the coverage was partial" tag="tool-limit">
+What stays the tool's fault is the silence. Indexing a quarter of a site isn't an error
+state in Botpress — it's a successful sync. Nothing in the interface says "I found 2
+pages," no warning, no coverage number to sanity-check. And when I fed it a single valid
+URL explicitly, a clean `200` with real content, all it said was **"0 pages found."**
+
+That combination is genuinely dangerous, because a grounded bot with a quarter of a
+knowledge base is indistinguishable from a stupid bot. It answers honestly and looks
+incompetent, and the tool gives you nothing to tell the difference.
 </ProcessStep>
 
 <ProcessStep result="fail" title="Then I chased two wrong theories at it" tag="my-setup">
@@ -93,9 +109,17 @@ only caught it because an answer ended mid-thought in a way a language model wou
 </ProcessStep>
 
 <ProcessStep result="pass" title="What worked">
-Hand-built the six missing pages into import files and loaded them as documents.
-Knowledge base went from 2 sources to 8. Then I re-ran the identical 30 questions,
-against the identical bot, with the instructions untouched.
+Two fixes, and the second is the one you actually want.
+
+**The workaround:** hand-built the six missing pages as markdown and imported them as
+documents. Knowledge base went from 2 sources to 8, and re-running the identical 30
+questions against the identical bot — instructions untouched — took it to 26/30.
+
+**The actual fix, found afterwards:** add a `robots.txt` with a `Sitemap:` line. Re-sync,
+and Botpress discovers all 11 URLs on its own, including the sitemaps themselves. The
+hand-built files then become a liability rather than a help — a frozen copy that drifts
+from the live site — so they came back out. Crawl beats import, once the crawler can
+actually see your site.
 </ProcessStep>
 
 ## The test

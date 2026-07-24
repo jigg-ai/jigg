@@ -40,16 +40,28 @@ The KB **is the site's own public content**, which is already versioned in this 
 under `site/` — so there are no separate KB files to generate or store. The bot is
 grounded by crawling the live site:
 
-- Source type: **Website** → root domain `jigg.ai`, indexing the public pages:
-  `/`, `/builds`, `/builds/website`, `/tools`, `/about`, `/privacy`,
-  `/affiliate-disclosure`, `/subscribe`.
-- Crawl date: _TBD — record when first indexed (perishable)._
+- Source type: **Website** → root domain `jigg.ai`. As of 2026-07-23 this indexes **11
+  entries**: the 9 public pages plus both sitemap XMLs.
+- **`site/public/robots.txt` is load-bearing for this.** Botpress finds the sitemap
+  through `robots.txt` and ignores the HTML `<link rel="sitemap">`. Without that file the
+  crawl reached only 2 pages. If coverage ever collapses again, check robots.txt first.
+- The 6 hand-built imports in `kb/` were the workaround while coverage was broken and were
+  **removed from Botpress on 2026-07-23** once the crawl worked — two copies of the same
+  content is a drift risk, and the crawl re-checks itself while a file does not.
+- Consider deselecting the two sitemap XML entries: they're indexed as "pages" but carry
+  no answerable content.
 - Build #2's own build log (`/builds/botpress`) isn't public yet, so it's not indexed;
   the bot should decline "how was this chatbot built?" until that build log publishes.
 
-**Re-crawl trigger:** after the widget + updated `/privacy` go live, re-crawl `/privacy`
-so the bot stops giving the pre-widget "email is the only data collected" answer (test
-A8). More generally, re-crawl when published site content changes materially.
+**Re-crawl trigger — this is a hard step, not a reminder.** Re-crawl after ANY deploy
+that changes published copy, then spot-check one question whose answer changed.
+
+Not hypothetical: at build #2's publish this was skipped, and within minutes the live bot
+was telling visitors the build-#1 repro pack contained "full-resolution editable diagrams"
+and a "complete curated prompt sequence" — the retracted list, deleted from the page in
+that very deploy, describing artifacts that never existed. The crawled sources
+(`jigg.ai`, `jigg.ai/builds/website`) had been indexed ~18h earlier and kept answering
+from the old copy. Publishing a correction does not correct the bot.
 
 **If the 30-question test exposes a gap** (e.g. the meaning of the freshness states, or
 of the "Runs on this site" badge, which may be thin in public prose): prefer adding that

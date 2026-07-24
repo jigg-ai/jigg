@@ -59,7 +59,7 @@ meta_line: ""         # short mono index-row detail — fill at draft
 # source of truth, so a tool's own facts live on the build. When several builds
 # share a tool, the most-recent build's tool_* values win (see site/src/lib/builds.ts).
 tool_summary: "No-code chatbot builder, hosted"   # no pricing claim until captured
-tool_verdict: "Genuinely good at the thing that matters — it never once made an answer up, across 60 graded questions. The trap is the knowledge base: it silently indexed 2 of my 8 pages and told me nothing, which made a well-behaved bot look stupid until I checked."
+tool_verdict: "Never made an answer up across 60 graded questions — genuinely good at the part that matters. The trap is knowledge-base coverage: it finds your sitemap via robots.txt and ignores the HTML link, then never warns you it indexed only a fraction. Check coverage before you judge a single answer."
 accessibility: "Some setup"   # building the bot needs no code, BUT the silent
                       # 2-of-8 KB coverage trap is not something a beginner would
                       # catch — they'd just conclude the bot was bad.
