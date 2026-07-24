@@ -130,6 +130,22 @@ point. See `builds/website/test.md` for the per-check detail on build #1.
   that doesn't exist — the exact overclaim already logged against build #1. Swap in
   `ReproPack` once a real pack exists.
 
+## Recoverable, not lost
+
+- **Build #1's cross-model exchange may be recoverable from the original chats.** The
+  audit established only that no prompt/critique artifact exists *in the repo*; the
+  ChatGPT and Claude histories likely still exist outside it. If exported, this closes the
+  one promise build #1 couldn't keep — properly, with real material.
+  - **Export the real chats. Do not reconstruct them.** Exporting is evidence;
+    rewriting from memory is fabrication, and the difference is invisible to a reader,
+    which is precisely why the line has to hold.
+  - Use `builds/_template/repro/exchange-log.md`: label every block `verbatim` /
+    `excerpt` / `redacted` / `summary`, and work the redaction checklist first — planning
+    chats routinely contain revenue/exit figures and identity details the site
+    deliberately never publishes.
+  - If it's redacted heavily, **don't call it "the full back-and-forth."** Describe what
+    it actually is. The original overclaim was the word "full" as much as the missing file.
+
 ## Schema / content drift (found while wiring build #2)
 
 - **`repro_pack` is a schema field nothing reads.** It's defined in

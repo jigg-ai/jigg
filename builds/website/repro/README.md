@@ -24,14 +24,18 @@ Plus, already public elsewhere in this repo:
 ## What is deliberately NOT in here, and why
 
 The build page previously advertised a **"complete curated prompt sequence"** and the
-**full model-critique back-and-forth** between Claude and ChatGPT. **Those artifacts do
-not exist.** Build #1's session was never recorded — the prompts and critiques were not
-captured anywhere in the repo, and there is no transcript to publish.
+**full model-critique back-and-forth** between Claude and ChatGPT. Neither is here,
+because neither was ever captured **into this repo** during build #1.
 
-They are not included here because the only way to produce them now would be to write
-plausible-looking prompts after the fact and present them as the real ones. Manufacturing
-evidence to satisfy a promise is worse than the broken promise, so the promise was
-retracted from the build page instead.
+Precisely: what's verified is that no prompt or critique artifact exists anywhere in the
+repository. The original ChatGPT and Claude chat histories may well still exist outside
+it — so treat this as a **capture failure, not a lost artifact**. It is recoverable by
+exporting those chats, redacting them, and adding them here with their provenance
+labelled (see `builds/_template/repro/exchange-log.md` for the shape).
+
+What will not happen is reconstruction. Writing a plausible-looking exchange from memory
+and presenting it as the original is fabrication no matter how closely it resembles what
+happened, and it is a worse failure than the missing file it would paper over.
 
 Two further items are absent for the same reason:
 - **"Full-resolution editable diagrams"** — no source diagram files were ever created.

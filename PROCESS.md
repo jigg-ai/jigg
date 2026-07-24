@@ -18,11 +18,32 @@ In `build-notes.md`, write:
 
 ## 2. Build
 - Do the work: Claude Code for site/repo builds; the tool itself otherwise.
-- **Capture the prompts and key decisions AS YOU GO**, into `build-notes.md` or a file
-  under `repro/`. Not a nice-to-have: build #1 promised "the actual prompts and critiques"
-  in its repro pack and could not deliver, because the session was never recorded. A
-  prompt you didn't save cannot be honestly reconstructed later — writing plausible ones
-  after the fact and calling them the originals is manufacturing evidence.
+- **Capture the prompts and key decisions AS YOU GO.** Build #1 promised "the actual
+  prompts and critiques" in its repro pack and shipped without them, because none of it
+  was captured into the repo. A prompt you didn't save cannot be honestly reconstructed
+  later — writing plausible ones afterwards and calling them the originals is
+  manufacturing evidence, and it's undetectable, which is what makes it disqualifying.
+
+  **Two kinds of material, two different owners — don't conflate them:**
+
+  | Material | Who can capture it |
+  |---|---|
+  | Work inside Claude Code / the repo | **The agent.** Log decisions, errors and dead ends to `build-notes.md` as they happen. |
+  | Cross-model exchanges in ChatGPT / Claude.ai | **Only the human.** The agent cannot see those chats and must never infer their contents. |
+
+  So the agent's obligation for external exchanges is not to produce them — it's to
+  **ask for them, explicitly, at draft time**, and to record a visible `NOT CAPTURED`
+  entry if they aren't supplied. Silently omitting them is how build #1's promise rotted.
+
+- **Starting a cross-model critique? Open the exchange log first.** Copy
+  `builds/_template/repro/exchange-log.md` to `builds/<slug>/repro/` and paste each round
+  in as it happens. Say "starting an exchange, log it" and the agent should open the file
+  and prompt for each round rather than waiting until the end. The template carries the
+  provenance labels (`verbatim` / `excerpt` / `redacted` / `summary`) and, importantly, a
+  **redaction checklist** — the pack is public, so a raw planning chat can leak revenue
+  figures, exit targets, or the identity behind the persona. On chatbot builds that's the
+  same material the adversarial tests exist to stop the bot revealing; don't let the
+  repro pack become the leak the bot refused to be.
 - For repo/site builds, let Claude Code scaffold from the brief (don't hand-build and
   push), and verify Git identity + push auth BEFORE the first commit: repo-local
   `user.email`, a single account-level SSH key (not a read-only deploy key), a clean
