@@ -18,6 +18,11 @@ In `build-notes.md`, write:
 
 ## 2. Build
 - Do the work: Claude Code for site/repo builds; the tool itself otherwise.
+- **Capture the prompts and key decisions AS YOU GO**, into `build-notes.md` or a file
+  under `repro/`. Not a nice-to-have: build #1 promised "the actual prompts and critiques"
+  in its repro pack and could not deliver, because the session was never recorded. A
+  prompt you didn't save cannot be honestly reconstructed later — writing plausible ones
+  after the fact and calling them the originals is manufacturing evidence.
 - For repo/site builds, let Claude Code scaffold from the brief (don't hand-build and
   push), and verify Git identity + push auth BEFORE the first commit: repo-local
   `user.email`, a single account-level SSH key (not a read-only deploy key), a clean
@@ -38,9 +43,29 @@ In `build-notes.md`, write:
 - Draft only. Never auto-publish.
 
 ## 5. Verify & publish
-- Human edit pass for honesty and voice.
-- Assemble the repro pack in `repro/` (public substantiation + gated full files).
-- Set `published`, `last_verified`, `status` in `meta.yaml`.
+
+**This step has a human in it. It is not optional and it is not the agent's to skip.**
+
+- **Assemble the repro pack in `repro/` — generate it, don't defer it.** Whoever drafts
+  the post also assembles the pack in the same pass, from artifacts that actually exist.
+  Default to **public, in-repo**: a pack behind an email gate contradicts the site's own
+  "no database, no lock-in" claim, and a gated pack that doesn't exist is worse — build
+  #1 shipped a form collecting addresses for a pack that was never built. If a promised
+  artifact wasn't captured, **say so in the pack** rather than reconstructing it.
+- **Then STOP and ask the human for the edit pass, explicitly.** Do not set `published`
+  or flip `status` to `verified` first, and do not mark a build verified on the agent's
+  own say-so. The ask should be concrete, not "does this look OK?" — hand over:
+  - a claim-by-claim audit of the draft against `test.md`, `meta.yaml` and `git log`,
+    flagging anything overclaimed, contradicted, or unsupported;
+  - the specific decisions only a human should make (does this merit `verified`? does
+    the copy overpromise? is the voice right?).
+- **Only after the human signs off:** set `published`, `last_verified`, `status`.
+
+> Why this is written so hard: build #1 was published with `status: verified` while two
+> of these three sub-steps had never happened. The flag asserted a verification the
+> process defines and that nobody performed. A `verified` badge the process didn't earn
+> is the one failure mode this project cannot survive, because it's the exact thing the
+> whole site claims to be better at.
 
 ## 6. Retro — this is how the process evolves
 - 2–3 lines: what was clunky, what to change next time.
@@ -71,3 +96,21 @@ In `build-notes.md`, write:
 - Open items that outlived this build are tracked in `BACKLOG.md`, not here — one
   backlog in one place, so deferrals don't drift across files. This retro stays
   retrospective: what was clunky, and what changed in the process because of it.
+
+### Build #1 — audit of the published post (Jul 2026, during build #2)
+Build #1 was audited claim-by-claim against `test.md`, `meta.yaml`, `repro/` and
+`git log` before build #2 was allowed to publish. What it found, and what changed:
+- **`status: verified` was set while step 5 had never been done.** The human edit pass
+  and the repro pack were both skipped; only the metadata was filled in. Step 5 is now
+  written as a hard gate with the human ask made explicit, because an agent that can
+  quietly mark its own work verified makes the freshness system decorative.
+- **The page promised a repro pack that didn't exist, behind an email form.** Fixed by
+  building the pack for real and making it public in-repo. Packs are now assembled in the
+  same pass as the draft, not deferred — deferred packs become permanent promises.
+- **The page undercounted its own unrun checks** ("the one check" when `test.md` recorded
+  three). The lesson generalises: prose that summarises `test.md` drifts from it, so state
+  counts, not adjectives, and check them against the file.
+- **Two promised artifacts could not be produced honestly** because the build session was
+  never recorded. Hence the new capture-as-you-go requirement in step 2. The gap is
+  disclosed on the page rather than reconstructed — an admitted hole beats a plausible
+  fabrication, and this project cannot afford to be caught doing the second.

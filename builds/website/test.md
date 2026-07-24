@@ -22,7 +22,7 @@ For a site build the check set isn't Q&A — it's whether the foundation actuall
 | 4 | Adding a new markdown build updates all views, no page-code edits | **Pass** | Temp entry → appeared on home, archive, and /tools, and generated its own detail route. Zero page-code changes. The core invariant, measured rather than assumed. |
 | 5 | "Runs on this site" badge shows only when runs_on_site: true | **Pass** | With 2 builds (one true, one false), badge count on /builds was exactly 1. |
 | 6 | Freshness state (verified/recheck-due/archived) renders correctly | **Pass (partial)** | `verified` (green) and `recheck-due` (amber) both confirmed. `archived` not yet exercised — no archived build exists. |
-| 7 | Lighthouse performance is strong (note score) | **Not run** | Needs the live deploy first. No score to claim. |
+| 7 | Lighthouse performance is strong (note score) | **Not run — now wired** | 2026-07-22: `@netlify/plugin-lighthouse` added to `netlify.toml`, auditing `/`, `/builds/`, `/tools/`, `/builds/website/` on every deploy. No thresholds set until a baseline exists. Still **no score to claim** until a deploy has run — record the real numbers here then. |
 | 8 | Basic accessibility passes (headings, alt text, contrast) | **Partial** | Built for it — semantic landmarks, skip link, heading order, `aria-current`/`aria-pressed`, decorative SVGs `aria-hidden`, visible focus rings. But NOT formally audited: no axe/Lighthouse run, contrast ratios not measured. Not claiming a pass. |
 | 9 | Mobile layout holds | **Pass** | 375×812: header wraps, serif scales via clamp, email capture stacks full-width, no horizontal overflow. |
 

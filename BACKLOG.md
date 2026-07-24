@@ -12,13 +12,30 @@ point. See `builds/website/test.md` for the per-check detail on build #1.
 
 ## Verification debt (build #1)
 
-- **Lighthouse performance pass** — `test.md` check #7, **not run**. Unblocked since the
-  deploy; needs a run against `https://jigg.ai` and the score recorded honestly.
+- **Lighthouse performance pass** — `test.md` check #7. **Now wired, not yet measured:**
+  `@netlify/plugin-lighthouse` is configured in `netlify.toml` to run on every deploy
+  against `/`, `/builds/`, `/tools/` and `/builds/website/`. Deliberately **no failing
+  thresholds** until a baseline exists — a threshold guessed before the first measurement
+  either breaks deploys for nothing or passes vacuously. **Next:** read the first real
+  scores off a deploy, record them in `test.md`, then set thresholds just under baseline
+  so genuine regressions break the build.
 - **Formal accessibility audit** — check #8, **partial**. The site is *built* for it
   (semantic landmarks, skip link, heading order, `aria-current`/`aria-pressed`,
-  decorative SVGs `aria-hidden`, visible focus rings), but there's been no axe or
-  Lighthouse a11y run and contrast ratios are unmeasured. Deliberately not claimed as a
-  pass.
+  decorative SVGs `aria-hidden`, visible focus rings), but there's been no axe run and
+  contrast ratios are unmeasured. The Lighthouse plugin will now produce an a11y *number*
+  — **do not let that number upgrade this to a pass.** Lighthouse a11y is an automated
+  subset; a real audit still means axe + manual keyboard/contrast checks.
+- **"In one sitting" is an undocumented claim** — build #1's `tool_verdict` (shown on
+  `/tools`) says "empty folder to a live, four-view content engine in one sitting."
+  `git log` supports it: scaffold commits all land at `2026-07-17 11:53`, deploy at
+  `13:22`–`13:34`, so roughly **1h45m from scaffold to live**. But no time was ever
+  recorded, and STYLE asks for "times, costs, test scores" as concrete proof. Replace the
+  adjective with the measured number, or record a real timing next build.
+- **`$0` hosting tile is unverified in-repo** — build #1 claims "$0 Hosting (static, free
+  tier)" with `pricing_as_of: 2026-07-17`. Plausible and fresh, but no receipt or evidence
+  lives in the repo. Re-verify on the CONTEXT §9 pricing cadence (60–90 days → due around
+  **mid-to-late Sep 2026**), and note that Netlify free-tier build minutes are finite —
+  adding the Lighthouse plugin consumes more of them per deploy.
 - **`archived` freshness state never exercised** — check #6 is a partial pass:
   `verified` (green) and `recheck-due` (amber) are both confirmed, but no archived build
   exists yet, so that rendering path is untested. Naturally testable as builds age.
@@ -131,9 +148,16 @@ point. See `builds/website/test.md` for the per-check detail on build #1.
 
 ## Not built yet
 
-- **The repro pack itself** — the build page *describes* the pack's contents, but no
-  downloadable file is assembled or delivered. "Get the pack" currently just subscribes
-  via Buttondown. Assemble the pack, or soften the copy, before it's promoted hard.
+- ~~**The repro pack itself**~~ — **BUILT 2026-07-22.** Build #1's pack now exists and is
+  **public in the repo** at `builds/website/repro/`: `architecture.md`, `schema.md`,
+  `reproduce.md`, `deploy.md`. The email gate is gone — a pack you pay for with your
+  address contradicts the site's own "no database, no lock-in" claim, and the old form was
+  collecting addresses for a pack that did not exist. `repro_pack: false` now, since the
+  flag meant "gated download available." **Two promised artifacts were dropped rather than
+  faked:** the "curated prompt sequence" and the model-critique transcript — build #1's
+  session was never recorded, and reconstructing them would be manufacturing evidence.
+  The pack and the build page both say so plainly. Kept here as the record; delete on the
+  next sweep.
 - **Human verify/edit pass on build #1's post copy** — PROCESS step 5, and the item most
   at risk of permanent deferral. The prose is a first honest draft written by the same
   agent that did the build, with no independent editorial pass. Build #1 is currently the
@@ -154,9 +178,11 @@ These are cheap to clear once builds #2/#3 land, and near-impossible before:
 - **Tools-index aggregation ("most-recent wins")** — when several builds share a `tool`,
   `src/lib/builds.ts` sums the build count and uses the most-recent build's `tool_*`
   fields. Documented, but never exercised with two builds on one tool.
-- **Repro-pack copy consistency** — the post says the model-critique back-and-forth is
-  "in the repro pack," but the listed pack contents don't name it. Reconcile when the
-  pack is actually assembled.
+- ~~**Repro-pack copy consistency**~~ — **RESOLVED 2026-07-22.** The post claimed the
+  model-critique back-and-forth was "in the repro pack"; it was in neither the delivered
+  pack (which didn't exist) nor the planned contents. Root cause: the session was never
+  recorded. The claim is retracted on the build page with the reason stated, and PROCESS
+  §2 now requires capturing prompts and decisions *during* the build.
 - **No view of what's due for re-verification** — CONTEXT §9 defines a cadence
   (pricing-sensitive claims ~60–90 days, active production artifacts ~monthly, workflow
   conclusions after major releases), and every build stores `last_verified`, but nothing

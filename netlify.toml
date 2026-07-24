@@ -10,3 +10,33 @@
 [build.environment]
   # Pin the Node version for reproducible builds (Astro 7 needs a current Node).
   NODE_VERSION = "22"
+
+# Lighthouse on every deploy. This closes test.md check #7 (performance, previously
+# "Not run" with no score to claim) and gives check #8 a real accessibility NUMBER —
+# though note an automated Lighthouse a11y score is NOT a formal audit; it catches a
+# subset of issues. Don't upgrade check #8 to a full pass on this alone.
+#
+# Running it per-deploy rather than once by hand is deliberate: a score measured once
+# and quoted forever is exactly the stale claim this project exists to avoid.
+[[plugins]]
+  package = "@netlify/plugin-lighthouse"
+
+  [plugins.inputs]
+    output_path = "reports/lighthouse.html"
+
+  # Audit the views that actually matter, not just the home page: the archive and the
+  # tools index are generated from the builds collection, so they're where a regression
+  # would show up first.
+  [[plugins.inputs.audits]]
+    path = "/"
+  [[plugins.inputs.audits]]
+    path = "builds/"
+  [[plugins.inputs.audits]]
+    path = "tools/"
+  [[plugins.inputs.audits]]
+    path = "builds/website/"
+
+  # NO failing thresholds yet — ON PURPOSE. We have never measured this site, so any
+  # threshold set now would be a guess, and a guessed threshold either fails deploys
+  # for no reason or passes vacuously. Record the first real scores, then set
+  # thresholds just under the baseline so genuine regressions break the build.

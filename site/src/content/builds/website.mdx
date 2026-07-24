@@ -8,7 +8,7 @@ runs_on_site: true
 status: "verified"
 summary: "Claude Code took this site from an empty folder to a live, four-view build-log engine where publishing a new post is adding one markdown file. The build itself went smoothly — the one caveat is that the real time sink wasn't the code at all, it was the Git and GitHub auth setup around it."
 test_score: ""
-repro_pack: true
+repro_pack: false   # public in-repo pack, not a gated download — see repro/
 published: 2026-07-17
 last_verified: 2026-07-17
 pricing_as_of: 2026-07-17
@@ -22,7 +22,7 @@ accessibility: "Some setup"
 import ShortVersion from '../../components/post/ShortVersion.astro';
 import ProcessStep from '../../components/post/ProcessStep.astro';
 import StatTiles from '../../components/post/StatTiles.astro';
-import ReproPack from '../../components/post/ReproPack.astro';
+
 import ToolVerdict from '../../components/post/ToolVerdict.astro';
 
 <ShortVersion>
@@ -49,8 +49,10 @@ site/src/
    └─ tools/index.astro            → tools index
 ```
 
-Every page reads that same collection — none of it is bespoke to this post, so you
-could lift this structure wholesale for your own site.
+Those four pages all read that same collection — none of it is bespoke to this
+post, so you could lift this structure wholesale for your own site. (The standalone
+pages — About, Privacy, the disclosure — are a separate `pages` collection; they
+don't touch the build data at all.)
 
 ## The honest process
 
@@ -88,8 +90,15 @@ steal. The concept and the page designs didn't come from one AI in one pass. Mos
 of the thinking was done in Claude (Opus 4.8), with ChatGPT (5.6) pulled in as a
 second opinion; the UI mockups were made by Claude, then critiqued by ChatGPT, with
 the useful feedback folded back in by Claude. Having one model red-team another's
-work caught things the first missed. Simple move, real payoff — the full
-back-and-forth, with the actual critiques and prompts, is in the repro pack.
+work caught things the first missed. Simple move, real payoff.
+
+An honest correction, added later: this section used to promise "the full
+back-and-forth, with the actual critiques and prompts" in the repro pack. **That
+material doesn't exist.** The session was never recorded, so there's no transcript
+to publish — and writing plausible-looking prompts after the fact and passing them
+off as the originals would be worse than admitting the gap. The pack says so
+plainly, and capturing prompts during the build is now an explicit pipeline step
+rather than an afterthought.
 
 ## The test
 
@@ -105,9 +114,18 @@ actually holds. What's verified so far:
 Adding a markdown file lights up the home page, the archive, its own detail page,
 and the tools index with no page-code changes — the core invariant passes. The
 "Runs on this site" badge and the freshness states render straight from
-frontmatter. And it's shipped: deployed on Netlify and live at
-[jigg.ai](https://jigg.ai), on a custom domain with HTTPS. The one check still
-logged as pending rather than claimed is a Lighthouse performance pass.
+frontmatter — though only two of the three freshness states have actually been
+seen render: `verified` and `recheck-due`. No build has been archived yet, so that
+path is still untested. And it's shipped: deployed on Netlify and live at
+[jigg.ai](https://jigg.ai), on a custom domain with HTTPS.
+
+**Three** checks are logged as pending rather than claimed, not one: the Lighthouse
+performance pass (never run — Lighthouse now runs on every deploy, so there'll be a
+real number instead of an adjective), the accessibility audit (the site is *built*
+for it — semantic landmarks, skip link, heading order, visible focus rings — but it
+has never been formally audited, no axe run, contrast unmeasured), and the
+`archived` freshness state above. An earlier version of this page said "the one
+check," which undercounted; `test.md` had it right and the page didn't.
 
 <StatTiles variant="fact" stats={[
   { value: "$0", label: "Hosting (static, free tier)" },
@@ -117,26 +135,29 @@ logged as pending rather than claimed is a Lighthouse performance pass.
 
 ## Reproduce this
 
-<ReproPack
-  onPage={[
-    "The repository tree above — the one entry and the four files that read it",
-    "The AI workflow that made it, and which model did what",
-    "Every failure from the build, tagged my-setup vs tool-limit",
-    "The exact stack and versions, in the stamp at the top",
-    "What the test checked — and the checks still unrun",
-  ]}
-  packDescription="Reproduce this build — Get the complete content schema, AI workflow, architecture diagram, curated build prompts, annotated repository structure, and runnable Astro scaffold used to build Jigg.AI."
-  packContents={[
-    "Complete schema and sample dataset",
-    "Full-resolution editable diagrams",
-    "Complete curated prompt sequence",
-    "Full repository map",
-    "Runnable Astro scaffold",
-    "Setup guide",
-    "Deployment checklist",
-    "Reusable templates",
-  ]}
-/>
+The pack is **public, in the repository** — no email, no download gate. That's the
+only version that's consistent with claiming "no database, no lock-in": a pack you
+have to pay for with your address would contradict the whole point.
+
+It lives in [`builds/website/repro/`](https://github.com/jigg-ai/jigg/tree/main/builds/website/repro):
+
+- **`architecture.md`** — the one-collection → four-views design, with a diagram
+  drawn from the actual code, and why `/tools` is a projection rather than a second list.
+- **`schema.md`** — the content schema annotated field by field, including the three
+  tool roles and why merging them would break the link/no-link split.
+- **`reproduce.md`** — rebuild from an empty folder: exact commands, pinned versions,
+  and how to re-run the core-invariant check yourself.
+- **`deploy.md`** — the Netlify config, the Lighthouse plugin, and the full Git/SSH
+  auth chain that ate the time, with the fix.
+
+Alongside it, already public: [`build-notes.md`](https://github.com/jigg-ai/jigg/blob/main/builds/website/build-notes.md)
+(the journal, dead ends included) and [`test.md`](https://github.com/jigg-ai/jigg/blob/main/builds/website/test.md)
+(the check set decided before building, and what's still unrun).
+
+**What's not in it, and why:** this page used to advertise a curated prompt sequence
+and full-resolution editable diagrams. Neither exists — the session wasn't recorded
+and no diagram sources were ever made. They're absent rather than reconstructed,
+because inventing artifacts to satisfy an old promise is worse than retracting it.
 
 ## The tool
 
