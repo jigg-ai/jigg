@@ -72,6 +72,19 @@ point. See `builds/website/test.md` for the per-check detail on build #1.
   for the exact errors people hit (e.g. "subscriber blocked by your firewall", "Buttondown
   Netlify 400"). Keep it **out of `/tools`** (Buttondown isn't an AI tool). Full raw material
   is in `builds/website/build-notes.md`. Trigger: provider swap / signup rebuild, not a date.
+- **Revisit Buttondown's spam firewall once there's real subscriber traction.** All of it is
+  currently **off** — Auditing mode Disabled, IP-address auditing off, Attack mode off — because
+  it was false-positiving legitimate signups (including the owner's own email) through the
+  server-side proxy, and at zero subscribers it guards against spam volume that doesn't exist.
+  Double opt-in is the gate for now. **When there's an audience worth spam-targeting, reconsider
+  re-tightening — but mind the proxy constraints that caused the mess:** (1) IP-address auditing
+  will *always* false-positive, since every signup reaches Buttondown from Netlify's datacenter IP;
+  (2) Attack mode auto-escalates to IP auditing on a "surge of unactivated subscribers," which a
+  real launch looks exactly like — so those two should stay off regardless; (3) plain Auditing
+  mode "Enabled" still heuristic-blocks some legit gmail addresses. Safer lever if needed:
+  "Handling blocked subscribers" = keep-for-review (not reject), so false positives stay visible
+  and recoverable rather than silently dropped. Trigger: real signups/spam appearing, not a date.
+  Background: the firewall saga in `builds/website/build-notes.md` and the build #1 postscript.
 
 - ~~**Botpress's Website sync silently refuses valid pages — cause never determined**~~ —
   **SOLVED 2026-07-23: we had no `robots.txt`.** That's where Botpress looks for the
