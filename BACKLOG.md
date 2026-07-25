@@ -216,10 +216,19 @@ captured; embed built + verified at desktop/mobile. Still-open items are follow-
   badly: 20%/12mo vs 25% vs 35%/3mo, so never state numbers from memory) as `affiliate_url` in
   the `.mdx` frontmatter, and the ToolVerdict CTA turns on automatically. Also confirms the
   stamp then links HeyGen only. (Same shape as build #2's deferred-pricing item.)
-- **POST-DEPLOY (after the human pushes) — re-sync the Botpress bot's KB (PROCESS §5).**
-  Publishing a new build adds site content the live bot answers from; re-crawl and spot-check
-  one question about the explainer video in a **fresh conversation** (clear
-  `bp-webchat-message-history-default`, per the trap logged twice already).
+- **POST-DEPLOY — Botpress KB re-sync IN PROGRESS (PROCESS §5).** Pushed + deployed
+  2026-07-24. First re-crawl did **not** pick up `/builds/explainer-video/`. Our side
+  verified live and correct: page returns `200`, it **is** in `sitemap-0.xml`, the sitemap is
+  served fresh (`cache-control: max-age=0, must-revalidate`, Netlify, no Cloudflare proxy),
+  and `robots.txt` points to `sitemap-index.xml`. So this is the **same Botpress silent
+  under-indexing documented all through build #2** — a valid, discoverable page the crawler
+  just doesn't take, with no warning. Next: re-crawl again now that the deploy is confirmed
+  live (the first crawl may have run before propagation); confirm the Botpress source list
+  shows the new page (the tool won't warn — build #2 standing check); if it still refuses,
+  fall back to a manual KB Document import (build #2 workaround, reintroduces the drift
+  obligation). When testing the bot afterward, use a **fresh conversation** (clear
+  `bp-webchat-message-history-default`) — the conversation-restore trap gave a false
+  "didn't work" reading twice in build #2.
 - **Repro pack is human-owned in part.** The video clips, both raw renders, the brand kit, the
   **prompts** and the **Claude↔ChatGPT exchange** live in HeyGen and the chats — HeyGen has no
   prompt export. Marked TO ADD / awaiting export in `repro/`, not reconstructed (PROCESS §2).
