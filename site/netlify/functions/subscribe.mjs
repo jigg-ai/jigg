@@ -10,7 +10,7 @@
 // The API key lives ONLY in the BUTTONDOWN_API_KEY env var (set in Netlify), never
 // in the repo. Netlify Functions v2 signature: `export default (req) => Response`.
 
-const API_URL = 'https://api.buttondown.email/v1/subscribers';
+const API_URL = 'https://api.buttondown.com/v1/subscribers';
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default async (req) => {
@@ -42,12 +42,19 @@ export default async (req) => {
     return reply({ ok: false, error: 'invalid_email' }, 422, '/subscribe?error=invalid');
   }
 
+  // Pass the real visitor's IP so Buttondown's spam firewall judges the actual
+  // subscriber, not our datacenter server IP (which it otherwise 400s as spam).
+  const clientIp =
+    req.headers.get('x-nf-client-connection-ip') ||
+    (req.headers.get('x-forwarded-for') || '').split(',')[0].trim() ||
+    undefined;
+
   let bdRes, bdBody;
   try {
     bdRes = await fetch(API_URL, {
       method: 'POST',
       headers: { Authorization: `Token ${key}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email_address: email }),
+      body: JSON.stringify({ email_address: email, ...(clientIp && { ip_address: clientIp }) }),
     });
     bdBody = await bdRes.json().catch(() => ({}));
   } catch (err) {
@@ -65,7 +72,14 @@ export default async (req) => {
   }
 
   console.error('Buttondown subscribe failed', bdRes.status, bdBody);
-  return reply({ ok: false, error: 'subscribe_failed' }, 502, '/subscribe?error=failed');
+  // `upstream` is a temporary diagnostic — surfaces Buttondown's real reason so we
+  // can pin the 400 without reading Netlify logs. Trim once the flow is confirmed.
+  const detail = bdBody && (bdBody.detail || bdBody.code || JSON.stringify(bdBody));
+  return reply(
+    { ok: false, error: 'subscribe_failed', upstream: { status: bdRes.status, detail: String(detail).slice(0, 300) } },
+    502,
+    '/subscribe?error=failed'
+  );
 };
 
 const json = (data, status = 200) =>
