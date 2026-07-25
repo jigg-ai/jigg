@@ -200,6 +200,35 @@ cost us a wrong reading in one build.
   that doesn't exist — the exact overclaim already logged against build #1. Swap in
   `ReproPack` once a real pack exists.
 
+## Build #3 (explainer video, HeyGen) — open at scaffold (2026-07-24)
+
+Scaffolded as a **draft** from the build-#3 handoff: `builds/explainer-video/`
+(meta.yaml, BRIEF, build-notes, test, post, repro). Built + tested, NOT published — the
+detail below is in-build (tracked in its own files); listed here so the one backlog sees it.
+
+- **Three publish gates still open (verification debt) — do NOT publish those sections
+  until they clear:** (1) the HeyGen **Rewardful affiliate link + real terms/cookie
+  window** from the official dashboard — third-party sources disagree badly (20%/12mo vs
+  25% vs 35%/3mo), so never state numbers from memory; (2) the **real paid price from the
+  receipt** → `pricing_as_of` + cost-per-finished-minute (a test metric); (3) the
+  **YouTube link** (channel verification pending) → embed + description/pinned/end-screen.
+  Plus confirm the AI-disclosure line renders beside the embed (CONTEXT §4).
+- **Human verify/edit pass (PROCESS §5) not done.** `status`/`published`/`last_verified`
+  are blank on purpose; the handoff pre-filled `verified`/`published: true` and the agent
+  did not set them. Assemble the pack, then hand the human a claim-by-claim audit.
+- **Repro pack is human-owned in part.** The video clips, both raw renders, the brand kit,
+  the **prompts** and the **Claude↔ChatGPT exchange** live in HeyGen and the chats — HeyGen
+  has no prompt export. They're marked TO ADD / awaiting export in `repro/`, not
+  reconstructed (PROCESS §2). `repro_pack` stays false until they're in.
+- **Operational test figures TO-CAPTURE:** time to render, takes, credits, $/min, run date
+  (`test.md` Part 2). Left blank, not estimated.
+- **Deferred to a future build:** a full **HeyGen vs Synthesia comparison** (same 90s
+  script into both, reader judges) — parked until this solo baseline exists.
+- **Series-wide v2 fix:** choosing a **frame-filling/landscape avatar** kills the
+  pillarboxing across *every* future video build, not just this one — decide it once. Also
+  per-build v2: deliberate proof-zooms and a soft caption track (`.srt`). These are a
+  "what I'd change" retro on the page, not a re-render now.
+
 ## Recoverable, not lost
 
 - **Build #1's cross-model exchange may be recoverable from the original chats.** The
