@@ -3,13 +3,12 @@
 # This file is CANONICAL: site/src/content.config.ts mirrors it exactly. If you
 # add a field in one, add it in the other — they must not drift.
 #
-# STATUS: Draft stage (PROCESS §4). The video is built and tested, but this build
-# has NOT been through the human verify pass (PROCESS §5) and cannot publish yet:
-# three perishable facts are still unobtained — the real Rewardful affiliate link,
-# the real paid price from the receipt, and the YouTube link (channel verification
-# pending). Those are left blank ON PURPOSE. The handoff's Part A §1 pre-filled
-# `status: verified` / `published: true`; per PROCESS §5 the agent does not set
-# those — a human does, after the edit pass, and never while the gates below are open.
+# STATUS: PUBLISHED 2026-07-24. Human verify pass signed off by the human (PROCESS §5),
+# so status → verified and published/last_verified are set. Price + YouTube captured.
+# The HeyGen affiliate link was deliberately NOT allowed to block publish (approval time
+# is unknown) — it's backlogged as a follow-up; `affiliate_url` stays blank until it lands
+# and the verdict CTA turns on automatically when it's added. Operational figures
+# (time/takes/credits) were never logged and are left blank rather than invented.
 title: "What I learned making my first AI explainer video with HeyGen"
 slug: "explainer-video"   # the .mdx filename under site/src/content/builds/ IS the slug
 category: "video"         # first Video-category build
@@ -35,21 +34,20 @@ stack: ["YouTube"]    # the video host/embed — the one supporting tool THIS bu
                       # the site's permanent infra onto this build (CONTEXT §5).
 runs_on_site: true    # the finished video is embedded on this build page — the dogfood
                       # badge applies. Only stays true once the embed is actually live.
-status: draft         # NOT verified — see the STATUS note at top. Built + tested, but
-                      # the human edit pass hasn't happened and publish gates are open.
-                      # The site honours this: PROD build excludes status: draft.
+status: verified      # human verify pass signed off (PROCESS §5). Set by/for a human,
+                      # not on the agent's own say-so — see the STATUS note at top.
 summary: "I made a 70-second video explaining what Jigg.AI is, with an AI presenter I never filmed — no camera, no face, no voice of my own — using HeyGen. If you want a short explainer and you're starting from nothing, it is an AI tool worth your time: it kept my script word-for-word, looked credible on the first paid render, and took an afternoon. The one caveat: the free tier watermarks everything and caps you at 60 seconds, so shipping means paying — and the avatar I picked left black bars on the plain talking-head shots, which I'd fix next time."
 test_score: "Fresh-viewer clarity 3/3 · avatar/voice natural, no uncanny flags · 15s bake-off decided it vs Synthesia"   # video has no single X/30 — composite verdict; the number-ish parts live in test.md
-affiliate_url: ""     # PENDING — Part A §5 TODO 1. HeyGen's Rewardful affiliate link is
-                      # not yet obtained, and third-party sources disagree badly on the
-                      # terms (20%/12mo vs 25% vs 35%/3mo). Leave blank; never invent a
-                      # link or state commission numbers from memory/aggregators. Pull the
-                      # real link + terms from the official dashboard before publishing.
+affiliate_url: ""     # BACKLOGGED, not blocking. Applied to HeyGen's Rewardful program;
+                      # approval time unknown, so publish did not wait on it. Add the real
+                      # link (+ terms/cookie window from the official dashboard) when it
+                      # lands — the verdict CTA turns on automatically. Never invent a link
+                      # or state commission numbers from memory/aggregators.
 repro_pack: false     # the pack is not fully assembled (media clips + the human-owned
                       # prompt/exchange exports are still outstanding — see repro/README.md).
                       # flip to true only if a gated download is actually built.
-published: ""         # blocked — human verify pass (PROCESS §5); affiliate link still pending.
-last_verified: ""     # set together with published, by a human, after the edit pass.
+published: "2026-07-24"       # human verify pass signed off.
+last_verified: "2026-07-24"
 pricing_as_of: "2026-07-24"   # CAPTURED. Real paid HeyGen "Creator" plan: US$32.06 incl.
                       # tax (from the receipt the human provided). This dates the cost as
                       # accurate/captured today; it is NOT claimed as the exact receipt/
@@ -61,9 +59,11 @@ pricing_as_of: "2026-07-24"   # CAPTURED. Real paid HeyGen "Creator" plan: US$32
 # fact tiles in the .mdx body so the stamp stays one compact line.
 
 # ---- display + tool-projection helpers (rendered by the site) ----
-featured: false       # keep false for now; promoting this to featured at publish
-                      # auto-demotes build #1 from the home hero (CONTEXT §6). A publish
-                      # decision for the human, not set here.
+featured: true        # the explainer of what Jigg.AI is → the home hero, per the human's
+                      # "this is the home/featured artifact." pickFeatured() takes the most-
+                      # recent featured build, so this auto-demotes build #1 (which keeps
+                      # featured: true and resumes the hero if #3 is ever unpublished) —
+                      # CONTEXT §6, no manual editing of #1 needed.
 meta_line: "one afternoon · 70s render · 15s bake-off vs Synthesia"
 video_id: "gIMQJcLP6L4"   # YouTube embed ID — drives the VideoEmbed artifact preview.
                       # Clean watch URL: https://youtu.be/gIMQJcLP6L4 (the ?si=… share-

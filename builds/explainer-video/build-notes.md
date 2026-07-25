@@ -104,6 +104,23 @@ The running journal. Messy is correct.
   (PROCESS §5). The YouTube iframe only *plays* if the video stays public — the artifact
   preview depends on YouTube (accepted upkeep tier, CONTEXT §3).
 
+## 2026-07-24 — PUBLISHED (PROCESS §5)
+- **Human verify pass signed off** by the human. Per PROCESS §5, flags set on the human's
+  say-so (not the agent's): `status: draft → verified`, `published`/`last_verified: 2026-07-24`
+  in both meta.yaml and the `.mdx`.
+- **Published WITHOUT the affiliate link, deliberately.** The human's call: HeyGen affiliate
+  approval time is unknown, so it does not block publish. `affiliate_url` stays blank → the CTA
+  is off; it's a standing BACKLOG follow-up that turns the CTA on when added. (Build #1 also
+  shipped with no affiliate CTA, so the pattern's fine.)
+- **Featured → home hero.** Set `featured: true` per the human's "this is the home/featured
+  artifact." Build #1 auto-demoted by ordering (CONTEXT §6); no edit to #1 needed.
+- **Verified the four-view invariant on the PROD build:** 10 pages now (was 9); the one `.mdx`
+  lights up home (hero), `/builds` (under *july 2026*, a **Video** filter chip appeared),
+  `/tools` (HeyGen), and `/builds/explainer-video`. The "undated" archive group the human
+  spotted was this build's *draft* showing in dev with no publish date — resolved by publishing.
+- **POST-DEPLOY (human, after push):** re-crawl the Botpress bot's KB so it knows the new build,
+  and spot-check in a fresh conversation (PROCESS §5). Not done here — nothing is pushed yet.
+
 ## TO-CAPTURE (perishable / human-owned — do NOT guess)
 - ~~Real paid HeyGen price~~ → **CAPTURED 2026-07-24**: Creator, US$32.06 incl. tax. Exact
   receipt/purchase *date* still optional (used capture date for `pricing_as_of`).

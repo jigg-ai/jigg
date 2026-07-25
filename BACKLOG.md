@@ -172,8 +172,11 @@ cost us a wrong reading in one build.
   `pricing_as_of` is unset and `tool_summary` deliberately avoids "free tier available."
   Chosen over estimating a price — an invented price is this project's founding example of
   a bad AI answer. Capture it on the next Botpress touch.
-- **Build #1 keeps the home hero.** Build #2 published with `featured: false` rather than
-  demoting #1 (CONTEXT §6 auto-demotes on promotion). Revisit when #3 lands.
+- ~~**Build #1 keeps the home hero.**~~ **Superseded 2026-07-24:** build #3 (the explainer
+  video) published with `featured: true` and is now the home hero; build #1 auto-demoted via
+  ordering (CONTEXT §6, `pickFeatured` takes the most-recent featured build). Build #1 keeps
+  `featured: true` in its data, so it resumes the hero if #3 is ever unpublished — no manual
+  edit of #1 was needed. Kept as the record; delete on the next sweep.
 
 ## Build #2 follow-ups (deferred from the test)
 
@@ -202,42 +205,39 @@ cost us a wrong reading in one build.
 
 ## Build #3 (explainer video, HeyGen) — open at scaffold (2026-07-24)
 
-Scaffolded as a **draft** from the build-#3 handoff: `builds/explainer-video/`
-(meta.yaml, BRIEF, build-notes, test, post, repro). Built + tested, NOT published — the
-detail below is in-build (tracked in its own files); listed here so the one backlog sees it.
+**PUBLISHED 2026-07-24** (`status: verified`, in the repo; live on the next deploy/push).
+Human verify pass signed off. Featured as the home hero — build #1 auto-demoted (CONTEXT §6).
+`builds/explainer-video/` + `site/src/content/builds/explainer-video.mdx`. Price + YouTube
+captured; embed built + verified at desktop/mobile. Still-open items are follow-ups, not gates:
 
-- **Publish gates — two cleared (2026-07-24), one still open:**
-  - ~~real paid price~~ **CAPTURED**: HeyGen Creator, US$32.06 incl. tax, `pricing_as_of:
-    2026-07-24` (capture date, not the exact receipt date — swap if a precise one is wanted).
-  - ~~YouTube link + embed + disclosure~~ **DONE**: `gIMQJcLP6L4` embedded via a new
-    responsive `VideoEmbed.astro` (youtube-nocookie, lazy, 16:9), the verbatim AI-disclosure
-    baked in as the caption; verified rendering in dev at desktop + mobile, no console errors.
-  - **STILL OPEN — HeyGen affiliate link.** Applied to the Rewardful program; awaiting
-    approval. Pull the real terms/cookie window from the official dashboard — third-party
-    sources disagree badly (20%/12mo vs 25% vs 35%/3mo), so never state numbers from memory.
-    Until it lands, `affiliate_url` is omitted from the `.mdx` frontmatter and the ToolVerdict
-    CTA is off; adding the field turns the CTA on automatically.
-- **Human verify/edit pass (PROCESS §5) not done — the remaining gate besides the affiliate
-  link.** `status` stays `draft`; `published`/`last_verified` blank. The handoff pre-filled
-  `verified`/`published: true` and the agent did not set them. Hand the human a claim-by-claim
-  audit at the edit pass. NOTE for the human: promoting `featured: true` here auto-demotes
-  build #1 from the home hero (CONTEXT §6) — a deliberate publish decision, currently false.
+- **STANDING — HeyGen affiliate link (deliberately NOT a publish blocker).** Applied to the
+  Rewardful program; approval time unknown, so publish did not wait. When it lands: add the
+  real link (+ terms/cookie window from the official dashboard — third-party sources disagree
+  badly: 20%/12mo vs 25% vs 35%/3mo, so never state numbers from memory) as `affiliate_url` in
+  the `.mdx` frontmatter, and the ToolVerdict CTA turns on automatically. Also confirms the
+  stamp then links HeyGen only. (Same shape as build #2's deferred-pricing item.)
+- **POST-DEPLOY (after the human pushes) — re-sync the Botpress bot's KB (PROCESS §5).**
+  Publishing a new build adds site content the live bot answers from; re-crawl and spot-check
+  one question about the explainer video in a **fresh conversation** (clear
+  `bp-webchat-message-history-default`, per the trap logged twice already).
+- **Repro pack is human-owned in part.** The video clips, both raw renders, the brand kit, the
+  **prompts** and the **Claude↔ChatGPT exchange** live in HeyGen and the chats — HeyGen has no
+  prompt export. Marked TO ADD / awaiting export in `repro/`, not reconstructed (PROCESS §2).
+  `repro_pack` stays false until assembled. The published page does not overpromise them.
+- **Operational test figures never logged:** time to render, takes, credits, run date
+  (`test.md` Part 2). Left blank, not estimated; capture on the next HeyGen touch.
+- **Show-don't-tell enhancement (post-publish):** the two 15s bake-off clips side by side in
+  the "How I picked the tool" section (a `{/* … */}` placeholder marks the spot). Prose carries
+  the claim for now; the clips are a nice-to-have, not a substantiation gap.
 - **Schema touch:** added optional `video_id` to `content.config.ts` + `builds/_template/
   meta.yaml` (kept in sync). `post.md` was dropped for the `.mdx`-is-the-post precedent
-  (build #1/#2) — one more data point for the unresolved "post.md mandated but unused"
-  template item below.
-- **Repro pack is human-owned in part.** The video clips, both raw renders, the brand kit,
-  the **prompts** and the **Claude↔ChatGPT exchange** live in HeyGen and the chats — HeyGen
-  has no prompt export. They're marked TO ADD / awaiting export in `repro/`, not
-  reconstructed (PROCESS §2). `repro_pack` stays false until they're in.
-- **Operational test figures TO-CAPTURE:** time to render, takes, credits, $/min, run date
-  (`test.md` Part 2). Left blank, not estimated.
-- **Deferred to a future build:** a full **HeyGen vs Synthesia comparison** (same 90s
-  script into both, reader judges) — parked until this solo baseline exists.
-- **Series-wide v2 fix:** choosing a **frame-filling/landscape avatar** kills the
-  pillarboxing across *every* future video build, not just this one — decide it once. Also
-  per-build v2: deliberate proof-zooms and a soft caption track (`.srt`). These are a
-  "what I'd change" retro on the page, not a re-render now.
+  (build #1/#2) — one more data point for the unresolved "post.md mandated but unused" item.
+- **Deferred to a future build:** a full **HeyGen vs Synthesia comparison** (same 90s script
+  into both, reader judges) — parked until this solo baseline exists.
+- **Series-wide v2 fix:** choosing a **frame-filling/landscape avatar** kills the pillarboxing
+  across *every* future video build, not just this one — decide it once. Also per-build v2:
+  deliberate proof-zooms and a soft caption track (`.srt`). A "what I'd change" retro on the
+  page, not a re-render now.
 
 ## Recoverable, not lost
 
