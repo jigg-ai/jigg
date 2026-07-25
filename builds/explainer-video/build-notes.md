@@ -71,13 +71,48 @@ The running journal. Messy is correct.
   proof-zooms).
 - **Captions are burned into the pixels** (no soft track). v2: export an `.srt`.
 
+## 2026-07-24 — price + YouTube captured; embed wired; page assembled (draft)
+- **Price captured (human-provided receipt):** HeyGen **Creator** plan, **US$32.06 incl.
+  tax**. Set `pricing_as_of: 2026-07-24` (dates the cost as captured today — NOT claimed as
+  the exact receipt/purchase date; swap in the receipt date if a precise one is wanted).
+  Subscription, so a clean $/finished-minute depends on monthly output — the concrete
+  captured figure is the plan price. `test.md` operational table updated.
+- **YouTube captured:** video live at `https://youtu.be/gIMQJcLP6L4` (embed ID
+  `gIMQJcLP6L4`; the `?si=…` share-tracking token stripped — not part of a canonical ref).
+  Stored as `video_id` in frontmatter/meta.yaml so a re-render's new ID is a one-place change.
+- **Built a reusable `VideoEmbed.astro`** (`site/src/components/post/`) per the handoff spec:
+  responsive 16:9 wrapper (`aspect-ratio` + absolute-positioned iframe), `youtube-nocookie`
+  host, `loading="lazy"`, `referrerpolicy="strict-origin-when-cross-origin"`, allow-list +
+  `allowfullscreen`. The verbatim AI-disclosure is baked in as the default `<figcaption>` so
+  no video build can ship without it (CONTEXT §4). Config-driven, not per-build markup —
+  same principle as build #2's webchat embed.
+- **Added `video_id` to the schema** (`content.config.ts`, optional) and mirrored it into
+  `builds/_template/meta.yaml` (the two must not drift).
+- **Assembled the site entry** `site/src/content/builds/explainer-video.mdx` from the drafted
+  `post.md`, using the kit (ShortVersion, VideoEmbed, ProcessStep, StatTiles, ToolVerdict).
+  `status: draft` → PROD build excludes it; renders in dev. `affiliate_url` **omitted** from
+  frontmatter (still pending → schema `.url()` would reject `""`, and ToolVerdict then omits
+  the CTA — the correct pending state; the CTA appears automatically when the link is added).
+- **Removed `post.md`** — the `.mdx` is now the canonical post, matching build #1/#2, so
+  there aren't two drifting copies of the same prose (the anti-pattern BACKLOG flags).
+- **Verified in dev (localhost:4321):** page renders, **zero console errors**. Stamp shows
+  HeyGen unlinked (no affiliate) + no CTA. Embed src = `…/embed/gIMQJcLP6L4`, title/lazy/
+  referrerpolicy/allowfullscreen all correct; frame computed `16 / 9`, 616×347 desktop and
+  335×188 at 375px mobile (ratio 1.778, no horizontal overflow). Disclosure caption renders
+  verbatim beneath the embed.
+- **Still open before publish:** affiliate link (applied, pending) + the human verify pass
+  (PROCESS §5). The YouTube iframe only *plays* if the video stays public — the artifact
+  preview depends on YouTube (accepted upkeep tier, CONTEXT §3).
+
 ## TO-CAPTURE (perishable / human-owned — do NOT guess)
-- Real paid HeyGen price + purchase date (from the receipt) → `pricing_as_of`, cost/min.
+- ~~Real paid HeyGen price~~ → **CAPTURED 2026-07-24**: Creator, US$32.06 incl. tax. Exact
+  receipt/purchase *date* still optional (used capture date for `pricing_as_of`).
 - Operational test figures: time to a usable render, number of takes, credits consumed
-  (from the render session) → `test.md`.
+  (from the render session) → `test.md`. Still open — not logged during the session.
 - HeyGen Rewardful affiliate link + real terms/cookie window (official dashboard) →
-  `affiliate_url`.
-- YouTube link (channel verification pending) → embed + description/pinned/end-screen.
+  `affiliate_url`. **Still open — applied to the program, awaiting approval.**
+- ~~YouTube link~~ → **CAPTURED 2026-07-24**: `gIMQJcLP6L4`, embedded. Still to do when
+  convenient: add the site link to the video's description/pinned comment/end-screen.
 - The script-generation and revision **prompts**, and the **Claude↔ChatGPT exchange** —
   they live in the human's chats. Export into `repro/` (exchange-log.md); do NOT
   reconstruct (PROCESS §2). Recorded as awaiting-export there, not silently omitted.

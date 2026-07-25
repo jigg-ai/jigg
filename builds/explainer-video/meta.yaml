@@ -48,11 +48,14 @@ affiliate_url: ""     # PENDING — Part A §5 TODO 1. HeyGen's Rewardful affili
 repro_pack: false     # the pack is not fully assembled (media clips + the human-owned
                       # prompt/exchange exports are still outstanding — see repro/README.md).
                       # flip to true only if a gated download is actually built.
-published: ""         # blocked — human verify pass (PROCESS §5) + the three publish gates.
+published: ""         # blocked — human verify pass (PROCESS §5); affiliate link still pending.
 last_verified: ""     # set together with published, by a human, after the edit pass.
-pricing_as_of: ""     # PENDING — Part A §5 TODO 2. Date the real paid HeyGen plan from the
-                      # receipt; the dollar figure is a test metric (cost per finished
-                      # minute). Don't quote a third-party price.
+pricing_as_of: "2026-07-24"   # CAPTURED. Real paid HeyGen "Creator" plan: US$32.06 incl.
+                      # tax (from the receipt the human provided). This dates the cost as
+                      # accurate/captured today; it is NOT claimed as the exact receipt/
+                      # purchase date — swap in the receipt date if a precise one is wanted.
+                      # Subscription, so per-finished-minute depends on monthly output —
+                      # the concrete captured figure is the plan price. See test.md.
 
 # Cost / hosting / framework detail does NOT go in the top stamp — author those as
 # fact tiles in the .mdx body so the stamp stays one compact line.
@@ -62,6 +65,10 @@ featured: false       # keep false for now; promoting this to featured at publis
                       # auto-demotes build #1 from the home hero (CONTEXT §6). A publish
                       # decision for the human, not set here.
 meta_line: "one afternoon · 70s render · 15s bake-off vs Synthesia"
+video_id: "gIMQJcLP6L4"   # YouTube embed ID — drives the VideoEmbed artifact preview.
+                      # Clean watch URL: https://youtu.be/gIMQJcLP6L4 (the ?si=… share-
+                      # tracking token is stripped — it is not part of a canonical ref).
+                      # Embedded via youtube-nocookie.com. One place to update on re-render.
 
 # /tools is a PROJECTION of the builds collection — there is no separate tools
 # source of truth, so a tool's own facts live on the build. When several builds

@@ -1,0 +1,182 @@
+---
+title: "What I learned making my first AI explainer video with HeyGen"
+category: "video"
+tool: "HeyGen"
+built_with: ["Claude Opus 4.8", "ChatGPT 5.6"]
+stack: ["YouTube"]
+runs_on_site: true
+status: "draft"
+summary: "I made a 70-second video explaining what Jigg.AI is, with an AI presenter I never filmed — no camera, no face, no voice of my own — using HeyGen. If you want a short explainer and you're starting from nothing, it is an AI tool worth your time: it kept my script word-for-word, looked credible on the first paid render, and took an afternoon. The one caveat: the free tier watermarks everything and caps you at 60 seconds, so shipping means paying — and the avatar I picked left black bars on the plain talking-head shots, which I'd fix next time."
+test_score: "Fresh-viewer clarity 3/3 · avatar/voice natural, no uncanny flags · 15s bake-off decided it vs Synthesia"
+repro_pack: false
+pricing_as_of: 2026-07-24
+featured: false
+meta_line: "one afternoon · 70s render · 15s bake-off vs Synthesia"
+video_id: "gIMQJcLP6L4"
+tool_summary: "AI avatar video maker, hosted"
+tool_verdict: "Kept my script exact and looked credible on the first paid render — a written script to a finished video in an afternoon, no camera and no face. Where it is not the pick: structured training/L&D content, where Synthesia's presenter-led approach fits better. Go in knowing the free tier is for evaluating, not publishing — you pay to ship anything real."
+accessibility: "Beginner-friendly"
+---
+
+import ShortVersion from '../../components/post/ShortVersion.astro';
+import VideoEmbed from '../../components/post/VideoEmbed.astro';
+import ProcessStep from '../../components/post/ProcessStep.astro';
+import StatTiles from '../../components/post/StatTiles.astro';
+import ToolVerdict from '../../components/post/ToolVerdict.astro';
+
+<ShortVersion>
+I made a 70-second video explaining what Jigg.AI is — and I did it with an AI presenter I
+never filmed, using HeyGen. No camera, no face, no voice of my own. If you want a short
+marketing or explainer video and you're starting from nothing, HeyGen is an AI tool worth
+your time: it kept my script word-for-word, looked credible on the first paid render, and
+took an afternoon. The one honest caveat: the free tier watermarks everything and caps you
+at 60 seconds, so a publishable video means paying — and the avatar I picked left black bars
+on the plain talking-head shots, which I'd fix next time. If you're making structured
+training videos instead of short explainers, the tool I *didn't* pick (Synthesia) is the
+better fit — more on that below.
+</ShortVersion>
+
+<VideoEmbed id={frontmatter.video_id} title="What is Jigg.AI? — explainer" />
+
+Being AI-made isn't a disclaimer here — it's the whole point.
+
+## How I picked the tool (and why I didn't just guess)
+
+Two tools own this space: HeyGen and Synthesia. Instead of arguing about which was better,
+I ran a test. I wrote one 15-second script — deliberately booby-trapped with the things AI
+presenters fumble: my brand name said aloud ("Jigg.AI"), a spoken number ("thirty
+questions"), a clipped one-word beat ("No hype."), and a fast three-item list — and fed the
+*exact same text* into both tools. Then I watched.
+
+HeyGen read my script as written. Synthesia rewrote it — it turned my 15 seconds of
+first-person copy into 46 seconds of third-person corporate narration ("Our AI solutions
+undergo rigorous testing…"), retitled the whole thing "Jigg.AI: Practical AI Tools and
+Solutions," and made a build-in-public project sound like a SaaS company that doesn't exist.
+
+Here's the part I want to be fair about, because it's easy to get wrong: **that wasn't
+Synthesia being broken.** It was me leaving its AI-assist mode on, which is *designed* to
+expand a brief into a full presentation. I re-ran it with strict-script mode on, and it held
+my words at 20 seconds — right next to HeyGen's. So the honest finding isn't "Synthesia
+can't follow a script." It's that the two tools have different instincts: HeyGen reaches for
+a creator/startup register, Synthesia for a presenter-led, training-video one. For a
+build-in-public site, HeyGen's instinct fit my voice with less fighting. That's the real
+reason I picked it — not a fake knockout.
+
+{/* SHOW, DON'T TELL — to add at publish: the two 15-second bake-off clips (HeyGen vs
+    Synthesia) side by side. Human-owned media, not in the repo yet (see repro/README.md). */}
+
+## The honest process — what broke
+
+<ProcessStep result="fail" title="The free tier can't ship" tag="tool-limit">
+HeyGen's free plan watermarks the whole frame and caps you at 60 seconds. My explainer was
+longer, and a watermarked video isn't publishable as the site's featured build. So I paid.
+Expected, but worth knowing before you start: "free" means "evaluate," not "publish."
+</ProcessStep>
+
+<ProcessStep result="fail" title="The tool invented my brand's design once" tag="my-setup">
+On import it defaulted to a placeholder logo ("logoipsum"). Pulling my real brand kit fixed
+it in one step.
+</ProcessStep>
+
+<ProcessStep result="fail" title="A template tried to credit a fake person" tag="my-setup">
+HeyGen's "Name Card" template ships with a dummy "Lead Engineer" credit, and I couldn't
+delete it. It never appeared — my script gave it no intro to hook onto — but on a brand with
+no named individual, that's the kind of default you check for. Dodged.
+</ProcessStep>
+
+<ProcessStep result="fail" title="It re-paced my script" tag="tool-limit">
+I wrote ~87 seconds; it rendered 70. Faster, and nothing important got cut — but the tool
+re-times you, so verify your key line survived. (Mine did — I checked the honest-failure
+beat was still intact.)
+</ProcessStep>
+
+<ProcessStep result="fail" title="The avatar I picked left black bars" tag="my-setup">
+On the plain talking-head shots, a portrait avatar sits in a vertical column inside the
+landscape frame. It reads as repurposed-vertical, and it's the thing I'd fix first next time
+— by choosing a frame-filling avatar.
+</ProcessStep>
+
+## The test — how I'll grade every video build
+
+The 30-question format I use for bots doesn't fit video. So here's the video test, decided
+before I generated (not graded on a curve after): fresh-viewer clarity, avatar believability,
+voice naturalness, and the honest operational cost.
+
+<StatTiles variant="metric" stats={[
+  { value: "3/3", label: "fresh viewers got the premise unprompted", tone: "ok" },
+  { value: "0", label: "uncanny-valley flags on the paid render", tone: "ok" },
+  { value: "70s", label: "finished video — no camera, no face", tone: "ok" },
+]} />
+
+The clarity number is the one that counts most: it's the thing I can't self-judge, so I
+showed the video to people who'd never seen the site and asked what it's about. All three got
+it. The "No hype." beat and the list pacing landed, and "Jigg.AI" was pronounced cleanly.
+
+<StatTiles variant="fact" stats={[
+  { value: "$32.06", label: "HeyGen Creator plan, incl. tax" },
+  { value: "15s", label: "bake-off that decided it vs Synthesia" },
+  { value: "3", label: "v2 fixes logged: framing, proof, captions" },
+]} />
+
+One honesty note on cost: $32.06 is the real paid Creator plan (with tax), which is what it
+took to ship a watermark-free video. It's a monthly subscription, so a clean "cost per
+finished minute" depends on how much you make in the cycle — the concrete figure is the plan
+price. Time-to-render, number of takes and credits consumed weren't logged during the session,
+so I'm not going to invent them.
+
+## Two AIs, arguing — how this build actually got made
+
+This is the part I'd normally hide, so I'm showing it. This build wasn't made by one AI. It
+was made by me pointing two of them at each other.
+
+**Claude** did the planning and wrote the script. **ChatGPT** I used as the opposition — I
+had it argue the *other* side and tear up my drafts. They genuinely disagreed, and the
+disagreement made the build better:
+
+- **On the tool.** ChatGPT argued for Synthesia — better for a documented, reproducible,
+  expandable video *system*, closer to the "real business tool" thesis. Claude pushed back
+  that Synthesia's "business" is enterprise training, not my reader, and that the prompt I'd
+  publish lives upstream anyway. Neither won by argument. The **15-second bake-off** settled
+  it with evidence.
+- **On the output.** Once I had a render, ChatGPT critiqued it hard — flagged that the proof
+  on screen was too small to read, that the avatar was boxed in black bars, and that one line
+  ("an AI answer engine can't fake") overclaimed, since an engine *can* fake a claim; what it
+  can't fake is the visible evidence. Claude triaged those into must-fix vs nice-to-have and
+  caught the one thing ChatGPT got wrong — its fix for the AI-presenter disclosure would have
+  broken the brand's first-person voice; the right fix was to *disclose* and keep the voice.
+
+The takeaway, and the reason this section exists: the useful move wasn't trusting either AI.
+It was making them disagree in front of me and keeping the judgment for myself. That's the
+whole method of this site, applied to its own making.
+
+## Reproduce this
+
+On this page: the honest process above, the scored selection rubric (HeyGen vs Synthesia,
+including the strict-mode fairness re-run), and the video test — all decided before the render
+was judged. The full rubric and results are in the repo at
+[`builds/explainer-video/test.md`](https://github.com/jigg-ai/jigg/blob/main/builds/explainer-video/test.md),
+and the running journal, fault-tagged, is in
+[`build-notes.md`](https://github.com/jigg-ai/jigg/blob/main/builds/explainer-video/build-notes.md).
+
+One honest note on provenance: HeyGen has no native way to export prompt history, so the
+prompts behind this build (research → script → scene-plan → revision) and the Claude↔ChatGPT
+exchange live upstream in the chats. They're assembled by hand from the logs — not written
+from memory afterwards — so the pack lists what's captured and marks what's still being
+exported rather than filling gaps with plausible reconstructions. The pack is at
+[`builds/explainer-video/repro/`](https://github.com/jigg-ai/jigg/tree/main/builds/explainer-video/repro).
+
+## The tool
+
+<ToolVerdict
+  tool="HeyGen"
+  toolSummary="AI avatar video maker, hosted"
+  affiliateUrl={frontmatter.affiliate_url}
+  ctaLabel="Make a video like this with HeyGen"
+>
+HeyGen is an AI tool worth your time if you're making short explainer or marketing video. It
+kept my script exact, looked credible on the first paid render, and turned a written script
+into a finished video in an afternoon with no camera and no face. Where it's *not* the pick:
+structured training and L&D content, where Synthesia's presenter-led, scene-based approach
+fits better. And go in knowing the free tier is for evaluating, not publishing — you'll pay
+to ship anything real.
+</ToolVerdict>

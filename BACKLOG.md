@@ -206,16 +206,26 @@ Scaffolded as a **draft** from the build-#3 handoff: `builds/explainer-video/`
 (meta.yaml, BRIEF, build-notes, test, post, repro). Built + tested, NOT published — the
 detail below is in-build (tracked in its own files); listed here so the one backlog sees it.
 
-- **Three publish gates still open (verification debt) — do NOT publish those sections
-  until they clear:** (1) the HeyGen **Rewardful affiliate link + real terms/cookie
-  window** from the official dashboard — third-party sources disagree badly (20%/12mo vs
-  25% vs 35%/3mo), so never state numbers from memory; (2) the **real paid price from the
-  receipt** → `pricing_as_of` + cost-per-finished-minute (a test metric); (3) the
-  **YouTube link** (channel verification pending) → embed + description/pinned/end-screen.
-  Plus confirm the AI-disclosure line renders beside the embed (CONTEXT §4).
-- **Human verify/edit pass (PROCESS §5) not done.** `status`/`published`/`last_verified`
-  are blank on purpose; the handoff pre-filled `verified`/`published: true` and the agent
-  did not set them. Assemble the pack, then hand the human a claim-by-claim audit.
+- **Publish gates — two cleared (2026-07-24), one still open:**
+  - ~~real paid price~~ **CAPTURED**: HeyGen Creator, US$32.06 incl. tax, `pricing_as_of:
+    2026-07-24` (capture date, not the exact receipt date — swap if a precise one is wanted).
+  - ~~YouTube link + embed + disclosure~~ **DONE**: `gIMQJcLP6L4` embedded via a new
+    responsive `VideoEmbed.astro` (youtube-nocookie, lazy, 16:9), the verbatim AI-disclosure
+    baked in as the caption; verified rendering in dev at desktop + mobile, no console errors.
+  - **STILL OPEN — HeyGen affiliate link.** Applied to the Rewardful program; awaiting
+    approval. Pull the real terms/cookie window from the official dashboard — third-party
+    sources disagree badly (20%/12mo vs 25% vs 35%/3mo), so never state numbers from memory.
+    Until it lands, `affiliate_url` is omitted from the `.mdx` frontmatter and the ToolVerdict
+    CTA is off; adding the field turns the CTA on automatically.
+- **Human verify/edit pass (PROCESS §5) not done — the remaining gate besides the affiliate
+  link.** `status` stays `draft`; `published`/`last_verified` blank. The handoff pre-filled
+  `verified`/`published: true` and the agent did not set them. Hand the human a claim-by-claim
+  audit at the edit pass. NOTE for the human: promoting `featured: true` here auto-demotes
+  build #1 from the home hero (CONTEXT §6) — a deliberate publish decision, currently false.
+- **Schema touch:** added optional `video_id` to `content.config.ts` + `builds/_template/
+  meta.yaml` (kept in sync). `post.md` was dropped for the `.mdx`-is-the-post precedent
+  (build #1/#2) — one more data point for the unresolved "post.md mandated but unused"
+  template item below.
 - **Repro pack is human-owned in part.** The video clips, both raw renders, the brand kit,
   the **prompts** and the **Claude↔ChatGPT exchange** live in HeyGen and the chats — HeyGen
   has no prompt export. They're marked TO ADD / awaiting export in `repro/`, not

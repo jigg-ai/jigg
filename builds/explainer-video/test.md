@@ -59,15 +59,15 @@ choice or gap on our side.
 | 7 | **Captions** | Partial `[my setup]` | Captions burned into the pixels, no soft track — v2: export an `.srt`. |
 | 8 | **Free-tier publishability** | Fail (expected) `[tool limit]` | Free tier watermarks the whole frame + caps at 60s → had to pay to ship. Expected free-tier behaviour; "free" = evaluate, not publish. |
 
-### Operational cost (TO-CAPTURE — do not estimate)
+### Operational cost (partly captured — the rest not estimated)
 
 | Metric | Value |
 |---|---|
-| Time to a usable render | TO-CAPTURE |
-| Number of takes | TO-CAPTURE |
-| Credits consumed | TO-CAPTURE |
-| Real paid price | TO-CAPTURE (from the receipt → `pricing_as_of`) |
-| **Cost per finished minute** | TO-CAPTURE (derived from the two above) |
+| Time to a usable render | TO-CAPTURE (not logged during the session) |
+| Number of takes | TO-CAPTURE (not logged during the session) |
+| Credits consumed | TO-CAPTURE (not logged during the session) |
+| Real paid price | **US$32.06 incl. tax** — HeyGen **Creator** plan (from the receipt; `pricing_as_of: 2026-07-24`) |
+| **Cost per finished minute** | Not a clean single number — Creator is a **monthly subscription**, so $/min depends on how much you produce in the cycle. The concrete, honest figure is the **$32.06 plan price** it took to ship one watermark-free video. Don't imply $32/min from a subscription. |
 
 ## Summary
 - **Selection:** HeyGen over Synthesia, decided by the 15s bake-off; strict-mode re-run
