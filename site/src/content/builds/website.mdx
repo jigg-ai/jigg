@@ -170,3 +170,77 @@ templates, and a reusable component kit to match. Astro's content collections ar
 the right backbone for it. Neither tool caused the friction here — that was all
 local Git config. If you can get past the auth setup once, the build loop is fast.
 </ToolVerdict>
+
+## Postscript: making the newsletter signup stay on the page (2026-07-25)
+
+Eight days after launch, one piece of the site still did the wrong thing: the
+email signup **redirected to Buttondown's own page** instead of submitting inline.
+Fixing that — "just subscribe and stay put" — became the longest debugging chase of
+the whole build, and it ended on a cause that wasn't in the code at all: a Buttondown
+spam-firewall setting that *our own testing had tripped*. If you're wiring a
+newsletter into a JavaScript site, this is the section to read. The honest caveat up
+front: the most instructive part is where I called it "fixed" on evidence that was
+quietly wrong — twice.
+
+<StatTiles variant="fact" stats={[
+  { value: "Server-side", label: "the only path that works" },
+  { value: "1 setting", label: "was the actual root cause" },
+  { value: "2×", label: "I called it fixed too early" },
+]} />
+
+<ProcessStep result="fail" title="Shipped an inline version that was never actually tested" tag="my-setup">
+The first attempt swapped the redirect for a hidden-iframe form post and showed an
+inline "check your inbox." It passed local verification — except the local test had
+the form pointed at a dummy page, so the one thing that mattered, a real cross-origin
+POST to Buttondown, was never exercised. In production it failed silently: visitors
+saw the success message and nobody got subscribed. "Verified locally" meant nothing,
+because the test mocked away the exact thing that broke.
+</ProcessStep>
+
+<ProcessStep result="fail" title="Every browser-only path is a dead end" tag="tool-limit">
+Three ways to submit straight from the browser, three walls: a direct `fetch` is
+**CORS-blocked** by Buttondown's embed endpoint; a hidden-iframe submit gets
+**stripped by browser tracking protection** (reliably fails in Safari); a `no-cors`
+fetch reaches the server but creates nothing. No purely client-side method is
+dependable — the embed endpoint just doesn't expose one.
+</ProcessStep>
+
+<ProcessStep result="pass" title="Move it server-side">
+The architecture that stuck: a small Netlify Function calls Buttondown's authenticated
+API server-side. The form posts same-origin — no CORS, no new tab — and gets real
+success / already-subscribed / error states back. Correct design. It also, immediately,
+returned an error on every single call.
+</ProcessStep>
+
+<ProcessStep result="fail" title="Called it fixed — twice — on evidence that was wrong" tag="my-setup">
+The proxy 400'd every time. First wrong guess: forward the visitor's IP; a couple of
+tests went green, so I declared it solved. Those greens came from `curl` running on my
+own machine — a residential IP — not the datacenter path real users actually hit. A
+clean isolation test killed the theory outright. When a result depends on *where the
+request comes from*, a test that doesn't run from production's origin isn't a test —
+it's a lie you tell yourself.
+</ProcessStep>
+
+<ProcessStep result="fail" title="The block was self-inflicted" tag="my-setup">
+The real error, once I stopped guessing and read it: **"This subscriber was blocked by
+your firewall."** Buttondown's *Attack mode* auto-escalates to IP-address auditing when
+it detects a surge of unactivated subscribers — and our own burst of test signups *was*
+that surge. It then audited the connection IP, which for a server-side proxy is always a
+datacenter address → a permanent false positive against our own form. The tool's rough
+edge here: it surfaced only as a bare `400`, with nothing pointing at a user-configurable
+setting as the cause.
+</ProcessStep>
+
+<ProcessStep result="pass" title="The fix">
+Three settings in Buttondown's Firewall: disable **IP-address auditing** and **Attack
+mode**, and drop **Auditing mode** from Aggressive back to Enabled. Safe here because the
+newsletter is double opt-in — nobody joins the list without clicking a confirmation link,
+so *that*, not the IP audit, is the real spam gate. Verified from a real browser, and a
+rapid burst of signups now all go through.
+</ProcessStep>
+
+The code that finally shipped is a few dozen lines. The lesson is the expensive part, and
+it's the same one twice: I trusted a green result without checking that the *test* matched
+production — first the mocked endpoint, then the residential IP. An AI pair-builder will
+happily hand you a passing check; making sure the check exercises the real thing is still
+the human's job.
