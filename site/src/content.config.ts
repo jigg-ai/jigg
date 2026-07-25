@@ -55,6 +55,10 @@ const builds = defineCollection({
     // ---- display + tool-projection helpers (required by the mockups) ----
     featured: z.boolean().default(false),          // pins the home hero
     meta_line: z.string().optional(),              // mono row detail, e.g. "3 evenings · 2 rebuilds"
+    // Artifact-preview source for video builds: the YouTube embed ID lives HERE
+    // (one place to update if a re-render changes it), read by the VideoEmbed
+    // component in the build's MDX body. Optional — only video builds set it.
+    video_id: z.string().optional(),               // e.g. "gIMQJcLP6L4"
 
     // Tool-level fields intentionally live on the build: /tools is a PROJECTION
     // of this collection, not a second source of truth. When several builds share

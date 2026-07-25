@@ -1,0 +1,60 @@
+---
+// Responsive YouTube artifact preview for video builds. The embed ID comes from
+// the build's frontmatter (`video_id`) so a re-render's new ID is a one-place change
+// — never hardcode it across templates. Uses youtube-nocookie for a privacy-friendlier
+// embed (consistent with the site's citation-friendly posture and the privacy page).
+//
+// The AI-presenter disclosure is REQUIRED beside every such embed (CONTEXT §4). It is
+// baked in as the default caption so a video build cannot accidentally ship without it;
+// override only if the exact wording must change.
+interface Props {
+  id: string;
+  title?: string;
+  disclosure?: string;
+}
+const {
+  id,
+  title = 'Video',
+  disclosure = 'Presenter and voice are AI-generated; scripted and directed by Jigg.AI.',
+} = Astro.props;
+---
+
+<figure class="video">
+  <div class="frame">
+    <iframe
+      src={`https://www.youtube-nocookie.com/embed/${id}`}
+      title={title}
+      loading="lazy"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      referrerpolicy="strict-origin-when-cross-origin"
+      allowfullscreen></iframe>
+  </div>
+  <figcaption>{disclosure}</figcaption>
+</figure>
+
+<style>
+  .video { margin: 0; }
+  .frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--surface-2);
+    box-shadow: var(--shadow-sm);
+  }
+  .frame iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  figcaption {
+    margin-top: 0.7rem;
+    color: var(--ink-muted);
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+</style>

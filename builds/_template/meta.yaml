@@ -35,6 +35,9 @@ pricing_as_of: ""     # YYYY-MM-DD — dates the primary tool's cost (the only p
 # ---- display + tool-projection helpers (rendered by the site) ----
 featured: false       # pins this build as the home hero
 meta_line: ""         # short mono detail on index rows, e.g. "3 evenings · 2 rebuilds"
+video_id: ""          # video builds only: the YouTube embed ID (e.g. "gIMQJcLP6L4"),
+                      # read by the VideoEmbed component in the MDX body. Kept here so a
+                      # re-render's new ID is a one-place change. Omit for non-video builds.
 
 # /tools is a PROJECTION of the builds collection — there is no separate tools
 # source of truth, so a tool's own facts live on the build. When several builds
