@@ -7,7 +7,9 @@ import sitemap from '@astrojs/sitemap';
 // must match where the site is actually served — the live custom domain.
 export default defineConfig({
   site: 'https://jigg.ai',
-  integrations: [mdx(), sitemap()],
+  // /subscribed is a transactional confirmation landing (Buttondown's
+  // "After confirming" redirect) — noindex'd and kept out of the sitemap.
+  integrations: [mdx(), sitemap({ filter: (page) => !page.includes('/subscribed') })],
   // Code blocks render in the site's own neutral palette instead of a syntax
   // theme: the palette rule is one brand warmth + green for status, nothing else.
   markdown: { syntaxHighlight: false },

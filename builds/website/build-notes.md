@@ -143,6 +143,19 @@ Write as you go. Messy is correct — this is the first published build log.
   One gotcha caught in browser verify: `form.hidden` didn't hide the form because
   `.capture { display: grid }` (author) outranks the UA `[hidden]` rule — added
   `.capture[hidden] { display: none }`.
+- **Buttondown branding pass** (2026-07-24) — reviewed the Buttondown settings against the
+  repo's brand tokens (`site/src/styles/global.css`, CONTEXT §14). Flagged (their action —
+  external account): newsletter name still the `My Awesome Newsletter` default; empty
+  subscribe-page description; both accent-color fields on Buttondown's default blue vs our
+  `--brand #c4693c`; archive bg `#fafafa` vs our `--bg #faf8f3`; archive fonts inverted vs
+  our "serif headings + sans body" rule. Fraunces isn't in Buttondown's font list, so the
+  brand-true pick is **Georgia** (our declared `--font-serif` fallback) for headings + a
+  neutral sans (Figtree/Lato) for body. Archive + email themes switched to Classic (theirs).
+- **Added `/subscribed` confirmation page** (2026-07-24) — landing for Buttondown's "After
+  confirming" redirect (chosen over `/thank-you`: names the actual state, matches STYLE's
+  plain-naming rule). `noindex, follow` + excluded from the sitemap via a filter in
+  `astro.config.mjs` — it's transactional, not discoverable content. Verified desktop +
+  mobile, no console errors. Buttondown field to set: `https://jigg.ai/subscribed`.
 
 ## Artifacts
 <!-- screenshots of each view; the deploy URL; a short screen recording if useful -->
