@@ -64,8 +64,14 @@ point. See `builds/website/test.md` for the per-check detail on build #1.
   single dynamic `[slug].astro` over the `pages` collection would make a new info page a
   one-file add, matching the invariant the `builds` collection already satisfies.
   Deferred to avoid refactoring working, deployed pages.
-
-## Tooling issues (build #2, Botpress)
+- **Promote the newsletter-signup saga to its own build — on an email-provider change.**
+  The signup debugging story currently lives as a dated **Postscript on build #1's page**
+  (`site/src/content/builds/website.mdx`), where it belongs while Buttondown is the provider.
+  If/when the email provider changes (or the signup is redesigned), lift that self-contained
+  section into its own standalone build-log `.mdx` — it's a natural, SEO-worthy landing page
+  for the exact errors people hit (e.g. "subscriber blocked by your firewall", "Buttondown
+  Netlify 400"). Keep it **out of `/tools`** (Buttondown isn't an AI tool). Full raw material
+  is in `builds/website/build-notes.md`. Trigger: provider swap / signup rebuild, not a date.
 
 - ~~**Botpress's Website sync silently refuses valid pages — cause never determined**~~ —
   **SOLVED 2026-07-23: we had no `robots.txt`.** That's where Botpress looks for the
