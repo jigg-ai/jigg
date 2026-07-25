@@ -54,11 +54,6 @@ point. See `builds/website/test.md` for the per-check detail on build #1.
   version"** fact tile. Reviewed and deliberately kept for now; revisit the keep/drop
   call. To be precise about which tile: it's the *framework-version* one. The `$0`
   hosting tile is **not** duplicated — it carries cost, which the stamp doesn't.
-- **Email signup redirects rather than submitting on-site** — the Buttondown form is a
-  plain POST to their public embed endpoint, so subscribing opens Buttondown's
-  confirmation page in a new tab. That's deliberate (no API key in the browser, works
-  without JS), but an on-site submission with an inline success state is the known
-  improvement.
 - **Grab `jig.ai` and redirect to Jigg.AI** — CONTEXT §14 calls for it as brand-name
   hygiene: the namespace is crowded, so the short domain should point here rather than
   sit available for someone else to take. Cheap, one-time, and **blocked on nothing** —
@@ -216,19 +211,17 @@ captured; embed built + verified at desktop/mobile. Still-open items are follow-
   badly: 20%/12mo vs 25% vs 35%/3mo, so never state numbers from memory) as `affiliate_url` in
   the `.mdx` frontmatter, and the ToolVerdict CTA turns on automatically. Also confirms the
   stamp then links HeyGen only. (Same shape as build #2's deferred-pricing item.)
-- **POST-DEPLOY — Botpress KB re-sync IN PROGRESS (PROCESS §5).** Pushed + deployed
-  2026-07-24. First re-crawl did **not** pick up `/builds/explainer-video/`. Our side
-  verified live and correct: page returns `200`, it **is** in `sitemap-0.xml`, the sitemap is
-  served fresh (`cache-control: max-age=0, must-revalidate`, Netlify, no Cloudflare proxy),
-  and `robots.txt` points to `sitemap-index.xml`. So this is the **same Botpress silent
-  under-indexing documented all through build #2** — a valid, discoverable page the crawler
-  just doesn't take, with no warning. Next: re-crawl again now that the deploy is confirmed
-  live (the first crawl may have run before propagation); confirm the Botpress source list
-  shows the new page (the tool won't warn — build #2 standing check); if it still refuses,
-  fall back to a manual KB Document import (build #2 workaround, reintroduces the drift
-  obligation). When testing the bot afterward, use a **fresh conversation** (clear
-  `bp-webchat-message-history-default`) — the conversation-restore trap gave a false
-  "didn't work" reading twice in build #2.
+- ~~**POST-DEPLOY — Botpress KB re-sync**~~ **DONE 2026-07-24 (PROCESS §5).** Pushed +
+  deployed; a *first* re-crawl missed `/builds/explainer-video/`. Our side was verified live
+  and correct (page `200`, in `sitemap-0.xml`, sitemap served fresh — `max-age=0,
+  must-revalidate`, Netlify, no Cloudflare proxy — `robots.txt` → `sitemap-index.xml`), so
+  the miss was the same class of Botpress under-indexing seen in build #2, most likely a
+  crawl-before-propagation timing miss. A **second re-crawl picked it up**: the live bot now
+  correctly answers "explain how the explainer video was built," which it could only do from
+  the newly-crawled page — coverage confirmed by a real answer, not just a source count.
+  **Lesson (worth keeping): re-crawl *after* the deploy has propagated, and confirm coverage
+  with a content question, not the source list alone.** Kept as the record; delete on the
+  next sweep.
 - **Repro pack is human-owned in part.** The video clips, both raw renders, the brand kit, the
   **prompts** and the **Claude↔ChatGPT exchange** live in HeyGen and the chats — HeyGen has no
   prompt export. Marked TO ADD / awaiting export in `repro/`, not reconstructed (PROCESS §2).
