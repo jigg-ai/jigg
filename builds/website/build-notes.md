@@ -132,6 +132,17 @@ Write as you go. Messy is correct — this is the first published build log.
   page: once in the stamp's `Stack` segment, once as the "Framework version" fact tile.
   Flagged it; the tile earns its place for now, so we're keeping both and revisiting
   later. Noted here so it's a decision on the record rather than an oversight.
+- **Email signup now stays on-site** (2026-07-24) — cleared the parked BACKLOG item. The
+  Buttondown embed used `target="_blank"`, so subscribing popped their confirmation page
+  in a new tab. Buttondown accepts a native form POST but blocks direct `fetch`/XHR
+  (CORS), so AJAX would need a server proxy + API key — too heavy for a static site.
+  Instead, progressive enhancement in `EmailCapture.astro`: JS routes the same POST into
+  a hidden iframe and, on its `load`, swaps the form for an inline "check your inbox"
+  confirmation (focus moved to it, `role="status"` for SR). No JS → falls back to the
+  `target="_blank"` behavior. Double opt-in and "no API key in the browser" both intact.
+  One gotcha caught in browser verify: `form.hidden` didn't hide the form because
+  `.capture { display: grid }` (author) outranks the UA `[hidden]` rule — added
+  `.capture[hidden] { display: none }`.
 
 ## Artifacts
 <!-- screenshots of each view; the deploy URL; a short screen recording if useful -->

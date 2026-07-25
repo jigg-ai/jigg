@@ -1,7 +1,15 @@
 ---
 // Newsletter signup, wired to Buttondown's public embed endpoint. This posts a
-// plain form (no API key in the browser) to Buttondown, which then shows its
-// "confirm your subscription" page in a new tab (double opt-in).
+// plain form (no API key in the browser) to Buttondown, which runs its
+// double opt-in ("confirm your subscription") flow.
+//
+// UX: by default the POST would open Buttondown's confirmation page in a new
+// tab (target="_blank"). The client script below progressively enhances this —
+// it routes the POST into a hidden iframe so the page never navigates, then
+// swaps in an inline confirmation. Buttondown's embed endpoint accepts a native
+// form POST but blocks direct fetch/XHR (CORS), which is why we use an iframe
+// rather than AJAX — no server proxy or API key needed. With JS off, the
+// target="_blank" fallback still works.
 //
 // Set BUTTONDOWN_USERNAME to the newsletter's Buttondown username — it's the one
 // place that needs it, and every EmailCapture on the site uses it.
@@ -22,20 +30,71 @@ const {
 } = Astro.props;
 ---
 
-<form class:list={['capture', variant]} action={action} method="post" target="_blank">
-  <input
-    type="email"
-    name="email"
-    inputmode="email"
-    autocomplete="email"
-    aria-label="Email address"
-    placeholder={placeholder}
-    required
-  />
-  <input type="hidden" name="embed" value="1" />
-  <button type="submit" class="btn btn--primary">{cta}</button>
-  <p class="note">{note}</p>
-</form>
+<div class="capture-shell">
+  <form class:list={['capture', variant]} action={action} method="post" target="_blank">
+    <input
+      type="email"
+      name="email"
+      inputmode="email"
+      autocomplete="email"
+      aria-label="Email address"
+      placeholder={placeholder}
+      required
+    />
+    <input type="hidden" name="embed" value="1" />
+    <button type="submit" class="btn btn--primary">{cta}</button>
+    <p class="note">{note}</p>
+  </form>
+  <p class="capture__success" role="status" tabindex="-1" hidden>
+    Almost there — check your inbox and click the confirmation link to finish
+    subscribing. One email per new build, nothing else.
+  </p>
+</div>
+
+<script>
+  // Progressive enhancement: keep subscribers on-site. The native form POST to
+  // Buttondown still runs (no CORS, no API key), but the response lands in a
+  // hidden iframe instead of a new tab, and we swap in an inline confirmation.
+  // Runs once and wires up every EmailCapture on the page.
+  document.querySelectorAll<HTMLFormElement>('form.capture').forEach((form, i) => {
+    const shell = form.closest('.capture-shell');
+    if (!shell) return;
+    const success = shell.querySelector<HTMLElement>('.capture__success');
+    const button = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+
+    // Route the POST into an invisible iframe so the browser doesn't navigate.
+    const frameName = `bd-sink-${i}`;
+    const frame = document.createElement('iframe');
+    frame.name = frameName;
+    frame.setAttribute('aria-hidden', 'true');
+    frame.tabIndex = -1;
+    frame.style.display = 'none';
+    shell.appendChild(frame);
+    form.target = frameName;
+
+    let submitting = false;
+
+    form.addEventListener('submit', () => {
+      // Native validation (required + type="email") has already passed here.
+      submitting = true;
+      if (button) {
+        button.disabled = true;
+        button.textContent = 'Subscribing…';
+      }
+    });
+
+    frame.addEventListener('load', () => {
+      // Ignore the iframe's initial about:blank load; only react post-submit.
+      if (!submitting) return;
+      submitting = false;
+      form.hidden = true;
+      if (success) {
+        success.hidden = false;
+        success.focus(); // move screen-reader/keyboard focus to the confirmation
+      }
+    });
+  });
+</script>
 
 <style>
   .capture {
@@ -44,6 +103,9 @@ const {
     gap: 0.6rem;
     align-items: start;
   }
+  /* The author `display: grid` above outweighs the UA `[hidden]` rule, so the
+     form wouldn't hide on success without this. */
+  .capture[hidden] { display: none; }
   .capture input[type='email'] {
     font: inherit;
     padding: 0.75em 0.9em;
@@ -56,6 +118,7 @@ const {
   }
   .capture input[type='email']:focus-visible { outline: 2px solid var(--brand); outline-offset: 1px; }
   .capture .btn { white-space: nowrap; }
+  .capture .btn:disabled { opacity: 0.65; cursor: default; }
   .note {
     grid-column: 1 / -1;
     color: var(--ink-muted);
@@ -66,6 +129,17 @@ const {
     background: var(--surface);
     border-color: color-mix(in srgb, var(--brand) 30%, var(--border-strong));
   }
+
+  .capture__success {
+    color: var(--ink);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    padding: 0.85em 1em;
+    border: 1px solid color-mix(in srgb, var(--brand) 35%, var(--border-strong));
+    border-radius: var(--radius-sm);
+    background: color-mix(in srgb, var(--brand) 8%, var(--surface));
+  }
+  .capture__success:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
 
   @media (max-width: 30rem) {
     .capture { grid-template-columns: 1fr; }
