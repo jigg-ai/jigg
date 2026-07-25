@@ -178,18 +178,31 @@ Write as you go. Messy is correct — this is the first published build log.
 - **Lesson [my setup]** — "verified locally" meant nothing here because the local test
   mocked away the exact thing that broke (the cross-origin POST). A flow that depends on a
   third-party endpoint has to be tested against that endpoint, not a stand-in.
-- **Proxy worked but Buttondown 400'd every call — spam firewall [tool limit + my setup]**
-  (2026-07-25) — after deploy, the function returned 502 on every subscribe. Not auth: a
-  key check `GET /v1/subscribers` returned 200, and Buttondown's own API-request log showed
-  `POST /v1/subscribers` from **Netlify's datacenter IP → 400** while the same key from a
-  residential IP → 200. Cause: Buttondown runs a **spam firewall** that flags subscriptions
-  originating from datacenter IPs. Fix: forward the real visitor's IP as `ip_address`
-  (from `x-nf-client-connection-ip`) so the firewall judges the actual subscriber, not our
-  server. Also moved the host to `api.buttondown.com` (current docs). Verified live: fresh
-  address → `{ok:true,status:"subscribed"}` + confirmation email received; already-subscribed
-  address → `{ok:true,status:"already"}` and the browser renders the right inline state. The
-  `[tool limit]` half: the failure surfaced only as a generic 400 with no hint that a
-  firewall was the cause — had to diagnose it from the API-request log by IP.
+- **Proxy worked but Buttondown 400'd every call — the real cause was our own testing
+  [my setup, with a tool-limit assist]** (2026-07-25) — after deploy the function 502'd on
+  every subscribe. Not auth (`GET /v1/subscribers` → 200). Buttondown's API-request log showed
+  `POST /v1/subscribers` from **Netlify's datacenter IP → 400**, intermittently 201. I first
+  guessed the fix was forwarding the visitor's real IP as `ip_address` — and a couple of test
+  runs went green, so I called it fixed. **Wrong, twice over:** those greens were from `curl`
+  running *on the user's own machine* (Claude Code is local → residential IP), and the odd 201
+  was the firewall being probabilistic. A clean isolation test killed the theory — injecting a
+  *residential* IP into the body still 400'd, so `ip_address` decides nothing. The real error,
+  once surfaced from the API response: `"This subscriber was blocked by your firewall."` Root
+  cause: Buttondown's **Firewall** (Settings → Firewall) has **Attack mode** on by default,
+  which *"turns on aggressive auditing and IP-address auditing when it detects a surge of
+  unactivated subscribers."* Our own burst of test signups was that surge — so we tripped the
+  firewall into auditing the *connection* IP, which for a server-side proxy is always a
+  datacenter IP → permanent false positive. Real fix (in Buttondown, not code): disable **IP
+  address auditing** + **Attack mode**, drop **Auditing mode** Aggressive→Enabled. Double
+  opt-in stays the actual spam gate. We still forward `ip_address` (harmless, and correct if
+  auditing is ever re-enabled) and use `api.buttondown.com`. Verified live: single + a rapid
+  burst of 3 all → 201; browser subscribe confirmed by the user. **Note the launch trap:**
+  Attack mode would re-fire on a genuine launch spike (lots of not-yet-confirmed signups look
+  identical to the bot pattern), so it has to stay off for a proxy setup.
+- **Lesson [my setup]** — I called "fixed" twice on evidence that was contaminated by *where
+  my test ran from* (local machine = residential IP, not the datacenter path real users hit).
+  When a result depends on network origin, the test has to run from the same origin as
+  production — or the green is a lie.
 
 ## Artifacts
 <!-- screenshots of each view; the deploy URL; a short screen recording if useful -->

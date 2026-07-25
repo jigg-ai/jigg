@@ -4,15 +4,15 @@
 // A cross-origin `fetch` is CORS-blocked; a cross-site hidden-iframe form submit
 // gets eaten by browser tracking protection (Safari/Brave/Firefox); and the
 // anonymous embed endpoint rate-limits. So the form posts here, same-origin, and
-// we call Buttondown's *authenticated* API server-side.
+// we call Buttondown's authenticated API server-side — real success/error states.
 //
-// NOTE: currently in DIAGNOSTIC mode to pin Buttondown's spam-firewall behaviour
-// (it 400s requests from Netlify's datacenter egress IP). Responses carry a
-// temporary `_debug` block, and an `ip_address` in the POST body overrides the
-// header-derived IP so we can test whether the firewall honours a provided IP.
-// Both are removed once the real fix is confirmed.
+// One gotcha lives in Buttondown, not here: its Firewall (Settings → Firewall)
+// audits the *connection* IP, which for this proxy is always Netlify's datacenter
+// and so gets false-flagged. That's fixed by disabling "IP address auditing" +
+// "Attack mode" there; double opt-in is the real spam gate. We still forward the
+// visitor's real IP as `ip_address` so any future auditing judges them, not us.
 //
-// Key lives only in the BUTTONDOWN_API_KEY env var.
+// Key lives only in the BUTTONDOWN_API_KEY env var, never in the repo.
 
 const API_URL = 'https://api.buttondown.com/v1/subscribers';
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -26,22 +26,18 @@ export default async (req) => {
     return json({ ok: false, error: 'server_not_configured' }, 500);
   }
 
+  // Accept our fetch (JSON) and the no-JS form navigation (urlencoded) alike.
   const ctype = req.headers.get('content-type') || '';
   let email = '';
-  let bodyIp = ''; // TEMP: test override
   try {
-    if (ctype.includes('application/json')) {
-      const b = await req.json();
-      email = b.email || '';
-      bodyIp = b.ip_address || '';
-    } else {
-      email = (await req.formData()).get('email') || '';
-    }
+    if (ctype.includes('application/json')) email = (await req.json()).email || '';
+    else email = (await req.formData()).get('email') || '';
   } catch {
     email = '';
   }
   email = String(email).trim().toLowerCase();
 
+  // No-JS clients get redirects; our fetch (Accept: application/json) gets JSON.
   const wantsJson = (req.headers.get('accept') || '').includes('application/json');
   const reply = (data, status, redirectTo) =>
     wantsJson ? json(data, status) : redirect(redirectTo);
@@ -50,9 +46,11 @@ export default async (req) => {
     return reply({ ok: false, error: 'invalid_email' }, 422, '/subscribe?error=invalid');
   }
 
-  const nfIp = req.headers.get('x-nf-client-connection-ip') || '';
-  const xff = (req.headers.get('x-forwarded-for') || '').split(',')[0].trim();
-  const clientIp = bodyIp || nfIp || xff || undefined; // bodyIp is the TEMP override
+  // Forward the real visitor IP so Buttondown records/audits the subscriber, not us.
+  const clientIp =
+    req.headers.get('x-nf-client-connection-ip') ||
+    (req.headers.get('x-forwarded-for') || '').split(',')[0].trim() ||
+    undefined;
 
   let bdRes, bdBody;
   try {
@@ -67,23 +65,19 @@ export default async (req) => {
     return reply({ ok: false, error: 'upstream_unreachable' }, 502, '/subscribe?error=network');
   }
 
-  // TEMP diagnostic echoed on every response.
-  const _debug = {
-    sentIp: clientIp || null,
-    nfIp: nfIp || null,
-    xff: xff || null,
-    upstreamStatus: bdRes.status,
-    upstreamDetail: String((bdBody && (bdBody.detail || bdBody.code)) || JSON.stringify(bdBody || {})).slice(0, 300),
-  };
+  // 200/201 → created; Buttondown sends the double opt-in confirmation email.
+  if (bdRes.ok) return reply({ ok: true, status: 'subscribed' }, 200, '/subscribed');
 
-  if (bdRes.ok) return reply({ ok: true, status: 'subscribed', _debug }, 200, '/subscribed');
-
+  // Duplicate: Buttondown returns 400 with a collision code (wording varies by
+  // API version, so match loosely). Treat as a soft success — they're on the list.
   if (bdRes.status === 400 && /exist|already|conflict/i.test(JSON.stringify(bdBody || ''))) {
-    return reply({ ok: true, status: 'already', _debug }, 200, '/subscribed');
+    return reply({ ok: true, status: 'already' }, 200, '/subscribed');
   }
 
+  // Full detail is logged server-side (Netlify function logs); the client only
+  // gets a generic error so we don't leak Buttondown's internals.
   console.error('Buttondown subscribe failed', bdRes.status, bdBody);
-  return reply({ ok: false, error: 'subscribe_failed', _debug }, 502, '/subscribe?error=failed');
+  return reply({ ok: false, error: 'subscribe_failed' }, 502, '/subscribe?error=failed');
 };
 
 const json = (data, status = 200) =>
