@@ -71,15 +71,10 @@ export default async (req) => {
     return reply({ ok: true, status: 'already' }, 200, '/subscribed');
   }
 
+  // Full detail is logged server-side (Netlify function logs); the client only
+  // gets a generic error so we don't leak Buttondown's internals.
   console.error('Buttondown subscribe failed', bdRes.status, bdBody);
-  // `upstream` is a temporary diagnostic — surfaces Buttondown's real reason so we
-  // can pin the 400 without reading Netlify logs. Trim once the flow is confirmed.
-  const detail = bdBody && (bdBody.detail || bdBody.code || JSON.stringify(bdBody));
-  return reply(
-    { ok: false, error: 'subscribe_failed', upstream: { status: bdRes.status, detail: String(detail).slice(0, 300) } },
-    502,
-    '/subscribe?error=failed'
-  );
+  return reply({ ok: false, error: 'subscribe_failed' }, 502, '/subscribe?error=failed');
 };
 
 const json = (data, status = 200) =>

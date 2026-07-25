@@ -178,6 +178,18 @@ Write as you go. Messy is correct — this is the first published build log.
 - **Lesson [my setup]** — "verified locally" meant nothing here because the local test
   mocked away the exact thing that broke (the cross-origin POST). A flow that depends on a
   third-party endpoint has to be tested against that endpoint, not a stand-in.
+- **Proxy worked but Buttondown 400'd every call — spam firewall [tool limit + my setup]**
+  (2026-07-25) — after deploy, the function returned 502 on every subscribe. Not auth: a
+  key check `GET /v1/subscribers` returned 200, and Buttondown's own API-request log showed
+  `POST /v1/subscribers` from **Netlify's datacenter IP → 400** while the same key from a
+  residential IP → 200. Cause: Buttondown runs a **spam firewall** that flags subscriptions
+  originating from datacenter IPs. Fix: forward the real visitor's IP as `ip_address`
+  (from `x-nf-client-connection-ip`) so the firewall judges the actual subscriber, not our
+  server. Also moved the host to `api.buttondown.com` (current docs). Verified live: fresh
+  address → `{ok:true,status:"subscribed"}` + confirmation email received; already-subscribed
+  address → `{ok:true,status:"already"}` and the browser renders the right inline state. The
+  `[tool limit]` half: the failure surfaced only as a generic 400 with no hint that a
+  firewall was the cause — had to diagnose it from the API-request log by IP.
 
 ## Artifacts
 <!-- screenshots of each view; the deploy URL; a short screen recording if useful -->
