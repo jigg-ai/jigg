@@ -7,6 +7,14 @@
 // The AI-presenter disclosure is REQUIRED beside every such embed (CONTEXT §4). It is
 // baked in as the default caption so a video build cannot accidentally ship without it;
 // override only if the exact wording must change.
+//
+// `cc_load_policy=0` tells the player not to auto-load a caption track. Our current render
+// has captions BURNED INTO the pixels, so YouTube's own track on top reads as double
+// captions. Viewers can still toggle CC on via the player. NOTE: this is best-effort — it
+// does not override a viewer who has forced "always show captions" in their account. The
+// definitive fix is to remove the caption track on the video itself in YouTube Studio
+// (there's nothing to burn-in AND overlay). Longer term, the v2 plan is a soft caption
+// track instead of burned-in — then captions become a single source and this can flip.
 interface Props {
   id: string;
   title?: string;
@@ -22,7 +30,7 @@ const {
 <figure class="video">
   <div class="frame">
     <iframe
-      src={`https://www.youtube-nocookie.com/embed/${id}`}
+      src={`https://www.youtube-nocookie.com/embed/${id}?cc_load_policy=0`}
       title={title}
       loading="lazy"
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
