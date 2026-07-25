@@ -65,19 +65,24 @@ export default async (req) => {
     return reply({ ok: false, error: 'upstream_unreachable' }, 502, '/subscribe?error=network');
   }
 
+  // TEMP diagnostic — echoes Buttondown's exact status+reason so we can pin why
+  // specific addresses bounce. Removed once the address-specific cause is known.
+  const _debug = {
+    upstreamStatus: bdRes.status,
+    upstreamDetail: String((bdBody && (bdBody.detail || bdBody.code)) || JSON.stringify(bdBody || {})).slice(0, 400),
+  };
+
   // 200/201 → created; Buttondown sends the double opt-in confirmation email.
-  if (bdRes.ok) return reply({ ok: true, status: 'subscribed' }, 200, '/subscribed');
+  if (bdRes.ok) return reply({ ok: true, status: 'subscribed', _debug }, 200, '/subscribed');
 
   // Duplicate: Buttondown returns 400 with a collision code (wording varies by
   // API version, so match loosely). Treat as a soft success — they're on the list.
   if (bdRes.status === 400 && /exist|already|conflict/i.test(JSON.stringify(bdBody || ''))) {
-    return reply({ ok: true, status: 'already' }, 200, '/subscribed');
+    return reply({ ok: true, status: 'already', _debug }, 200, '/subscribed');
   }
 
-  // Full detail is logged server-side (Netlify function logs); the client only
-  // gets a generic error so we don't leak Buttondown's internals.
   console.error('Buttondown subscribe failed', bdRes.status, bdBody);
-  return reply({ ok: false, error: 'subscribe_failed' }, 502, '/subscribe?error=failed');
+  return reply({ ok: false, error: 'subscribe_failed', _debug }, 502, '/subscribe?error=failed');
 };
 
 const json = (data, status = 200) =>
