@@ -156,6 +156,28 @@ Write as you go. Messy is correct — this is the first published build log.
   plain-naming rule). `noindex, follow` + excluded from the sitemap via a filter in
   `astro.config.mjs` — it's transactional, not discoverable content. Verified desktop +
   mobile, no console errors. Buttondown field to set: `https://jigg.ai/subscribed`.
+- **Subscribe rewritten to a server-side proxy — after the client-side approach failed
+  in production** (2026-07-25) — the honest dead-end trail: the inline-subscribe shipped
+  2026-07-24 (hidden-iframe form post) looked verified locally but was only ever tested
+  with the form action repointed to a dummy page — the *DOM swap* was verified, never a
+  real Buttondown POST. In production it silently failed: users saw "Almost there…" but no
+  subscriber was created and no email arrived. Debugged live with browser network tools.
+  Three overlapping causes, each fatal on its own: (1) a cross-origin `fetch` to Buttondown
+  is **CORS-blocked**; (2) the cross-site **hidden-iframe** submit is stripped by browser
+  tracking protection — reproduced failing in Safari, while it "worked" once in an
+  automation browser with protection off, which sent me chasing a false positive; (3) the
+  anonymous **embed endpoint rate-limited** after our test burst ("worked once locally then
+  stopped, for new addresses too"). A `no-cors` fetch reaches the server but creates
+  nothing. Conclusion: no browser-only path is reliable. **Fix:** `netlify/functions/
+  subscribe.mjs` calls Buttondown's authenticated API (`POST /v1/subscribers`, `Authorization:
+  Token`, body `{email_address}`) server-side; the form posts same-origin and gets real
+  success / already-subscribed / error states. Key lives only in the `BUTTONDOWN_API_KEY`
+  Netlify env var. No-JS still works (function 303-redirects to `/subscribed`). Verified:
+  build + frontend error path (dev 404) degrade cleanly; **success path validates only
+  against the live function post-deploy** — noted so it isn't over-claimed like last time.
+- **Lesson [my setup]** — "verified locally" meant nothing here because the local test
+  mocked away the exact thing that broke (the cross-origin POST). A flow that depends on a
+  third-party endpoint has to be tested against that endpoint, not a stand-in.
 
 ## Artifacts
 <!-- screenshots of each view; the deploy URL; a short screen recording if useful -->

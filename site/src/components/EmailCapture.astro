@@ -1,20 +1,15 @@
 ---
-// Newsletter signup, wired to Buttondown's public embed endpoint. This posts a
-// plain form (no API key in the browser) to Buttondown, which runs its
-// double opt-in ("confirm your subscription") flow.
+// Newsletter signup. Posts to our own same-origin Netlify Function
+// (/.netlify/functions/subscribe), which calls Buttondown's authenticated API
+// server-side. This replaced an earlier browser-direct approach that couldn't
+// work reliably: a cross-origin fetch is CORS-blocked, a cross-site hidden-iframe
+// submit is stripped by browser tracking protection, and the anonymous embed
+// endpoint rate-limits. The function path gives real success/error feedback.
 //
-// UX: by default the POST would open Buttondown's confirmation page in a new
-// tab (target="_blank"). The client script below progressively enhances this —
-// it routes the POST into a hidden iframe so the page never navigates, then
-// swaps in an inline confirmation. Buttondown's embed endpoint accepts a native
-// form POST but blocks direct fetch/XHR (CORS), which is why we use an iframe
-// rather than AJAX — no server proxy or API key needed. With JS off, the
-// target="_blank" fallback still works.
-//
-// Set BUTTONDOWN_USERNAME to the newsletter's Buttondown username — it's the one
-// place that needs it, and every EmailCapture on the site uses it.
-const BUTTONDOWN_USERNAME = 'jiggAI';
-const action = `https://buttondown.com/api/emails/embed-subscribe/${BUTTONDOWN_USERNAME}`;
+// Progressive enhancement: the <form> posts to the function natively, so with JS
+// off it still works — the function 303-redirects to /subscribed. With JS, we
+// intercept, POST via fetch, and show the result inline without leaving the page.
+const ACTION = '/.netlify/functions/subscribe';
 
 interface Props {
   cta?: string;
@@ -31,7 +26,7 @@ const {
 ---
 
 <div class="capture-shell">
-  <form class:list={['capture', variant]} action={action} method="post" target="_blank">
+  <form class:list={['capture', variant]} action={ACTION} method="post">
     <input
       type="email"
       name="email"
@@ -41,56 +36,71 @@ const {
       placeholder={placeholder}
       required
     />
-    <input type="hidden" name="embed" value="1" />
     <button type="submit" class="btn btn--primary">{cta}</button>
     <p class="note">{note}</p>
+    <p class="capture__error" role="alert" hidden></p>
   </form>
-  <p class="capture__success" role="status" tabindex="-1" hidden>
-    Almost there — check your inbox and click the confirmation link to finish
-    subscribing. One email per new build, nothing else.
-  </p>
+  <p class="capture__success" role="status" tabindex="-1" hidden></p>
 </div>
 
 <script>
-  // Progressive enhancement: keep subscribers on-site. The native form POST to
-  // Buttondown still runs (no CORS, no API key), but the response lands in a
-  // hidden iframe instead of a new tab, and we swap in an inline confirmation.
-  // Runs once and wires up every EmailCapture on the page.
-  document.querySelectorAll<HTMLFormElement>('form.capture').forEach((form, i) => {
-    const shell = form.closest('.capture-shell');
-    if (!shell) return;
-    const success = shell.querySelector<HTMLElement>('.capture__success');
-    const button = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+  // Progressive enhancement: intercept the native post, call the function via
+  // fetch, and render real success / already-subscribed / error states inline.
+  const SUBSCRIBED =
+    'Almost there — check your inbox and click the confirmation link to finish subscribing. One email per new build, nothing else.';
+  const ALREADY =
+    "You're already on the list. If you never confirmed, check your inbox for the confirmation link.";
+  const ERRORS: Record<string, string> = {
+    invalid_email: 'That doesn’t look like a valid email address.',
+    server_not_configured: 'Signups are temporarily unavailable — please try again later.',
+    default: 'Something went wrong. Please try again in a moment.',
+  };
 
-    // Route the POST into an invisible iframe so the browser doesn't navigate.
-    const frameName = `bd-sink-${i}`;
-    const frame = document.createElement('iframe');
-    frame.name = frameName;
-    frame.setAttribute('aria-hidden', 'true');
-    frame.tabIndex = -1;
-    frame.style.display = 'none';
-    shell.appendChild(frame);
-    form.target = frameName;
+  document.querySelectorAll<HTMLFormElement>('form.capture').forEach((form) => {
+    const shell = form.closest('.capture-shell')!;
+    const success = shell.querySelector<HTMLElement>('.capture__success')!;
+    const errorEl = form.querySelector<HTMLElement>('.capture__error')!;
+    const button = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+    const input = form.querySelector<HTMLInputElement>('input[type="email"]')!;
+    const label = button.textContent;
 
-    let submitting = false;
+    const setBusy = (busy: boolean) => {
+      button.disabled = busy;
+      button.textContent = busy ? 'Subscribing…' : label;
+    };
+    const showError = (msg: string) => {
+      errorEl.textContent = msg;
+      errorEl.hidden = false;
+    };
 
-    form.addEventListener('submit', () => {
-      // Native validation (required + type="email") has already passed here.
-      submitting = true;
-      if (button) {
-        button.disabled = true;
-        button.textContent = 'Subscribing…';
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!form.reportValidity()) return; // native email/required validation
+      errorEl.hidden = true;
+      setBusy(true);
+
+      let data: { ok?: boolean; status?: string; error?: string } = {};
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({ email: input.value.trim() }),
+        });
+        data = await res.json().catch(() => ({}));
+      } catch {
+        showError(ERRORS.default);
+        setBusy(false);
+        return;
       }
-    });
 
-    frame.addEventListener('load', () => {
-      // Ignore the iframe's initial about:blank load; only react post-submit.
-      if (!submitting) return;
-      submitting = false;
-      form.hidden = true;
-      if (success) {
+      if (data.ok) {
+        form.hidden = true;
+        success.textContent = data.status === 'already' ? ALREADY : SUBSCRIBED;
         success.hidden = false;
         success.focus(); // move screen-reader/keyboard focus to the confirmation
+      } else {
+        showError(ERRORS[data.error ?? 'default'] ?? ERRORS.default);
+        setBusy(false);
       }
     });
   });
@@ -123,6 +133,12 @@ const {
     grid-column: 1 / -1;
     color: var(--ink-muted);
     font-size: 0.85rem;
+    margin-top: 0.15rem;
+  }
+  .capture__error {
+    grid-column: 1 / -1;
+    color: var(--fault);
+    font-size: 0.9rem;
     margin-top: 0.15rem;
   }
   .onBrand input[type='email'] {

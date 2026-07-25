@@ -11,6 +11,13 @@
   # Pin the Node version for reproducible builds (Astro 7 needs a current Node).
   NODE_VERSION = "22"
 
+# Serverless functions live in site/netlify/functions (relative to base = "site").
+# subscribe.mjs proxies newsletter signups to Buttondown's authenticated API so the
+# browser never has to hit Buttondown cross-origin. Reads BUTTONDOWN_API_KEY from the
+# Netlify environment.
+[functions]
+  directory = "netlify/functions"
+
 # Lighthouse on every deploy. This closes test.md check #7 (performance, previously
 # "Not run" with no score to claim) and gives check #8 a real accessibility NUMBER —
 # though note an automated Lighthouse a11y score is NOT a formal audit; it catches a
