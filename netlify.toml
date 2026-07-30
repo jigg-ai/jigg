@@ -7,6 +7,29 @@
   command = "npm run build"
   publish = "dist"
 
+  # Skip the build entirely when a commit can't change what's served. Roughly a third
+  # of this repo's commits touch only PROCESS/BACKLOG/builds/* — byte-identical site
+  # output — and each one was costing a full metered production deploy (15 credits).
+  #
+  # Exit 0 means "ignore this build", non-zero means "build it", so `git diff --quiet`
+  # has exactly the right polarity: no changes in the watched paths → skip.
+  #
+  # Three details here are load-bearing; all three fail silently if you get them wrong:
+  #
+  # 1. `:/` anchors each pathspec to the REPO ROOT. This command runs from the base
+  #    directory (site/), so a bare `-- site/` would resolve to site/site/, never match,
+  #    and skip every deploy forever — including real content changes. The site would
+  #    quietly stop updating with nothing in the logs to say why.
+  # 2. The range is $CACHED_COMMIT_REF..$COMMIT_REF, i.e. everything in the push. With
+  #    HEAD^..HEAD, pushing three commits where only the middle one touched site/ would
+  #    skip the deploy and leave published content stale.
+  # 3. netlify.toml is watched too. It sits at the repo root, outside site/, so a change
+  #    to THIS file (Lighthouse thresholds, this rule) must still trigger a build.
+  #
+  # If $CACHED_COMMIT_REF is empty (no cache, first build) the command errors, exits
+  # non-zero, and Netlify builds — the safe direction to fail in.
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- :/site/ :/netlify.toml"
+
 [build.environment]
   # Pin the Node version for reproducible builds (Astro 7 needs a current Node).
   NODE_VERSION = "22"
