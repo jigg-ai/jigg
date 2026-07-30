@@ -20,16 +20,8 @@ point. See `builds/website/test.md` for the per-check detail on build #1.
   numbers are needed before setting any threshold — one path below the aggregate would break
   deploys; (2) Best Practices 92 is the outlier, uninvestigated. Thresholds are otherwise
   safe to set aggressively, since failed deploys consume no credits. Original entry below.
-- ~~**Lighthouse performance pass**~~ — **now wired, was not yet measured:**
-  `@netlify/plugin-lighthouse` is configured in `netlify.toml` to run on every deploy
-  against `/`, `/builds/`, `/tools/` and `/builds/website/`. Deliberately **no failing
-  thresholds** until a baseline exists — a threshold guessed before the first measurement
-  either breaks deploys for nothing or passes vacuously. **Next:** read the first real
-  scores off a deploy, record them in `test.md`, then set thresholds just under baseline
-  so genuine regressions break the build. **Now unblocked and free:** Deploy Previews cost
-  0 credits and run the plugin across all four paths, so the baseline can be read off the
-  next PR preview rather than waiting for a production deploy. Thresholds are also safe to
-  set aggressively — failed deploys don't consume credits.
+  (Superseded the long-standing "wired but never measured" entry, open since 2026-07-23 —
+  it was blocked purely on a deploy being expensive enough to ration. Deleted on this sweep.)
 - **Formal accessibility audit** — check #8, **partial**. The site is *built* for it
   (semantic landmarks, skip link, heading order, `aria-current`/`aria-pressed`,
   decorative SVGs `aria-hidden`, visible focus rings), but there's been no axe run and
@@ -60,8 +52,9 @@ point. See `builds/website/test.md` for the per-check detail on build #1.
 
 ## Deploy model (adopted 2026-07-29) — open items
 
-The model itself is in `PROCESS.md` → **Shipping**. These are the parts that are asserted
-but not yet observed, plus one thing only a human can do.
+The model itself is in `PROCESS.md` → **Shipping**. Adopted and exercised end-to-end on the
+same day: PR #1 → free preview → merge → one production deploy → a free docs-only push. What
+remains below is what's still *unobserved*, not untried.
 
 - **NEW — Netlify reports nothing to GitHub for production deploys.** Deploy Previews post
   commit statuses (that's how PR #1's checks appeared), but the production deploy of
@@ -72,32 +65,40 @@ but not yet observed, plus one thing only a human can do.
   happened and didn't, and a docs-heavy repo means most pushes legitimately skip, so a
   wrongly-skipped content change would blend in. Fix: add a GitHub commit-status deploy
   notification (Netlify → Project configuration → Notifications) so it becomes scriptable.
-- **The build `ignore` rule — half verified.** The **"builds when it should"** direction
-  **PASSED 2026-07-29**: merging PR #1 produced `Production: main@98e0db4 Published` in 30s,
-  correctly *not* skipped because `netlify.toml` was in the diff. The **skip** direction is
-  still unproven — see below. Note the credit meter showed nothing deducted immediately
-  after that deploy; that was **lag, not a skipped build**, and the deploy list is the
-  authoritative signal. Don't diagnose from the meter.
-- **The skip direction has never actually run.** Verified locally that the git command
-  has the right polarity and that the un-anchored `-- site/` form would wrongly skip a real
-  site change (`:/` matters because the command runs from `base = "site"`). But "Netlify
-  honours it" is still an assumption. **Verify free, on the next docs-only push:** land a
-  commit touching nothing under `site/` or `netlify.toml` on `main` and confirm the Netlify
-  deploy list shows a skipped build, not a deploy. **This very commit is that test** — it
-  changes only `builds/website/test.md` and `BACKLOG.md`, so it should produce no deploy at
-  all. Until that's seen, don't treat docs-only commits as free — and note the failure
-  direction that matters: a rule that skips too much means published content silently stops
-  updating, which is worse than overpaying.
-- **"Deploy Previews are 0 credits" rests on Netlify's docs plus a support reply.** Both are
-  real receipts, but CONTEXT §9 wants our own. **Cheap to close:** watch the credit meter
-  across this PR's preview rebuilds. If it doesn't move across several rebuilds, that's a
-  first-party observation, which beats a support answer and dates itself.
-- **HUMAN ACTION — disable squash-merge and rebase-merge on the GitHub repo.** Not a repo
-  change, so it can't be committed. PROCESS depends on it: a squash merge collapses a build
-  branch to one commit and one timestamp, deleting the `diag → fix → chore: remove
-  diagnostic` sequences that are step 4's input and the project's differentiating material.
-  Do it **before the first build PR**, because the loss is silent and unrecoverable after
-  the fact.
+- ~~**The build `ignore` rule is unverified.**~~ — **VERIFIED BOTH DIRECTIONS 2026-07-29.**
+  Not just "it skips" — the rule has to skip *and* build correctly, and both were observed
+  on real pushes:
+  - **Builds when it should:** merging PR #1 → `Production: main@98e0db4` **Published** in
+    30s, 15 credits (confirmed on the meter). Correct — `netlify.toml` was in the diff.
+  - **Skips when it should:** the docs-only push `83e995b` (`test.md` + `BACKLOG.md`) →
+    `Production: main@83e995b` **Canceled**. Correct — nothing under `:/site/` or
+    `:/netlify.toml` changed.
+  - **The signal is `Canceled`, not an absent entry.** A skipped build still appears in the
+    deploy list, labelled Canceled. Predicted "no new entry" and that was wrong. This is a
+    trap: "Canceled" reads as a failure, so an ignored build looks broken at a glance, and
+    conversely a *wrongly*-skipped content change looks identical to a correctly-skipped
+    docs commit. See the commit-status item above — that's what makes the difference
+    checkable instead of eyeballed.
+  - **Diagnose from the deploy list, not the credit meter.** The meter showed nothing
+    deducted for several minutes after the `98e0db4` deploy, which briefly looked like a
+    wrongly-skipped build. It was lag. The 15 credits landed later.
+- **"Deploy Previews are 0 credits" — consistent with observation, not yet rigorously
+  measured.** 2026-07-29: PR #1's preview built (`d0d6928`, 32s, Lighthouse across 4 paths)
+  and the meter moved only when the *production* deploy landed, by exactly 15. So the preview
+  demonstrably didn't bill. But that's a single preview build, not the several rebuilds
+  needed to rule out rounding or lag. Netlify's docs and a support reply both say 0. Treat as
+  strongly supported; close it properly by watching the meter across a build branch with a
+  dozen preview rebuilds — which the next real build will produce for free anyway.
+- ~~**HUMAN ACTION — disable squash-merge and rebase-merge on the GitHub repo.**~~ **DONE
+  2026-07-29**, before the first build PR as required. `allow_squash_merge: false`,
+  `allow_rebase_merge: false`, `allow_merge_commit: true`. Verified working on PR #1's merge:
+  `98e0db4` has **two parents** and all four branch commits survive individually. Also set
+  `merge_commit_title: PR_TITLE` (so `git log --first-parent main` reads as real milestones
+  rather than "Merge pull request #1 from…") and `merge_commit_message: BLANK` — the latter
+  deliberately, since PR bodies can carry an AI-attribution footer and CLAUDE.md forbids
+  those in commits; BLANK makes leaking one into history structurally impossible.
+  `delete_branch_on_merge` left `false` on purpose: branch refs are the recovery path.
+  Kept as the record; delete on the next sweep.
 - **Preview Servers are NOT the free surface — don't reach for that dialog.** Netlify's UI
   offers "Preview Servers" per branch, which looks like the obvious fit and is the one
   preview surface that *is* metered: **10 credits per GB-hour** of compute. One left running
