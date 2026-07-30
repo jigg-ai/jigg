@@ -18,7 +18,10 @@ point. See `builds/website/test.md` for the per-check detail on build #1.
   thresholds** until a baseline exists — a threshold guessed before the first measurement
   either breaks deploys for nothing or passes vacuously. **Next:** read the first real
   scores off a deploy, record them in `test.md`, then set thresholds just under baseline
-  so genuine regressions break the build.
+  so genuine regressions break the build. **Now unblocked and free:** Deploy Previews cost
+  0 credits and run the plugin across all four paths, so the baseline can be read off the
+  next PR preview rather than waiting for a production deploy. Thresholds are also safe to
+  set aggressively — failed deploys don't consume credits.
 - **Formal accessibility audit** — check #8, **partial**. The site is *built* for it
   (semantic landmarks, skip link, heading order, `aria-current`/`aria-pressed`,
   decorative SVGs `aria-hidden`, visible focus rings), but there's been no axe run and
@@ -34,11 +37,52 @@ point. See `builds/website/test.md` for the per-check detail on build #1.
 - **`$0` hosting tile is unverified in-repo** — build #1 claims "$0 Hosting (static, free
   tier)" with `pricing_as_of: 2026-07-17`. Plausible and fresh, but no receipt or evidence
   lives in the repo. Re-verify on the CONTEXT §9 pricing cadence (60–90 days → due around
-  **mid-to-late Sep 2026**), and note that Netlify free-tier build minutes are finite —
-  adding the Lighthouse plugin consumes more of them per deploy.
+  **mid-to-late Sep 2026**). ~~Netlify free-tier build minutes are finite — adding the
+  Lighthouse plugin consumes more of them per deploy.~~ **Corrected 2026-07-29:** that was
+  a legacy-plan concern. Netlify now bills credits, and there is no separate build-minutes
+  meter — production deploys are 15 credits each, Deploy Previews and branch deploys are 0.
+  So the plugin is free on every preview; it only ever rides along with a deploy already
+  being paid for. The `$0` claim is still unsubstantiated in-repo, but the pressure on it is
+  deploy *count*, not build time — and July's cycle did exhaust the 300-credit allowance,
+  which is what the new build `ignore` rule and the branch-per-build flow (PROCESS,
+  "Shipping") exist to fix. Capture a real receipt at the Sep re-verification.
 - **`archived` freshness state never exercised** — check #6 is a partial pass:
   `verified` (green) and `recheck-due` (amber) are both confirmed, but no archived build
   exists yet, so that rendering path is untested. Naturally testable as builds age.
+
+## Deploy model (adopted 2026-07-29) — open items
+
+The model itself is in `PROCESS.md` → **Shipping**. These are the parts that are asserted
+but not yet observed, plus one thing only a human can do.
+
+- **The build `ignore` rule has never actually run.** Verified locally that the git command
+  has the right polarity and that the un-anchored `-- site/` form would wrongly skip a real
+  site change (`:/` matters because the command runs from `base = "site"`). But "Netlify
+  honours it" is still an assumption. **Verify right after the merge, free:** push one
+  docs-only commit to `main` and confirm the Netlify log shows a skipped build, not a
+  deploy. Until that's seen, don't treat docs-only commits as free — and note the failure
+  direction that matters: a rule that skips too much means published content silently stops
+  updating, which is worse than overpaying.
+- **"Deploy Previews are 0 credits" rests on Netlify's docs plus a support reply.** Both are
+  real receipts, but CONTEXT §9 wants our own. **Cheap to close:** watch the credit meter
+  across this PR's preview rebuilds. If it doesn't move across several rebuilds, that's a
+  first-party observation, which beats a support answer and dates itself.
+- **HUMAN ACTION — disable squash-merge and rebase-merge on the GitHub repo.** Not a repo
+  change, so it can't be committed. PROCESS depends on it: a squash merge collapses a build
+  branch to one commit and one timestamp, deleting the `diag → fix → chore: remove
+  diagnostic` sequences that are step 4's input and the project's differentiating material.
+  Do it **before the first build PR**, because the loss is silent and unrecoverable after
+  the fact.
+- **Preview Servers are NOT the free surface — don't reach for that dialog.** Netlify's UI
+  offers "Preview Servers" per branch, which looks like the obvious fit and is the one
+  preview surface that *is* metered: **10 credits per GB-hour** of compute. One left running
+  at 1 GB for ten hours is ~100 credits, a third of the monthly allowance, with no commit to
+  show for it. They also run the site in *dev* mode via the Netlify CLI, so they never
+  execute `npm run build` — the actual validator here, since it type-checks `.astro` and
+  enforces the zod schema. A branch that cannot build would preview green. Deploy Previews
+  (PR-triggered, real production build, 0 credits) are the correct surface. Some Netlify
+  material advertises Preview Servers as "free to try through April" — expired, and it was
+  never the compute line anyway.
 
 ## Unconfirmed facts
 
@@ -72,6 +116,27 @@ point. See `builds/website/test.md` for the per-check detail on build #1.
   for the exact errors people hit (e.g. "subscriber blocked by your firewall", "Buttondown
   Netlify 400"). Keep it **out of `/tools`** (Buttondown isn't an AI tool). Full raw material
   is in `builds/website/build-notes.md`. Trigger: provider swap / signup rebuild, not a date.
+- **Revisit Buttondown's spam firewall once there's real subscriber traction.** All of it is
+  currently **off** — Auditing mode Disabled, IP-address auditing off, Attack mode off — because
+  it was false-positiving legitimate signups (including the owner's own email) through the
+  server-side proxy, and at zero subscribers it guards against spam volume that doesn't exist.
+  Double opt-in is the gate for now. **When there's an audience worth spam-targeting, reconsider
+  re-tightening — but mind the proxy constraints that caused the mess:** (1) IP-address auditing
+  will *always* false-positive, since every signup reaches Buttondown from Netlify's datacenter IP;
+  (2) Attack mode auto-escalates to IP auditing on a "surge of unactivated subscribers," which a
+  real launch looks exactly like — so those two should stay off regardless; (3) plain Auditing
+  mode "Enabled" still heuristic-blocks some legit gmail addresses. Safer lever if needed:
+  "Handling blocked subscribers" = keep-for-review (not reject), so false positives stay visible
+  and recoverable rather than silently dropped. Trigger: real signups/spam appearing, not a date.
+  Background: the firewall saga in `builds/website/build-notes.md` and the build #1 postscript.
+  - **When re-tightening, re-check the preview test convention at the same time.** PROCESS
+    ("Testing the newsletter proxy on a preview") standardises disposable
+    `jigg.ai.biz+test-YYYYMMDD@gmail.com` addresses for verifying signup changes on a Deploy
+    Preview. That works today only *because* the firewall is off: plus-addressed gmail is a
+    textbook spam signal, and the base address is one of the ones that was getting blocked. Turn
+    auditing back on and the test address stops behaving like a real subscriber — so the test
+    would quietly stop being representative exactly when it matters most. Re-verify the
+    convention against the new settings, don't assume it survived.
 
 - ~~**Botpress's Website sync silently refuses valid pages — cause never determined**~~ —
   **SOLVED 2026-07-23: we had no `robots.txt`.** That's where Botpress looks for the

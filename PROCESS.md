@@ -53,6 +53,9 @@ In `build-notes.md`, write:
 - Capture screenshots / short recordings of the artifact.
 - Commits are your timestamped milestones. One logical change per commit, clear
   messages (they feed the build log). See CLAUDE.md for commit rules.
+- **Work on a `build/<slug>` branch, and commit as freely as the work deserves** — branch
+  pushes are free, so cost never argues for fewer commits. See **Shipping** below for the
+  branch → preview → merge flow and the merge rules that keep this log intact.
 
 ## 3. Test
 - Run the check set from step 1. Record results in `test.md`.
@@ -81,6 +84,10 @@ In `build-notes.md`, write:
   - the specific decisions only a human should make (does this merit `verified`? does
     the copy overpromise? is the voice right?).
 - **Only after the human signs off:** set `published`, `last_verified`, `status`.
+- **Then merge the branch — the merge is the publish** (see **Shipping** below). Hand the
+  human the Deploy Preview URL for the sign-off above, not the live site: the whole point
+  is that they review it before it exists in public. Merging last also keeps `published`
+  honest, since the deploy lands the same day the date claims.
 - **After the deploy: re-sync anything that holds a COPY of the site's content.** Today
   that means the support bot's knowledge base. Publishing corrected copy does not correct
   the bot — it keeps answering from whatever it crawled last.
@@ -102,6 +109,77 @@ In `build-notes.md`, write:
 - 2–3 lines: what was clunky, what to change next time.
 - Update THIS file (add to the retro log below). The process is dogfooded like
   everything else.
+
+## Shipping — how work reaches production
+
+Applies across every step above, not at one point in the pipeline.
+
+**Why there's a rule at all.** Netlify meters **production deploys only**, at 15 credits
+each against a 300-credit monthly allowance — about 20 deploys a month. Build #1 ran with
+auto-deploy on every push to `main` and spent **315 of 317.4 credits on deploys**; nine
+thousand web requests cost 2.3. The allowance ran out before the cycle did, and nothing
+could ship until it reset. Traffic here is effectively free. *Shipping* is what costs.
+
+The cause wasn't doing too much work — it was that committing and pushing normally
+triggered a metered deploy every time. **Deploy Previews and branch deploys are 0
+credits**, so all iteration belongs there.
+
+| Work | Path | Cost |
+|---|---|---|
+| Docs only — nothing under `site/` or `netlify.toml` | commit straight to `main` | **0** (build `ignore`) |
+| A build | `build/<slug>` → PR → preview → merge | 15 |
+| Site fix / enhancement | `fix/<slug>` → PR → preview → merge | 15, batchable |
+| Urgent production fix | `fix/<slug>` → PR → merge | 15, never batched |
+
+### For a build
+1. Branch `build/<slug>` off `main`. Commit as freely as the work deserves — pushes to a
+   branch are free, so nothing here should ever discourage committing.
+2. Iterate locally: **`netlify dev` if functions are in scope**, `npm run preview`
+   otherwise. `npm run preview` does NOT serve `site/netlify/functions/`, nor apply
+   `netlify.toml` redirects and headers — build #1's most expensive debugging episode was
+   function work, exactly what it can't exercise.
+3. Push the branch, open a PR against `main`. Netlify builds a Deploy Preview and rebuilds
+   it on every subsequent commit, at the same URL. **Fixes go on top as new commits — the
+   PR is the workspace, not a one-shot submission.** Never close and reopen.
+4. Verify on the preview: the real production build on real infrastructure. This is also
+   where the step-5 human pass happens, before anything is live.
+5. **Merge. The merge IS the publish** — one production deploy, nothing to click.
+   Auto-publish on `main` stays ON; there is no separate deploy step.
+
+If a branch sits open for days, rebase onto `main` before the final verification, or
+you're approving a state that won't exist after the merge.
+
+### The discipline, and the two ways to wreck the log
+- **Merge when the build is done, not nearly done.** On-branch iteration is free;
+  post-merge fixes are 15 credits each. "Merged, then spotted a typo, merged again" is
+  the only expensive habit left.
+- **Merge commits only — never squash.** Squashing collapses a branch to one commit and
+  one timestamp, deleting the `diag → fix → chore: remove diagnostic` sequences that are
+  this project's differentiating raw material and the input to step 4. Squash- and
+  rebase-merge are disabled on the GitHub repo for this reason.
+- **Never amend or force-push to tidy a branch.** Same loss, self-inflicted. Push fix
+  commits on top and let the mess stand.
+
+`main` becomes non-linear as a result; `git log --first-parent main` reads as one
+milestone per build, and `git log <merge>^..<merge>` gives that build's internals.
+Acceptable while one build is in flight at a time — revisit if that changes.
+
+### Don't piggyback unrelated work on a build branch
+A Buttondown fix riding on `build/<slug>` couples two things that can block each other,
+and pollutes the commit range step 4 reads as that build's story. The exception is a
+change the build genuinely depends on — then it isn't a separate fix, it's part of the
+build. Independent, non-urgent site fixes can be batched onto one `chore/*` sweep: unlike
+builds, they carry no `published` date and no step-5 gate, so holding them corrupts
+nothing.
+
+### Testing the newsletter proxy on a preview
+A preview reaches Buttondown from a Netlify datacenter IP, same as production — so the
+condition behind build #1's firewall saga reproduces faithfully, and this is the class of
+bug previews are best at. Two rules: use a disposable tagged address
+(`jigg.ai.biz+test-YYYYMMDD@gmail.com`) and delete it afterwards, and never test with the
+owner's own address — `BACKLOG.md` records it getting firewall-blocked, so it's a
+misleading subject. Double opt-in means a test sub stays unactivated until confirmed;
+decide whether you're testing the proxy or the whole flow.
 
 ## Retro log
 
