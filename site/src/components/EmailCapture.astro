@@ -6,10 +6,29 @@
 // submit is stripped by browser tracking protection, and the anonymous embed
 // endpoint rate-limits. The function path gives real success/error feedback.
 //
-// Progressive enhancement: the <form> posts to the function natively, so with JS
-// off it still works — the function 303-redirects to /subscribed. With JS, we
-// intercept, POST via fetch, and show the result inline without leaving the page.
+// Cloudflare Turnstile guards the endpoint. Every submission must carry a token
+// that the function verifies server-side — the widget alone protects nothing,
+// since any string can be POSTed to the endpoint directly. That means JavaScript
+// is now REQUIRED to subscribe: a no-JS submission can't produce a token, and
+// accepting token-less posts would be the bypass. The urlencoded/303 path is kept
+// for the case where JS renders the widget but the fetch itself fails.
 const ACTION = '/.netlify/functions/subscribe';
+
+// Public by design — this is rendered into the HTML. It must be the sitekey that
+// PAIRS with the context's TURNSTILE_SECRET_KEY: real keys reject Cloudflare's
+// dummy token and test keys reject real ones, so previews use the test pair.
+// Fail the build on Netlify if it's missing rather than silently shipping a
+// broken widget; locally, fall back to the test key so `npm run build` still runs.
+const TEST_SITEKEY = '1x00000000000000000000AA';
+const configuredSitekey =
+  import.meta.env.PUBLIC_TURNSTILE_SITEKEY || process.env.PUBLIC_TURNSTILE_SITEKEY || '';
+if (!configuredSitekey && process.env.NETLIFY) {
+  throw new Error(
+    'PUBLIC_TURNSTILE_SITEKEY is not set. Set it in Netlify with the Builds scope ' +
+      '(production: the real sitekey; preview/branch/local: 1x00000000000000000000AA).'
+  );
+}
+const SITEKEY = configuredSitekey || TEST_SITEKEY;
 
 interface Props {
   cta?: string;
@@ -36,9 +55,34 @@ const {
       placeholder={placeholder}
       required
     />
+    {/*
+      Honeypot. A decoy no human sees or reaches: hidden off-screen rather than with
+      `type="hidden"` (better bots skip those), removed from the tab order and the
+      accessibility tree, and `autocomplete="off"` with a name browsers don't map to
+      any autofill category — password managers filling this would silently drop a
+      real subscriber. The server treats any value as a bot and returns the normal
+      success shape without subscribing.
+    */}
+    <input
+      class="capture__decoy"
+      type="text"
+      name="contact_reason"
+      autocomplete="off"
+      tabindex="-1"
+      aria-hidden="true"
+    />
     <button type="submit" class="btn btn--primary">{cta}</button>
+    {/*
+      Turnstile, implicit rendering: the script auto-detects `.cf-turnstile` on load
+      and injects a hidden `cf-turnstile-response` input into this form. Managed mode
+      is usually invisible — most visitors see nothing at all.
+    */}
+    <div class="cf-turnstile capture__turnstile" data-sitekey={SITEKEY} data-appearance="interaction-only"></div>
     <p class="note">{note}</p>
     <p class="capture__error" role="alert" hidden></p>
+    <noscript>
+      <p class="note">Subscribing requires JavaScript — it runs the anti-spam check on this form.</p>
+    </noscript>
   </form>
   <p class="capture__success" role="status" tabindex="-1" hidden></p>
 </div>
@@ -52,10 +96,27 @@ const {
     "You're already on the list. If you never confirmed, check your inbox for the confirmation link.";
   const ERRORS: Record<string, string> = {
     invalid_email: 'That doesn’t look like a valid email address.',
+    role_address: 'Please use a personal address rather than a shared inbox like support@ or info@.',
+    blocked_domain: 'That email provider isn’t accepted. Please use a different address.',
     unsubscribed: 'That address previously unsubscribed, so it can’t be re-added from this form.',
+    turnstile_missing: 'Please wait a moment for the anti-spam check to finish, then try again.',
+    turnstile_expired: 'That anti-spam check expired. Please try again.',
+    turnstile_failed: 'The anti-spam check didn’t pass. Please reload the page and try again.',
+    turnstile_unavailable: 'The anti-spam check is temporarily unavailable. Please try again shortly.',
     server_not_configured: 'Signups are temporarily unavailable — please try again later.',
     default: 'Something went wrong. Please try again in a moment.',
   };
+
+  // Load Turnstile once per page. Astro dedupes this hoisted script even when the
+  // component renders more than once; the guard covers anything else on the page.
+  if (!document.querySelector('script[data-turnstile]')) {
+    const s = document.createElement('script');
+    s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+    s.async = true;
+    s.defer = true;
+    s.dataset.turnstile = '';
+    document.head.appendChild(s);
+  }
 
   document.querySelectorAll<HTMLFormElement>('form.capture').forEach((form) => {
     const shell = form.closest('.capture-shell')!;
@@ -63,15 +124,21 @@ const {
     const errorEl = form.querySelector<HTMLElement>('.capture__error')!;
     const button = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
     const input = form.querySelector<HTMLInputElement>('input[type="email"]')!;
+    const decoy = form.querySelector<HTMLInputElement>('.capture__decoy');
+    const widget = form.querySelector<HTMLElement>('.cf-turnstile');
     const label = button.textContent;
 
     const setBusy = (busy: boolean) => {
       button.disabled = busy;
       button.textContent = busy ? 'Subscribing…' : label;
     };
+    // Turnstile tokens are single-use: once a submission consumes one, a retry needs
+    // a fresh token or it fails as `timeout-or-duplicate`. Reset on every error path.
     const showError = (msg: string) => {
       errorEl.textContent = msg;
       errorEl.hidden = false;
+      const ts = (window as any).turnstile;
+      if (ts && widget) ts.reset(widget);
     };
 
     form.addEventListener('submit', async (e) => {
@@ -81,14 +148,26 @@ const {
       setBusy(true);
 
       let data: { ok?: boolean; status?: string; error?: string } = {};
+      let httpStatus = 0;
       try {
         const res = await fetch(form.action, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-          body: JSON.stringify({ email: input.value.trim() }),
+          body: JSON.stringify({
+            email: input.value.trim(),
+            contact_reason: decoy?.value ?? '', // honeypot — must reach the server
+            // Injected into the form by Turnstile; the server verifies it and
+            // rejects the submission outright if it's absent or invalid.
+            'cf-turnstile-response':
+              form.querySelector<HTMLInputElement>('[name="cf-turnstile-response"]')?.value ?? '',
+          }),
         });
+        httpStatus = res.status;
         data = await res.json().catch(() => ({}));
-      } catch {
+      } catch (err) {
+        // The visible message stays generic; the console gets the real cause, so a
+        // failed signup is diagnosable from devtools instead of being a dead end.
+        console.error('[subscribe] request failed', err);
         showError(ERRORS.default);
         setBusy(false);
         return;
@@ -100,6 +179,12 @@ const {
         success.hidden = false;
         success.focus(); // move screen-reader/keyboard focus to the confirmation
       } else {
+        // `(no JSON body)` means the endpoint didn't answer as itself — e.g. the
+        // function isn't being served, which is what `npm run dev` alone produces.
+        console.error('[subscribe] rejected', {
+          httpStatus,
+          error: data.error ?? '(no JSON body)',
+        });
         showError(ERRORS[data.error ?? 'default'] ?? ERRORS.default);
         setBusy(false);
       }
@@ -130,12 +215,27 @@ const {
   .capture input[type='email']:focus-visible { outline: 2px solid var(--brand); outline-offset: 1px; }
   .capture .btn { white-space: nowrap; }
   .capture .btn:disabled { opacity: 0.65; cursor: default; }
+  /* Honeypot: off-screen and inert, but still a rendered field so bots that fill
+     every input trip it. Not `display: none` / `type="hidden"` — better bots skip
+     those. `position: absolute` keeps it out of the grid flow. */
+  .capture__decoy {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
   .note {
     grid-column: 1 / -1;
     color: var(--ink-muted);
     font-size: 0.85rem;
     margin-top: 0.15rem;
   }
+  /* Managed + interaction-only: usually renders nothing, so it must not reserve
+     space or open a gap in the form. It only takes layout when a challenge shows. */
+  .capture__turnstile { grid-column: 1 / -1; }
+  .capture__turnstile:empty { display: none; }
   .capture__error {
     grid-column: 1 / -1;
     color: var(--fault);

@@ -142,27 +142,40 @@ remains below is what's still *unobserved*, not untried.
   for the exact errors people hit (e.g. "subscriber blocked by your firewall", "Buttondown
   Netlify 400"). Keep it **out of `/tools`** (Buttondown isn't an AI tool). Full raw material
   is in `builds/website/build-notes.md`. Trigger: provider swap / signup rebuild, not a date.
-- **Revisit Buttondown's spam firewall once there's real subscriber traction.** All of it is
-  currently **off** — Auditing mode Disabled, IP-address auditing off, Attack mode off — because
-  it was false-positiving legitimate signups (including the owner's own email) through the
-  server-side proxy, and at zero subscribers it guards against spam volume that doesn't exist.
-  Double opt-in is the gate for now. **When there's an audience worth spam-targeting, reconsider
-  re-tightening — but mind the proxy constraints that caused the mess:** (1) IP-address auditing
-  will *always* false-positive, since every signup reaches Buttondown from Netlify's datacenter IP;
-  (2) Attack mode auto-escalates to IP auditing on a "surge of unactivated subscribers," which a
-  real launch looks exactly like — so those two should stay off regardless; (3) plain Auditing
-  mode "Enabled" still heuristic-blocks some legit gmail addresses. Safer lever if needed:
-  "Handling blocked subscribers" = keep-for-review (not reject), so false positives stay visible
-  and recoverable rather than silently dropped. Trigger: real signups/spam appearing, not a date.
-  Background: the firewall saga in `builds/website/build-notes.md` and the build #1 postscript.
-  - **When re-tightening, re-check the preview test convention at the same time.** PROCESS
+- ~~**Revisit Buttondown's spam firewall once there's real subscriber traction**~~ — **TRIGGER
+  FIRED 2026-07-27/29; settings re-enabled. Superseded by the hardening work below.** This item
+  used to say the firewall was "all off" and should stay off; that is no longer true and the
+  advice no longer holds. Bot signups arrived (~12 over four days, then ~25 over three, scraped
+  B2B addresses), so the firewall is now: **Auditing Enabled, Attack mode Enabled, Handling
+  blocked subscribers Enabled, IP-address auditing Disabled, Embed fingerprinting Disabled,
+  Blocked domains: `immenseignite.info`.** Kept here as the record of what changed and why:
+  - **Attack mode acts, it does not merely warn.** It auto-enables aggressive + IP-address
+    auditing on "a surge of unactivated subscribers" — which is indistinguishable from a
+    successful launch. With the server-side proxy in place that means signups can break at the
+    worst possible moment. Buttondown emails on trigger, so make sure that address is watched.
+  - **"IP auditing is safe now that `ip_address` is forwarded" is UNVERIFIED.** When auditing was
+    last on, signups still 400'd with the IP already being forwarded — but Attack mode had
+    escalated auditing to Aggressive, so the two are confounded. If it's enabled, re-test real
+    signups *after* the change, not before.
+  - **Double opt-in is not the spam gate.** It stops list poisoning, not list bombing — the
+    confirmation email is the payload, and strangers received them. Controls belong in front of
+    the Buttondown call.
+  - **The preview test convention needs re-checking now that auditing is back on.** PROCESS
     ("Testing the newsletter proxy on a preview") standardises disposable
-    `jigg.ai.biz+test-YYYYMMDD@gmail.com` addresses for verifying signup changes on a Deploy
-    Preview. That works today only *because* the firewall is off: plus-addressed gmail is a
-    textbook spam signal, and the base address is one of the ones that was getting blocked. Turn
-    auditing back on and the test address stops behaving like a real subscriber — so the test
-    would quietly stop being representative exactly when it matters most. Re-verify the
-    convention against the new settings, don't assume it survived.
+    `jigg.ai.biz+test-YYYYMMDD@gmail.com` addresses. That convention was written while the
+    firewall was off; plus-addressed gmail is a textbook spam signal, so a test signup may now be
+    blocked and stop being representative. Re-verify, don't assume it survived. (Correction to an
+    earlier note: the address that is permanently unsubscribable is `sasha.gmi.hodl@gmail.com`,
+    via an opt-out suppression — *"previously unsubscribed… you cannot resubscribe them"* — not
+    the bare `jigg.ai.biz@gmail.com`, and not the firewall. Different mechanism, different fix.)
+- **Confirmation links from a Deploy Preview land on production, not the preview.** Double opt-in
+  is only half-testable on a branch deploy: the subscribe POST exercises the preview's function,
+  but Buttondown's confirmation email redirects to `https://jigg.ai/subscribed` (the "After
+  confirming" URL is a single account-level setting, not per-deploy). Low impact today because
+  `/subscribed` is static and rarely changes — but if that page or the redirect target is ever
+  what's under test, a preview cannot validate it. Options if it matters: temporarily repoint the
+  Buttondown redirect, or verify that leg in production after merge. Trigger: changing
+  `/subscribed` or the redirect setting.
 
 - ~~**Botpress's Website sync silently refuses valid pages — cause never determined**~~ —
   **SOLVED 2026-07-23: we had no `robots.txt`.** That's where Botpress looks for the
