@@ -99,6 +99,34 @@ remains below is what's still *unobserved*, not untried.
   those in commits; BLANK makes leaking one into history structurally impossible.
   `delete_branch_on_merge` left `false` on purpose: branch refs are the recovery path.
   Kept as the record; delete on the next sweep.
+- **NEW — a `draft` build is invisible on its own Deploy Preview, which breaks PROCESS
+  step 5.** `site/src/lib/builds.ts:13` filters `status === 'draft'` out whenever
+  `import.meta.env.PROD` is true. A Deploy Preview *is* a production build, so a build
+  drafted on a branch does not render on the preview — confirmed on build #4, whose
+  `npm run build` emits 11 pages and no `/builds/buttondown-hardening/`. But PROCESS step 5
+  says to hand the human the Deploy Preview URL for sign-off, "not the live site: the whole
+  point is that they review it before it exists in public." Those two rules are in direct
+  conflict, and the conflict was invisible until a build was actually drafted on a branch.
+  - **Workaround in use:** review at `npm run dev`, which shows drafts. Costs nothing but
+    isn't the production build, so it proves less — exactly the gap that made build #1's
+    signup fix ship broken.
+  - **Do NOT work around it by flipping `status` to `verified` before the review.** That is
+    precisely the failure PROCESS step 5 was hardened against.
+  - **Fix worth making:** gate on Netlify's deploy context rather than `PROD` — show drafts
+    when `CONTEXT !== 'production'`, so previews render them and the live site never does.
+    One line, but it is a `site/` change and therefore a paid deploy, so batch it.
+
+- **NEW — publishing build #4 silently rewrites Claude Code's `/tools` entry.** `builds.ts:99`
+  takes the most-recent build's `tool_*` fields per tool, and `publishedTime` returns 0 for an
+  unset `published`. So while build #4 is a draft, build #1 stays primary and `/tools` still
+  shows "empty folder to a live, four-view content engine in one sitting" with
+  `accessibility: Some setup`. The moment step 5 sets `published` on build #4, the entry flips
+  to build #4's verdict and `accessibility: Advanced`. Working as designed (CONTEXT §6), and
+  the human should agree to it knowingly rather than discover it post-merge — it retires
+  build #1's verdict from `/tools` entirely. Note this also **closes the "aggregation never
+  exercised with two builds on one tool" item below**: verified rendering as `2 builds` under
+  one Claude Code entry at `npm run dev`. Re-confirm on the preview once drafts render there.
+
 - **Preview Servers are NOT the free surface — don't reach for that dialog.** Netlify's UI
   offers "Preview Servers" per branch, which looks like the obvious fit and is the one
   preview surface that *is* metered: **10 credits per GB-hour** of compute. One left running
@@ -428,9 +456,11 @@ These are cheap to clear once builds #2/#3 land, and near-impossible before:
   `rel="sponsored nofollow noopener"`, while `Built with:` renders "Claude Opus 4.8,
   Claude Code" as plain text. The empty `stack` segment is omitted rather than padded, as
   CONTEXT §3 specifies. Kept here as the record; delete on the next backlog sweep.
-- **Tools-index aggregation ("most-recent wins")** — when several builds share a `tool`,
-  `src/lib/builds.ts` sums the build count and uses the most-recent build's `tool_*`
-  fields. Documented, but never exercised with two builds on one tool.
+- ~~**Tools-index aggregation ("most-recent wins")**~~ — **EXERCISED 2026-07-30** by build #4,
+  the second Claude Code build. `/tools` correctly renders one Claude Code entry reading
+  "2 builds" rather than two entries. The tie-break behaviour while one is a draft, and what
+  changes at publish, are written up in the deploy-model section above. Still to confirm on a
+  Deploy Preview rather than `npm run dev` — blocked on the draft-visibility item above.
 - ~~**Repro-pack copy consistency**~~ — **RESOLVED 2026-07-23.** The post claimed the
   model-critique back-and-forth was "in the repro pack"; it was in neither the delivered
   pack (which didn't exist) nor the planned contents. Root cause: the session was never

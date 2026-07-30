@@ -1,0 +1,279 @@
+---
+title: "Hardening a public signup endpoint after the bots found it"
+category: "websites"
+tool: "Claude Code"
+built_with: ["Claude Opus 5"]
+stack: ["Buttondown", "Netlify Functions", "Cloudflare Turnstile", "Astro 7.1"]
+runs_on_site: true
+status: "draft"
+summary: "The newsletter signup on this site was a public endpoint with no abuse controls, and bots found it: 33 scraped addresses in 65 hours, which meant confirmation emails landing on real strangers who never asked for them. Claude Code built the layered fix — honeypot, validation, origin check, server-verified Turnstile, failing closed — in a 2h21m session, and 12 of 13 acceptance checks pass. The caveat is the part you can't delegate: three separate times a test came back green because it wasn't running where production runs, and the tool hands you those green results without complaint."
+test_score: "12/13"
+repro_pack: false
+last_verified: 2026-07-30
+featured: false
+meta_line: "12/13 checks · 1 self-inflicted outage"
+tool_summary: "AI pair-builder in your terminal"
+tool_verdict: "Built the whole layered defence — honeypot, validation, server-verified Turnstile, fail-closed — in one 2h21m session, and got the ordering of the controls right without being asked. It will also hand you a passing test that never exercised production. Checking that the test matches reality is still yours."
+accessibility: "Advanced"
+---
+
+import ShortVersion from '../../components/post/ShortVersion.astro';
+import ProcessStep from '../../components/post/ProcessStep.astro';
+import StatTiles from '../../components/post/StatTiles.astro';
+import ToolVerdict from '../../components/post/ToolVerdict.astro';
+
+<ShortVersion>
+The email signup on this site posted to a Netlify Function with no abuse controls
+on it at all. Bots found it and fed it **33 scraped addresses in 65 hours** — which
+is not a spam problem, it's a *sending* problem: every one of those triggered a
+confirmation email to a real stranger who never asked for it. Claude Code built the
+fix in one session and it holds. The honest caveat is that the expensive failures in
+this build were never the code. Three times I accepted a green test result that
+hadn't actually tested anything, and twice I published a number I couldn't source.
+</ShortVersion>
+
+The endpoint was publicly POST-able, so anything on the internet could hand it an
+address. What that costs isn't obvious until it happens:
+
+<StatTiles variant="metric" stats={[
+  { value: "33", label: "scraped addresses, in 65 hours" },
+  { value: "7", label: "strangers actually emailed" },
+  { value: "3", label: "hard bounces, on a list with no subscribers" },
+]} />
+
+Double opt-in doesn't save you here, and this is the part worth internalising if
+you're wiring a newsletter into anything public. Double opt-in stops list
+*poisoning* — nobody joins without confirming. It does nothing about list
+*bombing*, because **the confirmation email is itself the payload.** Strangers got
+mail from a newsletter they'd never heard of. Meanwhile the undeliverable ones
+became hard bounces charged against a sending reputation that had no subscribers to
+show for it. Left running, the realistic ending is Buttondown suspending the
+account — losing the asset before it exists.
+
+## What the traffic actually looked like
+
+Every figure on this page comes from a masked subscriber export that is
+[in the repository](https://github.com/jigg-ai/jigg/blob/main/builds/buttondown-hardening/repro/spam-wave-masked.csv),
+so you can recompute them rather than take my word for it. The addresses are masked
+because the people behind them are scraping victims, not attackers — publishing them
+would inflict exactly the harm this build exists to stop.
+
+Three things in it weren't visible from the dashboard:
+
+- **It was a pool, not a host.** 33 signups from **16 distinct IPs across 7 /24
+  subnets**, the busiest three carrying 11, 8 and 6. Median gap between signups: **65
+  minutes**. That's machine-regular pacing, deliberately spread.
+- **79% never got an email.** 26 of the 33 were blocked by Buttondown's own firewall
+  before anything was sent. Only **7 were ever emailed**, and 3 of those bounced. If
+  you see a bounce rate quoted for this build, the denominator is 7 — 43% — not 33.
+- **One of them confirmed.** An address from the wave clicked its confirmation link a
+  day later. I can't tell you whether that's a real person who genuinely wanted the
+  newsletter, a confused victim, or a corporate link-scanner following URLs
+  automatically. All three produce an identical record. It's left unclassified on
+  purpose, and it means a confirmation isn't proof of a human either.
+
+That spread is also the retroactive explanation for two ideas that went nowhere. Rate
+limiting per IP has almost nothing to bite on at one signup an hour across seven
+subnets. And forwarding the visitor's IP to Buttondown so its firewall can judge the
+subscriber — which sounds right, and which I chased hard — just hands it a different
+clean-looking address nearly every time.
+
+## The honest process
+
+<ProcessStep result="fail" title="Shipped a fix whose test mocked away the only thing that mattered" tag="my-setup">
+This build starts where the previous one ended: an inline signup that *looked*
+verified and was silently failing in production. Visitors saw "check your inbox," no
+subscriber was created, no email arrived. The local test had repointed the form at a
+dummy page — so the one thing that could break, a real cross-origin POST to
+Buttondown, was never exercised. "Verified locally" meant nothing.
+</ProcessStep>
+
+<ProcessStep result="fail" title="Every browser-only path is a dead end" tag="tool-limit">
+Three ways to submit straight from the browser, three walls. A cross-origin `fetch`
+is CORS-blocked. A cross-site hidden-iframe submit gets stripped by browser tracking
+protection — reproduced failing in Safari. A `no-cors` fetch reaches the server and
+creates nothing. The anonymous embed endpoint also rate-limits under test traffic.
+There is no reliable purely client-side integration; a server-side proxy isn't the
+elegant option, it's the only one.
+</ProcessStep>
+
+<ProcessStep result="fail" title="Called it fixed on evidence from the wrong machine" tag="my-setup">
+The proxy returned `400` on every call. First diagnosis: forward the visitor's IP. A
+couple of tests went green and I called it solved. Those greens came from `curl`
+running on my own machine — a residential IP — not the datacenter path real users
+take. A clean isolation test killed the theory outright: injecting a known-good
+residential IP into the request body still `400`d.
+</ProcessStep>
+
+<ProcessStep result="fail" title="The outage was self-inflicted, and the error said so" tag="my-setup">
+The actual message, once I read it instead of inferring it: **"This subscriber was
+blocked by your firewall."** Our own burst of test signups had tripped Buttondown's
+*Attack mode*, which auto-escalates to IP-address auditing on "a surge of unactivated
+subscribers." It then audits the *connection* IP — which for a server-side proxy is
+always the datacenter — so every signup became a permanent false positive, including
+my own address. Worth flagging for anyone about to launch: a surge of unactivated
+subscribers is also what a *successful* launch looks like.
+</ProcessStep>
+
+<ProcessStep result="fail" title="Buttondown reports a firewall block as a bare 400" tag="tool-limit">
+The block surfaces with no indication that a user-configurable setting is responsible.
+Diagnosing it meant reading the API request log and correlating by IP. The setting
+that caused it, the log that revealed it, and the error that hid it are three
+different screens.
+</ProcessStep>
+
+<ProcessStep result="fail" title="Claimed env vars don't need a redeploy. They do." tag="my-setup">
+Testing the Turnstile *rejection* path meant flipping the preview's secret to
+Cloudflare's always-fail key. I stated no redeploy was needed because functions read
+env per invocation. Wrong — Netlify injects env vars at deploy time. So the test ran
+against the old secret, returned `ok:true`, and I nearly recorded a pass for a control
+that had never run. It also created a stray subscriber. After a redeploy the same test
+returned `403 turnstile_failed` with nothing created: the actual proof.
+</ProcessStep>
+
+<ProcessStep result="pass" title="What worked">
+Controls in a deliberate order, every local check before any network call, so a bot
+costs nothing:
+
+`method → Origin/Referer → honeypot → email validation → Turnstile → Buttondown`
+
+The honeypot is hardened against autofill — off-screen, out of the tab order and the
+accessibility tree, `autocomplete="off"`, named to match no autofill category. A
+password manager filling it would silently drop a real subscriber, which is the same
+optimistic-success bug this build exists to delete. Tripping it returns the ordinary
+success response and creates nothing, so a bot learns nothing from trying. Turnstile
+is verified server-side and **fails closed**; the widget alone protects nothing, since
+any string can be POSTed to a public endpoint. `x-forwarded-for` is dropped as
+untrusted, because honouring a client-supplied header would let a bot hand a
+clean-looking IP to both Turnstile and Buttondown.
+</ProcessStep>
+
+### Deliberately not built
+
+A signed timestamp or dwell check was designed and then cut: the form is statically
+rendered, so an embedded timestamp is identical for every visitor and stays valid for
+the life of the deploy. Scrape once, replay forever. Turnstile already covers that
+ground, and cutting it removed a rendering-mode change and an environment variable
+too. Rate limiting is deferred — it needs durable state, and the traffic shape above
+suggests it would earn very little here anyway.
+
+## The breaking change I took knowingly
+
+**Subscribing now requires JavaScript.** A token-less submission is rejected, because
+accepting one *is* the bypass — it would void the entire control. The `<noscript>`
+note says so before someone types an address, not after. That's a real accessibility
+cost, taken deliberately rather than discovered later, and it's the kind of trade a
+bot-mitigation control almost always forces.
+
+## The test
+
+Thirteen acceptance checks, written into the brief **before** implementation rather
+than retrofitted afterwards.
+
+<StatTiles variant="metric" stats={[
+  { value: "12", label: "passed", tone: "ok" },
+  { value: "1", label: "skipped, deliberately" },
+  { value: "0", label: "failed", tone: "ok" },
+]} />
+
+They were run on a Deploy Preview and then **re-run against production**, because the
+real Turnstile key pair is a configuration a preview can't exercise — and a test
+secret left live in production would leave the endpoint wide open while appearing to
+work. That's check #12, and it's the one I'd least want to have skipped.
+
+The skip is #13, the Turnstile replay path. It differs from the rejection test by one
+error string, exercises Cloudflare's behaviour more than ours, and each flip costs a
+redeploy cycle. Recorded as skipped rather than quietly dropped. One further control —
+the forged `x-forwarded-for` header — is correct in code but **not directly
+observable** from outside, since the only external evidence would be the IP recorded
+on a created subscriber.
+
+Local testing was not a valid surface at any point: `npm run dev` and `npm run build`
+don't serve Netlify Functions at all, so every server-side control here was
+unverifiable until a preview existed. Every attempt returns the site's 404 page, which
+the client reports as a generic error — the exact trap that made the previous fix ship
+broken.
+
+## The figures that didn't survive
+
+This section exists because I nearly published four numbers I couldn't source. When I
+came to write this page, the traffic figures in my build notes — "~12 over four days,
+then ~25 over three," "33% bounce" — turned out to be recollection that had been
+repeated often enough to read as measurement. Pulling the actual export:
+
+| Written from memory | What the export shows |
+|---|---|
+| ~25 signups over three days | **33 over 64.9 hours** — I'd undercounted |
+| 33% hard-bounce rate | **3 of 7 emailed (43%)**, or 9% of all signups. The original quoted no denominator, so it wasn't wrong so much as unfalsifiable |
+| ~12 signups in an earlier wave | **No trace in the export.** Retracted |
+| A specific spam domain in the traffic | **Not in the export** either, though it remains in both blocklists |
+
+The same pass caught one more. My notes said the role-address filter was "validated
+against the observed traffic, which included `accountspayable@`, `support@`,
+`thbusinessoffice@`." Running the shipped list over the real export: it catches three
+of those four. The matcher compares the local part *exactly*, and `thbusinessoffice`
+isn't in it. So that control would have stopped 3 of 33 signups on its own. It's a
+cheap pre-filter that saves a network call, not a defence — Turnstile does the actual
+work, and I'd described a supporting actor as the lead. **[my setup]**, all of it.
+
+That's the same failure as the three green-result failures above, wearing different
+clothes: a claim that was never checked against the thing it described. The rule that
+fixes both is identical — derive it where the data actually lives, or don't publish it.
+
+<StatTiles variant="fact" stats={[
+  { value: "2h21m", label: "First commit to merge" },
+  { value: "4", label: "Commits on the branch" },
+  { value: "1", label: "Production deploy (15 credits)" },
+]} />
+
+Those credits are worth a footnote. July's deploys hit **315 of 317 available
+credits** and the allowance ran out before the month did — mostly this endpoint's
+`diagnose → fix → diagnose → fix` cycle, at 15 credits per production deploy. That
+prompted a $9 top-up and a switch to branch-per-build, where Deploy Previews cost
+nothing and production is paid for once, at merge. This build ran entirely on free
+previews and spent a single production deploy. The debugging didn't get cheaper; it
+moved somewhere it wasn't billed.
+
+## Reproduce this
+
+The pack is **partial and says so** — this build's evidence exists, the rest of the
+walkthrough doesn't yet. Listing what's absent rather than promising it is a rule this
+project learned the hard way.
+
+What's in the repository now:
+
+- [**`repro/spam-wave-masked.csv`**](https://github.com/jigg-ai/jigg/blob/main/builds/buttondown-hardening/repro/spam-wave-masked.csv)
+  — every signup in the wave, with timestamps, statuses, domain class and /24, from
+  which every number on this page can be recomputed.
+- [**`repro/README.md`**](https://github.com/jigg-ai/jigg/blob/main/builds/buttondown-hardening/repro/README.md)
+  — the masking rule column by column, and an explicit list of what the data does
+  *not* substantiate.
+- [**`build-notes.md`**](https://github.com/jigg-ai/jigg/blob/main/builds/buttondown-hardening/build-notes.md)
+  — the journal, dead ends included, with the corrected figures marked as corrections.
+- [**`test.md`**](https://github.com/jigg-ai/jigg/blob/main/builds/buttondown-hardening/test.md)
+  — all thirteen checks, the skip, and every failure tagged.
+
+The raw subscriber export is **deliberately not published**, in any repository, public
+or private. Its only job is to let someone re-derive these numbers, and nobody
+re-derives from a repository they can't clone — so the masked derivative is the
+artifact that actually substantiates anything. The raw file stays offline.
+
+## The tool
+
+<ToolVerdict tool="Claude Code" toolSummary="AI pair-builder in your terminal">
+This is a different test of Claude Code than the greenfield scaffold that built this
+site. Adversarial debugging is where a pair-builder can quietly hurt you, and it
+mostly didn't: it got the control ordering right without being asked — cheap local
+checks first, so rejected traffic never costs a network call — argued for failing
+closed on Turnstile, and caught that a password manager filling the honeypot would
+silently drop a real subscriber. It also talked me out of the dwell-time check by
+noticing the form is statically rendered.
+
+The failure mode is the one to plan for. Three times it produced a confident,
+reasonable-sounding claim — the IP is the problem, env vars don't need a redeploy —
+that a green test appeared to confirm, and each time the test was running somewhere
+production isn't. It will not tell you your evidence is contaminated. Give it a
+surface that matches production, make it read the error rather than infer it, and
+it's genuinely fast at this. Trust its diagnosis before you've reproduced it and it
+will help you be wrong efficiently.
+</ToolVerdict>
