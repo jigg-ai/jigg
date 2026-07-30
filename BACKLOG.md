@@ -145,10 +145,21 @@ remains below is what's still *unobserved*, not untried.
 - ~~**Revisit Buttondown's spam firewall once there's real subscriber traction**~~ — **TRIGGER
   FIRED 2026-07-27/29; settings re-enabled. Superseded by the hardening work below.** This item
   used to say the firewall was "all off" and should stay off; that is no longer true and the
-  advice no longer holds. Bot signups arrived (~12 over four days, then ~25 over three, scraped
-  B2B addresses), so the firewall is now: **Auditing Enabled, Attack mode Enabled, Handling
+  advice no longer holds. Bot signups arrived — **33 scraped addresses in 64.9 hours**
+  (2026-07-27T12:15:56Z → 2026-07-30T05:07:38Z, from 16 IPs across 7 /24s), so the firewall
+  is now: **Auditing Enabled, Attack mode Enabled, Handling
   blocked subscribers Enabled, IP-address auditing Disabled, Embed fingerprinting Disabled,
   Blocked domains: `immenseignite.info`.** Kept here as the record of what changed and why:
+  - **Figures corrected 2026-07-30.** This entry previously said "~12 over four days, then
+    ~25 over three" from recollection. The numbers above are derived from
+    `builds/buttondown-hardening/repro/spam-wave-masked.csv` and recomputable from it. The
+    earlier four-day wave has **no trace in the export** (oldest record 2026-07-27) and is
+    retracted; `immenseignite.info` likewise does not appear in the traffic, though it
+    remains in both blocklists. See that build's `build-notes.md` → *Figures that did not
+    survive the export*.
+  - **The firewall did most of the blocking, not our code.** 26 of the 33 (79%) were
+    `blocked` by Buttondown before any email went out; only 7 were ever emailed, of which 3
+    hard-bounced. Worth remembering before anyone proposes turning these settings back off.
   - **Attack mode acts, it does not merely warn.** It auto-enables aggressive + IP-address
     auditing on "a surge of unactivated subscribers" — which is indistinguishable from a
     successful launch. With the server-side proxy in place that means signups can break at the
@@ -159,7 +170,10 @@ remains below is what's still *unobserved*, not untried.
     signups *after* the change, not before.
   - **Double opt-in is not the spam gate.** It stops list poisoning, not list bombing — the
     confirmation email is the payload, and strangers received them. Controls belong in front of
-    the Buttondown call.
+    the Buttondown call. **Now evidenced from the other direction too:** one wave address
+    confirmed on 2026-07-30T15:22:34Z, so a confirmation is not proof of a human either —
+    a curious victim and a corporate link-scanner both produce one. Unclassified on purpose;
+    it is the account's first and only confirmed subscriber.
   - **The preview test convention needs re-checking now that auditing is back on.** PROCESS
     ("Testing the newsletter proxy on a preview") standardises disposable
     `jigg.ai.biz+test-YYYYMMDD@gmail.com` addresses. That convention was written while the
