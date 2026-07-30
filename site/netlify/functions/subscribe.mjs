@@ -33,6 +33,7 @@
 // Key lives only in the BUTTONDOWN_API_KEY env var, never in the repo.
 
 const API_URL = 'https://api.buttondown.com/v1/subscribers';
+const TURNSTILE_URL = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MAX_EMAIL_LEN = 254; // RFC 5321 practical ceiling
 
@@ -106,15 +107,18 @@ export default async (req) => {
   const ctype = req.headers.get('content-type') || '';
   let email = '';
   let honeypot = '';
+  let turnstileToken = '';
   try {
     if (ctype.includes('application/json')) {
       const body = await req.json();
       email = body.email || '';
       honeypot = body.contact_reason || '';
+      turnstileToken = body['cf-turnstile-response'] || '';
     } else {
       const form = await req.formData();
       email = form.get('email') || '';
       honeypot = form.get('contact_reason') || '';
+      turnstileToken = form.get('cf-turnstile-response') || '';
     }
   } catch {
     email = '';
@@ -149,12 +153,56 @@ export default async (req) => {
     return reply({ ok: false, error }, 422, `/subscribe?error=${rejection}`);
   }
 
-  // 6. Turnstile siteverify slots in here — first network call, ahead of Buttondown.
-
-  // Forward the real visitor IP so Buttondown records/audits the subscriber, not us.
-  // Only the Netlify-set header is trusted: `x-forwarded-for` is client-supplied and
-  // spoofable, so honouring it would let a bot hand Buttondown a clean-looking IP.
+  // The real visitor IP. Only the Netlify-set header is trusted: `x-forwarded-for`
+  // is client-supplied and spoofable, so honouring it would let a bot hand a
+  // clean-looking IP to both Turnstile and Buttondown.
   const clientIp = req.headers.get('x-nf-client-connection-ip') || undefined;
+
+  // 6. Turnstile — first network call, ahead of Buttondown. The widget alone
+  // protects nothing: any string can be POSTed here, so the token is only worth
+  // anything once Cloudflare has verified it server-side.
+  const turnstileSecret = process.env.TURNSTILE_SECRET_KEY;
+  if (!turnstileSecret) {
+    console.error('TURNSTILE_SECRET_KEY is not set');
+    return reply({ ok: false, error: 'server_not_configured' }, 500, '/subscribe?error=failed');
+  }
+
+  if (!turnstileToken) {
+    // No token at all: a direct POST, or a no-JS submission. Both are rejected —
+    // accepting token-less posts would be the bypass that voids the whole control.
+    log('turnstile_fail', { reason: 'missing_token', domain });
+    return reply({ ok: false, error: 'turnstile_missing' }, 403, '/subscribe?error=turnstile');
+  }
+
+  try {
+    const verifyBody = new URLSearchParams({ secret: turnstileSecret, response: turnstileToken });
+    if (clientIp) verifyBody.set('remoteip', clientIp);
+
+    const verifyRes = await fetch(TURNSTILE_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: verifyBody.toString(),
+    });
+    const verify = await verifyRes.json().catch(() => ({}));
+
+    if (!verify.success) {
+      const codes = verify['error-codes'] || [];
+      // Tokens are single-use and expire after 300s; a replay reports this code.
+      const expired = codes.includes('timeout-or-duplicate');
+      log('turnstile_fail', { reason: expired ? 'expired_or_replayed' : 'rejected', codes, domain });
+      return reply(
+        { ok: false, error: expired ? 'turnstile_expired' : 'turnstile_failed' },
+        403,
+        '/subscribe?error=turnstile'
+      );
+    }
+  } catch (err) {
+    // Fail closed. Losing an occasional signup to a Cloudflare blip beats accepting
+    // unverified submissions — the whole point of the control.
+    console.error('Turnstile siteverify unreachable', err);
+    log('turnstile_fail', { reason: 'siteverify_unreachable', domain });
+    return reply({ ok: false, error: 'turnstile_unavailable' }, 503, '/subscribe?error=turnstile');
+  }
 
   // 7. Buttondown.
   let bdRes, bdBody;

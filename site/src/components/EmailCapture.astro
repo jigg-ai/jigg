@@ -6,10 +6,29 @@
 // submit is stripped by browser tracking protection, and the anonymous embed
 // endpoint rate-limits. The function path gives real success/error feedback.
 //
-// Progressive enhancement: the <form> posts to the function natively, so with JS
-// off it still works — the function 303-redirects to /subscribed. With JS, we
-// intercept, POST via fetch, and show the result inline without leaving the page.
+// Cloudflare Turnstile guards the endpoint. Every submission must carry a token
+// that the function verifies server-side — the widget alone protects nothing,
+// since any string can be POSTed to the endpoint directly. That means JavaScript
+// is now REQUIRED to subscribe: a no-JS submission can't produce a token, and
+// accepting token-less posts would be the bypass. The urlencoded/303 path is kept
+// for the case where JS renders the widget but the fetch itself fails.
 const ACTION = '/.netlify/functions/subscribe';
+
+// Public by design — this is rendered into the HTML. It must be the sitekey that
+// PAIRS with the context's TURNSTILE_SECRET_KEY: real keys reject Cloudflare's
+// dummy token and test keys reject real ones, so previews use the test pair.
+// Fail the build on Netlify if it's missing rather than silently shipping a
+// broken widget; locally, fall back to the test key so `npm run build` still runs.
+const TEST_SITEKEY = '1x00000000000000000000AA';
+const configuredSitekey =
+  import.meta.env.PUBLIC_TURNSTILE_SITEKEY || process.env.PUBLIC_TURNSTILE_SITEKEY || '';
+if (!configuredSitekey && process.env.NETLIFY) {
+  throw new Error(
+    'PUBLIC_TURNSTILE_SITEKEY is not set. Set it in Netlify with the Builds scope ' +
+      '(production: the real sitekey; preview/branch/local: 1x00000000000000000000AA).'
+  );
+}
+const SITEKEY = configuredSitekey || TEST_SITEKEY;
 
 interface Props {
   cta?: string;
@@ -53,8 +72,17 @@ const {
       aria-hidden="true"
     />
     <button type="submit" class="btn btn--primary">{cta}</button>
+    {/*
+      Turnstile, implicit rendering: the script auto-detects `.cf-turnstile` on load
+      and injects a hidden `cf-turnstile-response` input into this form. Managed mode
+      is usually invisible — most visitors see nothing at all.
+    */}
+    <div class="cf-turnstile capture__turnstile" data-sitekey={SITEKEY} data-appearance="interaction-only"></div>
     <p class="note">{note}</p>
     <p class="capture__error" role="alert" hidden></p>
+    <noscript>
+      <p class="note">Subscribing requires JavaScript — it runs the anti-spam check on this form.</p>
+    </noscript>
   </form>
   <p class="capture__success" role="status" tabindex="-1" hidden></p>
 </div>
@@ -71,9 +99,24 @@ const {
     role_address: 'Please use a personal address rather than a shared inbox like support@ or info@.',
     blocked_domain: 'That email provider isn’t accepted. Please use a different address.',
     unsubscribed: 'That address previously unsubscribed, so it can’t be re-added from this form.',
+    turnstile_missing: 'Please wait a moment for the anti-spam check to finish, then try again.',
+    turnstile_expired: 'That anti-spam check expired. Please try again.',
+    turnstile_failed: 'The anti-spam check didn’t pass. Please reload the page and try again.',
+    turnstile_unavailable: 'The anti-spam check is temporarily unavailable. Please try again shortly.',
     server_not_configured: 'Signups are temporarily unavailable — please try again later.',
     default: 'Something went wrong. Please try again in a moment.',
   };
+
+  // Load Turnstile once per page. Astro dedupes this hoisted script even when the
+  // component renders more than once; the guard covers anything else on the page.
+  if (!document.querySelector('script[data-turnstile]')) {
+    const s = document.createElement('script');
+    s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+    s.async = true;
+    s.defer = true;
+    s.dataset.turnstile = '';
+    document.head.appendChild(s);
+  }
 
   document.querySelectorAll<HTMLFormElement>('form.capture').forEach((form) => {
     const shell = form.closest('.capture-shell')!;
@@ -82,15 +125,20 @@ const {
     const button = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
     const input = form.querySelector<HTMLInputElement>('input[type="email"]')!;
     const decoy = form.querySelector<HTMLInputElement>('.capture__decoy');
+    const widget = form.querySelector<HTMLElement>('.cf-turnstile');
     const label = button.textContent;
 
     const setBusy = (busy: boolean) => {
       button.disabled = busy;
       button.textContent = busy ? 'Subscribing…' : label;
     };
+    // Turnstile tokens are single-use: once a submission consumes one, a retry needs
+    // a fresh token or it fails as `timeout-or-duplicate`. Reset on every error path.
     const showError = (msg: string) => {
       errorEl.textContent = msg;
       errorEl.hidden = false;
+      const ts = (window as any).turnstile;
+      if (ts && widget) ts.reset(widget);
     };
 
     form.addEventListener('submit', async (e) => {
@@ -107,6 +155,10 @@ const {
           body: JSON.stringify({
             email: input.value.trim(),
             contact_reason: decoy?.value ?? '', // honeypot — must reach the server
+            // Injected into the form by Turnstile; the server verifies it and
+            // rejects the submission outright if it's absent or invalid.
+            'cf-turnstile-response':
+              form.querySelector<HTMLInputElement>('[name="cf-turnstile-response"]')?.value ?? '',
           }),
         });
         data = await res.json().catch(() => ({}));
@@ -169,6 +221,10 @@ const {
     font-size: 0.85rem;
     margin-top: 0.15rem;
   }
+  /* Managed + interaction-only: usually renders nothing, so it must not reserve
+     space or open a gap in the form. It only takes layout when a challenge shows. */
+  .capture__turnstile { grid-column: 1 / -1; }
+  .capture__turnstile:empty { display: none; }
   .capture__error {
     grid-column: 1 / -1;
     color: var(--fault);
