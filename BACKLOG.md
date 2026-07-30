@@ -12,7 +12,15 @@ point. See `builds/website/test.md` for the per-check detail on build #1.
 
 ## Verification debt (build #1)
 
-- **Lighthouse performance pass** — `test.md` check #7. **Now wired, not yet measured:**
+- **Lighthouse performance pass** — `test.md` check #7. **BASELINE CAPTURED 2026-07-29:**
+  Performance 97, Accessibility 97, Best Practices 92, SEO 100 across 4 paths, read off PR
+  #1's Deploy Preview at zero credits — which is what unblocked it. Recorded in `test.md`;
+  check #7 is now a pass. **Two things still open:** (1) the figures are Netlify's
+  *aggregate* for the run, and the plugin thresholds each path separately, so per-path
+  numbers are needed before setting any threshold — one path below the aggregate would break
+  deploys; (2) Best Practices 92 is the outlier, uninvestigated. Thresholds are otherwise
+  safe to set aggressively, since failed deploys consume no credits. Original entry below.
+- ~~**Lighthouse performance pass**~~ — **now wired, was not yet measured:**
   `@netlify/plugin-lighthouse` is configured in `netlify.toml` to run on every deploy
   against `/`, `/builds/`, `/tools/` and `/builds/website/`. Deliberately **no failing
   thresholds** until a baseline exists — a threshold guessed before the first measurement
@@ -55,12 +63,29 @@ point. See `builds/website/test.md` for the per-check detail on build #1.
 The model itself is in `PROCESS.md` → **Shipping**. These are the parts that are asserted
 but not yet observed, plus one thing only a human can do.
 
-- **The build `ignore` rule has never actually run.** Verified locally that the git command
+- **NEW — Netlify reports nothing to GitHub for production deploys.** Deploy Previews post
+  commit statuses (that's how PR #1's checks appeared), but the production deploy of
+  `98e0db4` produced zero statuses and no GitHub deployment record. So confirming a
+  production deploy actually ran requires opening the Netlify dashboard by hand — it can't
+  be checked with `gh api .../commits/main/status`. That matters more than it sounds:
+  the `ignore` rule's ongoing correctness depends on noticing when a deploy *should* have
+  happened and didn't, and a docs-heavy repo means most pushes legitimately skip, so a
+  wrongly-skipped content change would blend in. Fix: add a GitHub commit-status deploy
+  notification (Netlify → Project configuration → Notifications) so it becomes scriptable.
+- **The build `ignore` rule — half verified.** The **"builds when it should"** direction
+  **PASSED 2026-07-29**: merging PR #1 produced `Production: main@98e0db4 Published` in 30s,
+  correctly *not* skipped because `netlify.toml` was in the diff. The **skip** direction is
+  still unproven — see below. Note the credit meter showed nothing deducted immediately
+  after that deploy; that was **lag, not a skipped build**, and the deploy list is the
+  authoritative signal. Don't diagnose from the meter.
+- **The skip direction has never actually run.** Verified locally that the git command
   has the right polarity and that the un-anchored `-- site/` form would wrongly skip a real
   site change (`:/` matters because the command runs from `base = "site"`). But "Netlify
-  honours it" is still an assumption. **Verify right after the merge, free:** push one
-  docs-only commit to `main` and confirm the Netlify log shows a skipped build, not a
-  deploy. Until that's seen, don't treat docs-only commits as free — and note the failure
+  honours it" is still an assumption. **Verify free, on the next docs-only push:** land a
+  commit touching nothing under `site/` or `netlify.toml` on `main` and confirm the Netlify
+  deploy list shows a skipped build, not a deploy. **This very commit is that test** — it
+  changes only `builds/website/test.md` and `BACKLOG.md`, so it should produce no deploy at
+  all. Until that's seen, don't treat docs-only commits as free — and note the failure
   direction that matters: a rule that skips too much means published content silently stops
   updating, which is worse than overpaying.
 - **"Deploy Previews are 0 credits" rests on Netlify's docs plus a support reply.** Both are
