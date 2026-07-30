@@ -36,6 +36,22 @@ const {
       placeholder={placeholder}
       required
     />
+    {/*
+      Honeypot. A decoy no human sees or reaches: hidden off-screen rather than with
+      `type="hidden"` (better bots skip those), removed from the tab order and the
+      accessibility tree, and `autocomplete="off"` with a name browsers don't map to
+      any autofill category — password managers filling this would silently drop a
+      real subscriber. The server treats any value as a bot and returns the normal
+      success shape without subscribing.
+    */}
+    <input
+      class="capture__decoy"
+      type="text"
+      name="contact_reason"
+      autocomplete="off"
+      tabindex="-1"
+      aria-hidden="true"
+    />
     <button type="submit" class="btn btn--primary">{cta}</button>
     <p class="note">{note}</p>
     <p class="capture__error" role="alert" hidden></p>
@@ -52,6 +68,8 @@ const {
     "You're already on the list. If you never confirmed, check your inbox for the confirmation link.";
   const ERRORS: Record<string, string> = {
     invalid_email: 'That doesn’t look like a valid email address.',
+    role_address: 'Please use a personal address rather than a shared inbox like support@ or info@.',
+    blocked_domain: 'That email provider isn’t accepted. Please use a different address.',
     unsubscribed: 'That address previously unsubscribed, so it can’t be re-added from this form.',
     server_not_configured: 'Signups are temporarily unavailable — please try again later.',
     default: 'Something went wrong. Please try again in a moment.',
@@ -63,6 +81,7 @@ const {
     const errorEl = form.querySelector<HTMLElement>('.capture__error')!;
     const button = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
     const input = form.querySelector<HTMLInputElement>('input[type="email"]')!;
+    const decoy = form.querySelector<HTMLInputElement>('.capture__decoy');
     const label = button.textContent;
 
     const setBusy = (busy: boolean) => {
@@ -85,7 +104,10 @@ const {
         const res = await fetch(form.action, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-          body: JSON.stringify({ email: input.value.trim() }),
+          body: JSON.stringify({
+            email: input.value.trim(),
+            contact_reason: decoy?.value ?? '', // honeypot — must reach the server
+          }),
         });
         data = await res.json().catch(() => ({}));
       } catch {
@@ -130,6 +152,17 @@ const {
   .capture input[type='email']:focus-visible { outline: 2px solid var(--brand); outline-offset: 1px; }
   .capture .btn { white-space: nowrap; }
   .capture .btn:disabled { opacity: 0.65; cursor: default; }
+  /* Honeypot: off-screen and inert, but still a rendered field so bots that fill
+     every input trip it. Not `display: none` / `type="hidden"` — better bots skip
+     those. `position: absolute` keeps it out of the grid flow. */
+  .capture__decoy {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
   .note {
     grid-column: 1 / -1;
     color: var(--ink-muted);
