@@ -6,11 +6,24 @@
 // anonymous embed endpoint rate-limits. So the form posts here, same-origin, and
 // we call Buttondown's authenticated API server-side — real success/error states.
 //
-// One gotcha lives in Buttondown, not here: its Firewall (Settings → Firewall)
-// audits the *connection* IP, which for this proxy is always Netlify's datacenter
-// and so gets false-flagged. That's fixed by disabling "IP address auditing" +
-// "Attack mode" there; double opt-in is the real spam gate. We still forward the
-// visitor's real IP as `ip_address` so any future auditing judges them, not us.
+// One gotcha lives in Buttondown, not here: its Firewall (Settings → Firewall).
+// We forward the visitor's real IP as `ip_address` so the firewall can judge the
+// subscriber rather than us. Whether that satisfies "IP address auditing" is
+// UNVERIFIED: when auditing was last on, signups still returned 400 "blocked by
+// your firewall" with `ip_address` already being forwarded — but Attack mode had
+// escalated auditing to Aggressive at the time, so the two are confounded. Treat
+// "forwarding the IP makes IP auditing safe" as untested, and re-test after
+// enabling rather than before.
+//
+// Current Buttondown settings are deliberate and NOT to be changed from here:
+// Auditing Enabled, Attack mode Enabled, Handling-blocked Enabled, IP auditing
+// Disabled. Attack mode does not merely warn — it auto-enables IP auditing on a
+// surge of unactivated subscribers, which a real launch resembles.
+//
+// Note double opt-in is NOT sufficient as the spam gate. It prevents list
+// poisoning (nobody joins unconfirmed) but not list bombing: the confirmation
+// email is itself the payload, and strangers have received them from this
+// endpoint. Abuse controls belong in front of this call, not after it.
 //
 // Key lives only in the BUTTONDOWN_API_KEY env var, never in the repo.
 
