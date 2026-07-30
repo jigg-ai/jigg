@@ -1,0 +1,30 @@
+# Build #4 — hardening the newsletter signup after it was found by bots.
+#
+# NOTE ON `tool`: the tool under review is Claude Code, not Buttondown. /tools is a
+# projection of this collection and is an AI-tool index; Buttondown is the SUBJECT of
+# the build and belongs in `stack`, not `tool`. Build #1 also reviews Claude Code —
+# deliberate: that was greenfield scaffolding, this is adversarial debugging and
+# security work, which says something different about the same tool.
+title: "Hardening a public signup endpoint after the bots found it"
+slug: "buttondown-hardening"
+category: "websites"
+tool: "Claude Code"
+tool_version: ""      # still unknown — see BACKLOG; never guess a published version
+built_with: ["Claude Opus 5"]
+stack: ["Buttondown", "Netlify Functions", "Cloudflare Turnstile", "Astro 7.1"]
+runs_on_site: true    # the hardened form is the one on this site
+status: draft         # DRAFT — human verify pass (PROCESS step 5) not done
+summary: ""           # written at draft time, not stubbed here
+test_score: "12/13"   # acceptance tests passing; 1 deliberately skipped (see test.md)
+affiliate_url: ""
+repro_pack: false     # public in-repo, like build #1 — no email gate
+published: ""         # unset until verified + published
+last_verified: 2026-07-30
+pricing_as_of: ""     # no cost claim for the primary tool in this build
+
+featured: false
+meta_line: "12/13 checks · 1 self-inflicted outage"
+
+tool_summary: "AI pair-builder in your terminal"
+tool_verdict: ""      # written at draft time
+accessibility: "Advanced"
