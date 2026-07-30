@@ -148,6 +148,7 @@ const {
       setBusy(true);
 
       let data: { ok?: boolean; status?: string; error?: string } = {};
+      let httpStatus = 0;
       try {
         const res = await fetch(form.action, {
           method: 'POST',
@@ -161,8 +162,12 @@ const {
               form.querySelector<HTMLInputElement>('[name="cf-turnstile-response"]')?.value ?? '',
           }),
         });
+        httpStatus = res.status;
         data = await res.json().catch(() => ({}));
-      } catch {
+      } catch (err) {
+        // The visible message stays generic; the console gets the real cause, so a
+        // failed signup is diagnosable from devtools instead of being a dead end.
+        console.error('[subscribe] request failed', err);
         showError(ERRORS.default);
         setBusy(false);
         return;
@@ -174,6 +179,12 @@ const {
         success.hidden = false;
         success.focus(); // move screen-reader/keyboard focus to the confirmation
       } else {
+        // `(no JSON body)` means the endpoint didn't answer as itself — e.g. the
+        // function isn't being served, which is what `npm run dev` alone produces.
+        console.error('[subscribe] rejected', {
+          httpStatus,
+          error: data.error ?? '(no JSON body)',
+        });
         showError(ERRORS[data.error ?? 'default'] ?? ERRORS.default);
         setBusy(false);
       }
