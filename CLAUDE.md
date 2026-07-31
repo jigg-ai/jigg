@@ -175,4 +175,23 @@ for the build story, so write them that way.
 - Commits are authored as **Jigg.AI Bot <jigg.ai.biz@gmail.com>** (set repo-locally,
   overriding any global identity); the remote is **github.com/jigg-ai/jigg** (SSH,
   authenticates as the `jigg-ai` account).
+- **Pushing: SSH is the path; HTTPS via `gh` is the fallback when it isn't.** From a
+  human terminal SSH works normally. From an agent's shell it fails with
+  `Permission denied (publickey)` — the key is passphrase-protected and the shell gets a
+  *different, empty* ssh-agent than the user's session. Verified 2026-07-30 that this is
+  not the sandbox (it fails with sandboxing off) and not fixable with
+  `ssh-add --apple-use-keychain`: the passphrase lands in the data-protection keychain,
+  which is bound to the GUI login session and unreachable from a non-interactive shell.
+  Don't re-debug it, and **never "fix" it by stripping the key's passphrase** — that
+  leaves an unencrypted private key on disk, a worse trade than the fallback. Use:
+
+  ```
+  git -c credential.helper='!gh auth git-credential' push https://github.com/jigg-ai/jigg.git <branch>
+  ```
+
+  `gh` is authenticated as `jigg-ai`, so this is the same account and produces identical
+  commits; `gh pr create` / `gh pr merge` work normally. Leave `origin` as SSH and pass
+  the HTTPS URL explicitly. One gotcha: `git fetch origin` still fails, so `origin/main`
+  goes stale and "unpushed commit" counts read wrong — refresh with an explicit refspec,
+  `fetch https://github.com/jigg-ai/jigg.git 'refs/heads/main:refs/remotes/origin/main'`.
 - Do NOT add a `Co-Authored-By` or any other AI-attribution trailer to commits.
