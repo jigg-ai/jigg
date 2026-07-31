@@ -19,6 +19,7 @@ accessibility: "Advanced"
 import ShortVersion from '../../components/post/ShortVersion.astro';
 import ProcessStep from '../../components/post/ProcessStep.astro';
 import StatTiles from '../../components/post/StatTiles.astro';
+import Figure from '../../components/post/Figure.astro';
 import ToolVerdict from '../../components/post/ToolVerdict.astro';
 
 <ShortVersion>
@@ -56,6 +57,14 @@ Every figure on this page comes from a masked subscriber export that is
 so you can recompute them rather than take my word for it. The addresses are masked
 because the people behind them are scraping victims, not attackers — publishing them
 would inflict exactly the harm this build exists to stop.
+
+<Figure
+  src="/img/buttondown-hardening/spam-wave-masked.png"
+  width={735}
+  height={592}
+  alt="Subscriber list showing twelve of the thirty-three signups. Each row has an anonymous id, a masked address keeping only the mail provider or the top-level domain, and a status: mostly Blocked, with several Unactivated and one Undeliverable. One row reads thbusinessoffice at a masked .org domain. The top row is labelled 'ours' — an address created during testing."
+  caption="Twelve of the 33, as they arrived. Local parts are dropped, corporate domains reduced to their TLD, and our own test signup is labelled rather than hidden. Empty space between columns is compressed to fit; dates are shown in local time, while the figures above are UTC."
+/>
 
 Three things in it weren't visible from the dashboard:
 
@@ -225,13 +234,19 @@ fixes both is identical — derive it where the data actually lives, or don't pu
   { value: "1", label: "Production deploy (15 credits)" },
 ]} />
 
-Those credits are worth a footnote. July's deploys hit **315 of 317 available
-credits** and the allowance ran out before the month did — mostly this endpoint's
-`diagnose → fix → diagnose → fix` cycle, at 15 credits per production deploy. That
-prompted a $9 top-up and a switch to branch-per-build, where Deploy Previews cost
-nothing and production is paid for once, at merge. This build ran entirely on free
-previews and spent a single production deploy. The debugging didn't get cheaper; it
-moved somewhere it wasn't billed.
+> **A footnote on those credits — this is a Netlify bill, not a Buttondown one.**
+> The site is hosted on Netlify, which meters **production deploys** at 15 credits each
+> against a 300-credit monthly allowance. It does not meter traffic in any way that
+> mattered here: July served nine thousand web requests for 2.3 credits, while deploys
+> took **315 of 317**. The allowance ran out before the month did, mostly on this
+> endpoint's `diagnose → fix → diagnose → fix` cycle — every push to `main` triggered a
+> billed deploy, so debugging a server-side function was the single most expensive thing
+> the project did.
+>
+> The fix was a $9 top-up and a switch to branch-per-build: **Deploy Previews and branch
+> deploys cost 0**, and production is paid for exactly once, at merge. This build ran
+> entirely on free previews and spent a single production deploy. The debugging didn't
+> get cheaper — it moved somewhere it wasn't billed.
 
 ## Reproduce this
 
@@ -247,6 +262,8 @@ What's in the repository now:
 - [**`repro/README.md`**](https://github.com/jigg-ai/jigg/blob/main/builds/buttondown-hardening/repro/README.md)
   — the masking rule column by column, and an explicit list of what the data does
   *not* substantiate.
+- [**`repro/spam-wave-masked-full.png`**](https://github.com/jigg-ai/jigg/blob/main/builds/buttondown-hardening/repro/spam-wave-masked-full.png)
+  — all 34 rows, of which the image above is the top twelve.
 - [**`build-notes.md`**](https://github.com/jigg-ai/jigg/blob/main/builds/buttondown-hardening/build-notes.md)
   — the journal, dead ends included, with the corrected figures marked as corrections.
 - [**`test.md`**](https://github.com/jigg-ai/jigg/blob/main/builds/buttondown-hardening/test.md)

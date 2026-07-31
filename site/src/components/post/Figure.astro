@@ -1,0 +1,54 @@
+---
+// A captioned artifact screenshot for a build-log body.
+//
+// BRIEF/CONTEXT ask for REAL artifact screenshots rather than tool logos, so this is
+// the shared frame for them: bordered, rounded and shadowed to match VideoEmbed, with
+// the caption in muted ink underneath. Authors supply the caption; nothing is styled
+// per-post.
+//
+// `alt` is REQUIRED and deliberately separate from `caption`. A caption is context a
+// sighted reader gets *in addition* to the image; alt text has to carry the image's
+// actual content for someone who cannot see it. Passing the caption as alt is the
+// common shortcut and it leaves screen-reader users with strictly less than everyone
+// else — so the prop is required and has no default.
+//
+// `src` points at /public (e.g. "/img/<slug>/thing.png"). Width/height are optional but
+// worth passing: they reserve the box and stop the caption jumping as the image loads.
+//
+// FIGURES DO NOT BREAK OUT OF THE TEXT COLUMN. Every block on a build page — callout,
+// stat tiles, process step, table, code — is exactly the prose width, and that single
+// unbroken edge is most of what makes the page read as an editorial journal rather than
+// a dashboard. A wider figure was tried here and looked like a mistake, not emphasis.
+// If a screenshot is too dense to read at column width, the fix is the IMAGE, not the
+// layout: crop the chrome, compress dead space between columns, or show fewer rows.
+interface Props {
+  src: string;
+  alt: string;
+  caption?: string;
+  width?: number;
+  height?: number;
+}
+const { src, alt, caption, width, height } = Astro.props;
+---
+
+<figure class="shot">
+  <img src={src} alt={alt} width={width} height={height} loading="lazy" decoding="async" />
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+  .shot { margin: 0; }
+  .shot img {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface-2);
+    box-shadow: var(--shadow-sm);
+  }
+  figcaption {
+    margin-top: 0.7rem;
+    color: var(--ink-muted);
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+</style>

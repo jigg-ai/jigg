@@ -49,6 +49,31 @@ which is the whole point. The raw file stays offline.
 | `ip_id` | `ip01`…`ip16`, `own` | stable per distinct IP, so "16 distinct IPs" is checkable without publishing any of them |
 | `ip_net` | the /24 only | the bot infrastructure's subnets, kept because the clustering is a finding. **Our own row's network is `redacted`** — that one is the maintainer's home IP |
 
+### The screenshots
+
+`spam-wave-masked-full.png` is the same 34 rows rendered as a list, masked to the rule
+above — kept here because a picture of the wave arriving is evidence the CSV can't be,
+and because it is what a reader recognises from their own provider's dashboard.
+
+The version shown on the build page
+(`site/public/img/buttondown-hardening/spam-wave-masked.png`) is derived from that same
+file — never a reshoot, so the two cannot disagree about any value. Two purely visual
+edits, both stated here because an evidence image should say what was done to it:
+
+1. **Cropped** to the header plus the first 12 rows (`own01`, `a33`–`a23`), and the
+   checkbox and row-menu columns dropped.
+2. **Dead horizontal space between the columns compressed** — the source has 435px of
+   empty background between the address and status columns alone. Slices were rejoined
+   using the image's own background pixels, so the row striping stays continuous.
+
+**No value was altered, reordered, hidden or recoloured**; only empty space was removed.
+The point of the edit is legibility: the build page's text column is 616px, and the
+uncropped image scales to 47% there, which is unreadable. This lands at 84%.
+
+**Dates in both images are rendered in local time, while every figure in this folder and
+on the page is UTC** — that shifts four rows across a day boundary (`a07`, `a08`, `a20`,
+`a33`). The CSV's `occurred_at_utc` is canonical; the images are illustrative.
+
 Dropped entirely: `id`, `secondary_id`, `email`, `ip_address` (final octet), and every
 column Buttondown exported empty (`notes`, `referrer_url`, `utm_*`, `tags`, `metadata`,
 and the four lifecycle dates).

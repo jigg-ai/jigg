@@ -59,12 +59,25 @@ Plain verdict, placed after the proof.
 | `ShortVersion` | Citation-hook callout at the top | *(children)* |
 | `ProcessStep` | One fault-tagged step of the honest process | `result` `pass\|fail`, `title`, `tag` `my-setup\|tool-limit`, *(children)* |
 | `StatTiles` | Test-score breakdown or fact tiles | `variant` `metric\|fact`, `stats[]` `{value,label,tone?}` |
+| `Figure` | Captioned artifact screenshot | `src`, `alt` **(required)**, `caption?`, `width?`, `height?` |
 | `ReproPack` | "Reproduce this" + gated pack form | `items[]`, `title?`, `blurb?` |
 | `ToolVerdict` | Verdict + disclosed affiliate CTA | `tool`, `toolSummary?`, `affiliateUrl?`, *(children)* |
 
 ## Conventions
 
 - **Tag every failure** `my-setup` vs `tool-limit` — never conflate the two.
+- **`Figure` needs real `alt`, not a repeat of the caption.** The caption is extra
+  context for everyone; alt has to carry what the image actually shows. Screenshots
+  of people's data go through the build's masking rule *before* they reach
+  `public/` — see `builds/buttondown-hardening/repro/README.md` for the worked example.
+- **Nothing breaks out of the text column.** Every block here renders at exactly the
+  prose width, and that one unbroken edge is doing most of the editorial-journal work.
+  A dense screenshot that's illegible at column width gets *fixed as an image* — crop
+  the chrome, compress the dead space between columns, show fewer rows — not by
+  widening the layout. Tried the wide version on build #4; it read as a mistake.
+- **Say what you did to an evidence image.** Cropping and compressing whitespace is
+  fine and often necessary; doing it silently is not. Record the edits next to the
+  unmodified original in the build's `repro/`.
 - **Affiliate CTA goes last**, always disclosed (`ToolVerdict` handles the
   `rel="sponsored nofollow"` and the disclosure line).
 - **Colour is brand + status only.** These components never introduce a new hue;
