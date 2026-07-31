@@ -229,7 +229,9 @@ remains below is what's still *unobserved*, not untried.
     the Buttondown call. **Now evidenced from the other direction too:** one wave address
     confirmed on 2026-07-30T15:22:34Z, so a confirmation is not proof of a human either —
     a curious victim and a corporate link-scanner both produce one. Unclassified on purpose;
-    it is the account's first and only confirmed subscriber.
+    it is the first subscriber the *signup form* ever converted. **Corrected 2026-07-30:**
+    this said "the account's first and only confirmed subscriber," which the data can't
+    support — the export is scoped to signups from outside sources, not the whole account.
   - **The preview test convention needs re-checking now that auditing is back on.** PROCESS
     ("Testing the newsletter proxy on a preview") standardises disposable
     `jigg.ai.biz+test-YYYYMMDD@gmail.com` addresses. That convention was written while the

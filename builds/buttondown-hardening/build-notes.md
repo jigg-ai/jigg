@@ -133,8 +133,14 @@ nor prevented it. `risk_score` 0.0, no firewall reasons, and it arrived from a /
 sent exactly one signup, where the pool subnets sent 6–11. That is *suggestive* of a real
 visitor and it is not proof: a scraping victim who clicked out of confusion, or a
 corporate link-scanner following the confirmation URL, produce the same record. **Left
-unclassified deliberately.** It does mean the newsletter now has one confirmed subscriber,
-so "zero confirmed subscribers" is no longer true as of 2026-07-30T15:22Z.
+unclassified deliberately.** It does mean **the wave produced one confirmed subscriber**
+as of 2026-07-30T15:22Z.
+
+**Corrected 2026-07-30:** this said "the newsletter now has one confirmed subscriber,"
+which overreached. The export is scoped to signups from outside sources, not the whole
+account, so it cannot support any statement about the account's total confirmed
+subscribers — and at least one ordinary subscriber exists outside it. See
+`repro/README.md` → Provenance.
 
 ### Figures that did not survive the export
 

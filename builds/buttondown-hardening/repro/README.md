@@ -15,9 +15,22 @@ can be recomputed from it. It is a masked derivative of a Buttondown subscriber
 export — the raw export is **deliberately not in this repository** (see below).
 
 ### Provenance
-- **Source:** Buttondown → Subscribers → Export, full account export.
-- **Snapshot taken:** 2026-07-30, ~07:15 local (14:15 UTC). The account held 34
-  subscriber records in total at that moment; all 34 are here.
+- **Source:** Buttondown → Subscribers → Export, **scoped to the signups that arrived
+  from outside sources** — i.e. the spam wave — plus one address we created while
+  testing (`own01`). It is **not a full account snapshot.**
+- **Corrected 2026-07-30.** This section previously read "full account export… the
+  account held 34 subscriber records in total at that moment; all 34 are here." That was
+  wrong: at least one ordinary subscriber (the maintainer's own address) exists and is
+  deliberately outside this export. The error surfaced when that address received the
+  first newsletter and could not be found in these 34 rows. **Nothing derived changed** —
+  every figure here describes the wave, which is what the export scopes to — but a
+  sentence claiming an evidence file is complete has to be true, and this one was
+  assumed rather than checked. Same failure class as the four figures retracted in
+  `build-notes.md`.
+- **What this file therefore cannot tell you:** the account's total subscriber count, its
+  number of confirmed subscribers, or whether the list was empty at any given moment.
+  Buttondown is the only source for those. Do not compute them from here.
+- **Snapshot taken:** 2026-07-30, ~07:15 local (14:15 UTC).
 - **Raw file:** `jiggAI-subscribers-export-Buttondown.csv`, 34 data rows. Held
   offline by the maintainer, outside version control.
 - **One post-snapshot change is folded in:** `a23` transitioned to `regular` at
