@@ -99,9 +99,18 @@ remains below is what's still *unobserved*, not untried.
   those in commits; BLANK makes leaking one into history structurally impossible.
   `delete_branch_on_merge` left `false` on purpose: branch refs are the recovery path.
   Kept as the record; delete on the next sweep.
-- **NEW — a `draft` build is invisible on its own Deploy Preview, which breaks PROCESS
-  step 5.** `site/src/lib/builds.ts:13` filters `status === 'draft'` out whenever
-  `import.meta.env.PROD` is true. A Deploy Preview *is* a production build, so a build
+- ~~**NEW — a `draft` build is invisible on its own Deploy Preview, which breaks PROCESS
+  step 5.**~~ — **FIXED 2026-07-30** on `chore/search-indexing`, batched into the search-indexing
+  merge as planned. `site/src/lib/builds.ts` now derives draft visibility from Netlify's
+  `CONTEXT` instead of `import.meta.env.PROD`: `production` hides drafts, `deploy-preview` and
+  `branch-deploy` show them, and `CONTEXT` is unset off Netlify so local behaviour is unchanged
+  (`npm run dev` shows drafts, `npm run build`/`npm run preview` stay production-like). Verified
+  with a temporary draft entry across all four cases before the branch was pushed. **Still to
+  observe on a real preview** — the local run proves the gate, not Netlify's env. Original entry
+  below.
+  <br>
+  `site/src/lib/builds.ts:13` filtered `status === 'draft'` out whenever
+  `import.meta.env.PROD` was true. A Deploy Preview *is* a production build, so a build
   drafted on a branch does not render on the preview — confirmed on build #4, whose
   `npm run build` emits 11 pages and no `/builds/buttondown-hardening/`. But PROCESS step 5
   says to hand the human the Deploy Preview URL for sign-off, "not the live site: the whole
@@ -157,20 +166,51 @@ engines; right now it is discoverable only by passive crawl.
   "Request indexing" is the whole toolkit. **Search Console IS set up** (confirmed
   2026-07-30) — use it by hand on publish day.
 
-### 1. The sitemap has no `lastmod`
-`dist/sitemap-0.xml` emits bare `<loc>` entries — `@astrojs/sitemap` omits `lastmod`
-unless configured. So the ping was removed from the web *and* we never supplied the
-signal that replaced it; Google has no freshness hint at all. Fix with a `serialize` in
-`site/astro.config.mjs` mapping each build URL to its `published` / `last_verified` from
-the collection. Care needed: the dates are `z.coerce.date()`, and non-build routes
-(`/about`, `/tools`, the archive) have no natural date — decide whether they get the
-build-time date or none, rather than emitting something misleading.
+**BOTH BUILT 2026-07-30** on `chore/search-indexing`, batched with the draft-visibility fix
+above into one merge. Awaiting Deploy Preview verification and the human pass.
 
-### 2. IndexNow — worth adding even though Google ignores it
-A static key file in `site/public/` plus one POST on deploy covers Bing, Yandex, Seznam
-and Naver. **The reason it matters here is not Bing's search share — Bing's index feeds
-ChatGPT search and Copilot**, which is exactly the answer-engine citability §8 is after.
-Cheap, and the only *automatable* indexing channel that actually exists.
+### 1. ~~The sitemap has no `lastmod`~~ — DONE, with a deliberate decision recorded
+`serialize` in `site/astro.config.mjs` now supplies it. **The decision that matters is
+which routes DON'T get one**, because a `lastmod` is a claim that the page changed, and
+stamping the build time everywhere makes every deploy claim every page changed — Google
+detects that and discounts the field, which is worse than never adding it:
+- `/builds/<slug>/` → `max(published, last_verified)` from the build's frontmatter.
+- `/`, `/builds/`, `/tools/` → the newest **live** (non-draft) build's date. Defensible
+  because those three are *generated from* the collection, so a new build really does
+  rewrite them.
+- `/about`, `/privacy`, `/affiliate-disclosure`, `/subscribe` → **no `lastmod` at all.**
+  They're hand-edited Markdown with no date anywhere in the repo, and file mtime on
+  Netlify is the checkout time, i.e. exactly the lie above. `lastmod` is optional in the
+  protocol; omitting it is the honest answer.
+- Frontmatter is read off disk with a small scan, not through the collection —
+  `astro.config.mjs` is plain Node and can't import `astro:content`, and a YAML dep would
+  breach the keep-dependencies-light rule.
+- **Open follow-up, deliberately not solved:** the four info pages now have *no* freshness
+  signal. The obvious fix is an optional human-maintained `updated` field on the `pages`
+  collection, but it drifts silently the moment someone edits copy and forgets to bump it —
+  a wrong date is worse than none. Revisit only if those pages start mattering for
+  citation; the near-duplicate-info-routes item below would be the natural time.
+
+### 2. ~~IndexNow~~ — DONE (worth adding even though Google ignores it)
+Static key file at `site/public/97ed47aa164376cf88c588d4169d829c.txt` (public by design —
+that file *is* the ownership proof, so no secret and nothing to configure in Netlify) plus
+a local build plugin at `site/plugins/indexnow/`, wired in `netlify.toml`. Covers Bing,
+Yandex, Seznam, Naver. **The reason it matters here is not Bing's search share — Bing's
+index feeds ChatGPT search and Copilot**, which is exactly the answer-engine citability §8
+is after. Points worth not re-deriving:
+- **It must never fire on a Deploy Preview** (previews rebuild per commit and would
+  announce untested URLs for the production domain). Gated on `CONTEXT === 'production'`;
+  the *plugin form* is the second, structural gate, since the file only executes inside
+  Netlify's build system and no local `npm run build` can reach it.
+- **Not a GitHub Action:** an Action on merge can't see whether the deploy happened, and
+  `netlify.toml`'s `ignore` rule cancels docs-only builds — it would announce URLs for a
+  deploy that never ran. Riding the build gives "no deploy, no submission" for free.
+- Submits the whole sitemap each time (~11 URLs, ≤20 deploys/month, limit is 10,000)
+  rather than a git-diff'd subset, which would be a second source of truth about routes.
+- Failures warn and return. An indexing hint must never fail a 15-credit deploy.
+- **Still to verify after merge:** that the key file is served at its exact path on the
+  live domain, and that the production deploy log actually shows a `[indexnow] submitted`
+  line with a 2xx. The preview proves only the *negative* (that it stayed silent).
 
 ## Unconfirmed facts
 
