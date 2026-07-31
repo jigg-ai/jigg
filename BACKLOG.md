@@ -306,11 +306,19 @@ is after. Points worth not re-deriving:
     it is the first subscriber the *signup form* ever converted. **Corrected 2026-07-30:**
     this said "the account's first and only confirmed subscriber," which the data can't
     support — the export is scoped to signups from outside sources, not the whole account.
-  - **The preview test convention needs re-checking now that auditing is back on.** PROCESS
-    ("Testing the newsletter proxy on a preview") standardises disposable
-    `jigg.ai.biz+test-YYYYMMDD@gmail.com` addresses. That convention was written while the
-    firewall was off; plus-addressed gmail is a textbook spam signal, so a test signup may now be
-    blocked and stop being representative. Re-verify, don't assume it survived. (Correction to an
+  - ~~**The preview test convention needs re-checking now that auditing is back on.**~~
+    **RE-VERIFIED 2026-07-30 — the convention survived.** PROCESS ("Testing the newsletter
+    proxy on a preview") standardises disposable `jigg.ai.biz+test-YYYYMMDD@gmail.com`
+    addresses, and the worry was that plus-addressed gmail is a textbook spam signal, so a
+    test signup might now be firewalled and stop being representative. It isn't:
+    `jigg.ai.biz+testsub@gmail.com`, submitted **through a proxy** (so a non-residential IP,
+    the harsher case) landed as **Unactivated**, not Blocked — meaning Buttondown accepted it
+    and sent the confirmation with auditing and Attack mode both on. Keep using the
+    convention. Caveat: this ran against production rather than a Deploy Preview, but the
+    firewall judges the forwarded `ip_address` either way, so the result transfers.
+  - **Delete test subscribers after use** (PROCESS says so, and it's easy to skip). Any left
+    in `Unactivated` inflate the account's counts and read as real signups later — which is
+    exactly the confusion that prompted this check. (Correction to an
     earlier note: the address that is permanently unsubscribable is `sasha.gmi.hodl@gmail.com`,
     via an opt-out suppression — *"previously unsubscribed… you cannot resubscribe them"* — not
     the bare `jigg.ai.biz@gmail.com`, and not the firewall. Different mechanism, different fix.)
