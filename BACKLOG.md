@@ -378,6 +378,40 @@ cost us a wrong reading in one build.
   that doesn't exist — the exact overclaim already logged against build #1. Swap in
   `ReproPack` once a real pack exists.
 
+## Botpress KB re-sync — can it be automated? (investigated 2026-07-30, build #4)
+
+Build #4's post-deploy re-crawl was done by hand, same as #2 and #3. That's three builds
+where the correctness of the live bot depended on someone remembering. What the automation
+options actually are:
+
+- **Native scheduled recrawl — the practical fix, and it needs no API.** Select the pages
+  in the KB source list, open the **Recrawl** drop-down, and pick a schedule instead of
+  one-time indexing; **Recrawl Daily** is documented, with other frequencies available.
+  <https://botpress.com/docs/studio/concepts/knowledge-base/add-sources>
+  **CHECK IT EXISTS IN DESK FIRST.** That page is Studio documentation, and this project
+  has already been burned by exactly that gap — the Studio docs' "Specific Web Pages"
+  option was absent from Desk (see the Botpress coverage entry below). Confirm the control
+  is really there before treating this as solved.
+- **There is NO public API to trigger a website-source re-sync on demand.** So
+  "merge → re-crawl" cannot be wired into a deploy hook, which is the thing we actually
+  want. The [Files API](https://botpress.com/docs/api-reference/files-api/getting-started)
+  manages uploaded *documents* only; it does not drive the crawler.
+- **Don't solve it by going back to Files-API-pushed `kb/*.md`.** Those imports were
+  deliberately *removed* at build #2's publish once `robots.txt` fixed the crawl, because
+  two copies of the same page was itself a retrieval problem. Re-introducing them to gain
+  automation would re-introduce the drift.
+- **The unautomated part is the verification, and that's the part that has actually
+  failed.** A schedule fixes staleness, not correctness: build #3's first re-crawl missed
+  the new page (crawled before propagation), Botpress reports partial coverage as success,
+  and the conversation-memory trap means a naive re-test reads the bot's cache. **Lead,
+  not a plan:** Botpress has a Chat API, so a script could ask the live bot a question
+  whose answer changed in the deploy and assert on the reply. Its shape is unverified —
+  check before committing to it.
+
+**Suggested end state:** Recrawl Daily if Desk offers it, a manual re-sync on publish day
+when it needs to be live immediately, and the content-question spot-check kept human until
+the Chat API idea is actually investigated.
+
 ## Build #3 (explainer video, HeyGen) — open at scaffold (2026-07-24)
 
 **PUBLISHED 2026-07-24** (`status: verified`, in the repo; live on the next deploy/push).
