@@ -138,6 +138,40 @@ remains below is what's still *unobserved*, not untried.
   material advertises Preview Servers as "free to try through April" — expired, and it was
   never the compute line anyway.
 
+## Search indexing optimization — IMPORTANT, batch into the next `site/` merge
+
+Opened 2026-07-30, after build #4 published. Both items below are `site/` changes, so
+they cost one 15-credit production deploy — **batch them together, and ideally with
+whatever else is queued for `site/`.** `CONTEXT.md` §8 wants this site citable by answer
+engines; right now it is discoverable only by passive crawl.
+
+**Verified 2026-07-30 — do not re-investigate these, they are dead ends:**
+- **Google's Indexing API accepts only `JobPosting` and `BroadcastEvent`.** A build-log
+  page is rejected. It is not a general submission channel, whatever SEO blogs claim.
+  <https://developers.google.com/search/apis/indexing-api/v3/using-api>
+- **The sitemap ping endpoint is gone.** Google deprecated it in 2023 and it now 404s.
+  Google's stated replacement signal is `lastmod` in the sitemap.
+  <https://developers.google.com/search/blog/2023/06/sitemaps-lastmod-ping>
+- **Google does not support IndexNow.** Announced a trial in 2021, never shipped.
+- So for Google there is no automation: the sitemap plus Search Console's manual
+  "Request indexing" is the whole toolkit. **Search Console IS set up** (confirmed
+  2026-07-30) — use it by hand on publish day.
+
+### 1. The sitemap has no `lastmod`
+`dist/sitemap-0.xml` emits bare `<loc>` entries — `@astrojs/sitemap` omits `lastmod`
+unless configured. So the ping was removed from the web *and* we never supplied the
+signal that replaced it; Google has no freshness hint at all. Fix with a `serialize` in
+`site/astro.config.mjs` mapping each build URL to its `published` / `last_verified` from
+the collection. Care needed: the dates are `z.coerce.date()`, and non-build routes
+(`/about`, `/tools`, the archive) have no natural date — decide whether they get the
+build-time date or none, rather than emitting something misleading.
+
+### 2. IndexNow — worth adding even though Google ignores it
+A static key file in `site/public/` plus one POST on deploy covers Bing, Yandex, Seznam
+and Naver. **The reason it matters here is not Bing's search share — Bing's index feeds
+ChatGPT search and Copilot**, which is exactly the answer-engine citability §8 is after.
+Cheap, and the only *automatable* indexing channel that actually exists.
+
 ## Unconfirmed facts
 
 - ~~**Claude Code `tool_version`**~~ — **RESOLVED 2026-07-30: `2.1.219`**, set on build #4.
