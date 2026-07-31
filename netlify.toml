@@ -41,6 +41,14 @@
 [functions]
   directory = "netlify/functions"
 
+# IndexNow submission (Bing, Yandex, Seznam, Naver — and therefore ChatGPT search
+# and Copilot, which is the point). Local plugin; the path is relative to `base`,
+# so this resolves to site/plugins/indexnow. It self-gates on CONTEXT == production
+# and never fails the deploy — see the file header for why it's a plugin and not a
+# postbuild script or a GitHub Action.
+[[plugins]]
+  package = "./plugins/indexnow"
+
 # Lighthouse on every deploy. This closes test.md check #7 (performance, previously
 # "Not run" with no score to claim) and gives check #8 a real accessibility NUMBER —
 # though note an automated Lighthouse a11y score is NOT a formal audit; it catches a
