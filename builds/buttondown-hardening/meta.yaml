@@ -9,7 +9,11 @@ title: "Hardening the email signup endpoint after the bots found it"
 slug: "buttondown-hardening"
 category: "websites"
 tool: "Claude Code"
-tool_version: ""      # still unknown — see BACKLOG; never guess a published version
+# The EMBEDDED Claude Code build, not the Claude for Mac app it runs inside (that is
+# 1.24012.9 — a different thing, and the wrong answer). Three independent sources agree:
+# the install dir ~/Library/Application Support/Claude/claude-code/2.1.219/, the `version`
+# key in ~/.claude/sessions/*.json, and anthropics/claude-code#82543.
+tool_version: "2.1.219"
 built_with: ["Claude Opus 5"]
 stack: ["Buttondown", "Netlify Functions", "Cloudflare Turnstile", "Astro 7.1"]
 runs_on_site: true    # the hardened form is the one on this site

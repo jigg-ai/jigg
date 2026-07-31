@@ -140,22 +140,23 @@ remains below is what's still *unobserved*, not untried.
 
 ## Unconfirmed facts
 
-- **Claude Code `tool_version`** — still omitted from the build stamp, now on builds #1 and
-  #4. The CLI isn't on PATH (Claude Desktop install), and an earlier guess turned out to be
-  a feature-flag `min_version`, not the real version (logged in `build-notes.md`). Get it
-  from `/status` in Claude Code and add it back. **Never guess a version** — it's a
-  published claim.
-  - **Two wrong candidates, recorded so they don't get proposed a third time.**
-    (a) **The "Claude for Mac" version from the app's About panel — `1.24012.9 (03c61d)`
-    at build #4 — is the HOST APP, not Claude Code.** Claude Code runs inside it; they
-    version separately. Offered in good faith at build #4's publish and declined.
-    (b) The feature-flag `min_version` from the earlier attempt.
-  - **Best current candidate, still unconfirmed: `2.1.219`.** Read from the top-level
-    `version` key in `~/.claude/sessions/*.json`, a file whose siblings (`entrypoint`,
-    `peerProtocol`, `sessionId`) make it clearly a Claude Code session record. Plausible
-    and correctly shaped — but it is *inferred from an undocumented internal file*, which
-    is the same evidence class as both wrong answers above. `/status` is the authoritative
-    source and takes one keystroke; it just has to be a human's keystroke.
+- ~~**Claude Code `tool_version`**~~ — **RESOLVED 2026-07-30: `2.1.219`**, set on build #4.
+  Open since build #1 because the CLI isn't on PATH (Claude Desktop install) and an early
+  guess turned out to be a feature-flag `min_version`. Three independent sources agree:
+  the install directory `~/Library/Application Support/Claude/claude-code/2.1.219/`, the
+  top-level `version` key in `~/.claude/sessions/*.json`, and `anthropics/claude-code#82543`.
+  - **The distinction that took two wrong answers to learn: Claude Code is EMBEDDED in
+    Claude for Mac and versions separately.** The About panel's `1.24012.9 (03c61d)` is
+    the host app — proposed at build #4's publish and declined. The version we publish is
+    the embedded build, and the install path literally names it.
+  - **Build #1 still has no `tool_version`.** Its build ran on an earlier, unrecorded
+    version, so backfilling it with today's number would be a fabrication. Leave unset.
+  - **Setting it exposed a latent bug, now fixed.** `BuildRow` computed
+    `tool_version || tool`, so the first build to carry a version would have rendered
+    "2.1.219 · verified jul 2026" in the archive with the tool name gone. Now
+    `[tool, tool_version]`, matching `BuildStamp`. Same shape as the tools-index
+    aggregation item: a code path that only fires once an optional field is finally
+    populated, and therefore never exercised until it ships.
 
 ## Deliberate deferrals
 

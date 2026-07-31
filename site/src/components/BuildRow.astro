@@ -19,7 +19,11 @@ const href = `/builds/${id}`;
 const categoryLabel = data.category[0].toUpperCase() + data.category.slice(1);
 
 const stamp = [
-  data.tool_version || data.tool,
+  // Tool THEN version, matching BuildStamp on the detail page. This used to be
+  // `tool_version || tool`, which silently replaced the tool name with a bare number
+  // ("2.1.219 · verified jul 2026") the first time any build set a version — which
+  // build #4 was. The version qualifies the tool; it never stands in for it.
+  [data.tool, data.tool_version].filter(Boolean).join(' '),
   data.last_verified ? `verified ${monShort(data.last_verified)}` : null,
   data.meta_line,
 ]
