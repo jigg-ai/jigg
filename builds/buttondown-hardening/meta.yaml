@@ -5,7 +5,7 @@
 # the build and belongs in `stack`, not `tool`. Build #1 also reviews Claude Code —
 # deliberate: that was greenfield scaffolding, this is adversarial debugging and
 # security work, which says something different about the same tool.
-title: "Hardening a public signup endpoint after the bots found it"
+title: "Hardening the email signup endpoint after the bots found it"
 slug: "buttondown-hardening"
 category: "websites"
 tool: "Claude Code"
