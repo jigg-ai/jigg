@@ -157,6 +157,21 @@ remains below is what's still *unobserved*, not untried.
   sit available for someone else to take. Cheap, one-time, and **blocked on nothing** —
   it's open purely because it hasn't been done, not because it's waiting on anything.
   (Do it before the brand accumulates any reach worth squatting.)
+- **`/tools` has nowhere to put non-AI infrastructure it genuinely reviewed.** Raised at
+  build #4's draft and deliberately parked. `tool` stays **Claude Code** — `/tools` is a
+  projection of the builds collection and an *AI-tool* index, `stack` is where supporting
+  services belong, `affiliate_url` targets `tool`, and this is already settled for this
+  story further down ("Keep it out of `/tools` (Buttondown isn't an AI tool)"). Build #1 set
+  the same precedent with a Buttondown-heavy postscript under `tool: Claude Code`.
+  **But the gap is real:** build #4 produces two substantive Buttondown findings — a
+  firewall block surfacing as a bare `400` with no pointer to the setting causing it, and
+  Attack mode auto-escalating on a signup surge — and neither can reach `/tools`, so they
+  are discoverable only by reading the build log. Options if this recurs: a second
+  projection (a services/infrastructure index over `stack`), or accept that non-AI verdicts
+  live in build bodies only. **Do not resolve it by mislabelling `tool`** — that trades a
+  navigation gap for a wrong claim about what the build reviewed. Revisit when a second
+  build produces a real verdict on a non-AI service.
+
 - **Info-page routes are near-duplicates** — `/about`, `/privacy`, and
   `/affiliate-disclosure` each have their own route file with near-identical bodies. A
   single dynamic `[slug].astro` over the `pages` collection would make a new info page a

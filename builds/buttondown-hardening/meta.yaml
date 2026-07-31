@@ -19,7 +19,11 @@ test_score: "12/13"   # acceptance tests passing; 1 deliberately skipped (see te
 affiliate_url: ""
 repro_pack: false     # public in-repo, like build #1 — no email gate
 published: ""         # unset until verified + published
-last_verified: 2026-07-30
+# PROCESS step 5: published, last_verified and status are ALL set only after the
+# human sign-off. Pre-filling last_verified made the archive row read
+# "verified jul 2026" under a draft — the exact overclaim build #1 was audited for.
+# The checks were run 2026-07-30 (see test.md); that is a test date, not a verification.
+last_verified: ""
 pricing_as_of: ""     # no cost claim for the primary tool in this build
 
 featured: false
