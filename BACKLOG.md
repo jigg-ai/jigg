@@ -99,6 +99,34 @@ remains below is what's still *unobserved*, not untried.
   those in commits; BLANK makes leaking one into history structurally impossible.
   `delete_branch_on_merge` left `false` on purpose: branch refs are the recovery path.
   Kept as the record; delete on the next sweep.
+- **NEW — a `draft` build is invisible on its own Deploy Preview, which breaks PROCESS
+  step 5.** `site/src/lib/builds.ts:13` filters `status === 'draft'` out whenever
+  `import.meta.env.PROD` is true. A Deploy Preview *is* a production build, so a build
+  drafted on a branch does not render on the preview — confirmed on build #4, whose
+  `npm run build` emits 11 pages and no `/builds/buttondown-hardening/`. But PROCESS step 5
+  says to hand the human the Deploy Preview URL for sign-off, "not the live site: the whole
+  point is that they review it before it exists in public." Those two rules are in direct
+  conflict, and the conflict was invisible until a build was actually drafted on a branch.
+  - **Workaround in use:** review at `npm run dev`, which shows drafts. Costs nothing but
+    isn't the production build, so it proves less — exactly the gap that made build #1's
+    signup fix ship broken.
+  - **Do NOT work around it by flipping `status` to `verified` before the review.** That is
+    precisely the failure PROCESS step 5 was hardened against.
+  - **Fix worth making:** gate on Netlify's deploy context rather than `PROD` — show drafts
+    when `CONTEXT !== 'production'`, so previews render them and the live site never does.
+    One line, but it is a `site/` change and therefore a paid deploy, so batch it.
+
+- **NEW — publishing build #4 silently rewrites Claude Code's `/tools` entry.** `builds.ts:99`
+  takes the most-recent build's `tool_*` fields per tool, and `publishedTime` returns 0 for an
+  unset `published`. So while build #4 is a draft, build #1 stays primary and `/tools` still
+  shows "empty folder to a live, four-view content engine in one sitting" with
+  `accessibility: Some setup`. The moment step 5 sets `published` on build #4, the entry flips
+  to build #4's verdict and `accessibility: Advanced`. Working as designed (CONTEXT §6), and
+  the human should agree to it knowingly rather than discover it post-merge — it retires
+  build #1's verdict from `/tools` entirely. Note this also **closes the "aggregation never
+  exercised with two builds on one tool" item below**: verified rendering as `2 builds` under
+  one Claude Code entry at `npm run dev`. Re-confirm on the preview once drafts render there.
+
 - **Preview Servers are NOT the free surface — don't reach for that dialog.** Netlify's UI
   offers "Preview Servers" per branch, which looks like the obvious fit and is the one
   preview surface that *is* metered: **10 credits per GB-hour** of compute. One left running
@@ -112,10 +140,23 @@ remains below is what's still *unobserved*, not untried.
 
 ## Unconfirmed facts
 
-- **Claude Code `tool_version`** — currently omitted from the build stamp. The CLI isn't
-  on PATH (Claude Desktop install), and an earlier guess turned out to be a feature-flag
-  `min_version`, not the real version (logged in `build-notes.md`). Get it from `/status`
-  in Claude Code and add it back. **Never guess a version** — it's a published claim.
+- ~~**Claude Code `tool_version`**~~ — **RESOLVED 2026-07-30: `2.1.219`**, set on build #4.
+  Open since build #1 because the CLI isn't on PATH (Claude Desktop install) and an early
+  guess turned out to be a feature-flag `min_version`. Three independent sources agree:
+  the install directory `~/Library/Application Support/Claude/claude-code/2.1.219/`, the
+  top-level `version` key in `~/.claude/sessions/*.json`, and `anthropics/claude-code#82543`.
+  - **The distinction that took two wrong answers to learn: Claude Code is EMBEDDED in
+    Claude for Mac and versions separately.** The About panel's `1.24012.9 (03c61d)` is
+    the host app — proposed at build #4's publish and declined. The version we publish is
+    the embedded build, and the install path literally names it.
+  - **Build #1 still has no `tool_version`.** Its build ran on an earlier, unrecorded
+    version, so backfilling it with today's number would be a fabrication. Leave unset.
+  - **Setting it exposed a latent bug, now fixed.** `BuildRow` computed
+    `tool_version || tool`, so the first build to carry a version would have rendered
+    "2.1.219 · verified jul 2026" in the archive with the tool name gone. Now
+    `[tool, tool_version]`, matching `BuildStamp`. Same shape as the tools-index
+    aggregation item: a code path that only fires once an optional field is finally
+    populated, and therefore never exercised until it ships.
 
 ## Deliberate deferrals
 
@@ -129,6 +170,21 @@ remains below is what's still *unobserved*, not untried.
   sit available for someone else to take. Cheap, one-time, and **blocked on nothing** —
   it's open purely because it hasn't been done, not because it's waiting on anything.
   (Do it before the brand accumulates any reach worth squatting.)
+- **`/tools` has nowhere to put non-AI infrastructure it genuinely reviewed.** Raised at
+  build #4's draft and deliberately parked. `tool` stays **Claude Code** — `/tools` is a
+  projection of the builds collection and an *AI-tool* index, `stack` is where supporting
+  services belong, `affiliate_url` targets `tool`, and this is already settled for this
+  story further down ("Keep it out of `/tools` (Buttondown isn't an AI tool)"). Build #1 set
+  the same precedent with a Buttondown-heavy postscript under `tool: Claude Code`.
+  **But the gap is real:** build #4 produces two substantive Buttondown findings — a
+  firewall block surfacing as a bare `400` with no pointer to the setting causing it, and
+  Attack mode auto-escalating on a signup surge — and neither can reach `/tools`, so they
+  are discoverable only by reading the build log. Options if this recurs: a second
+  projection (a services/infrastructure index over `stack`), or accept that non-AI verdicts
+  live in build bodies only. **Do not resolve it by mislabelling `tool`** — that trades a
+  navigation gap for a wrong claim about what the build reviewed. Revisit when a second
+  build produces a real verdict on a non-AI service.
+
 - **Info-page routes are near-duplicates** — `/about`, `/privacy`, and
   `/affiliate-disclosure` each have their own route file with near-identical bodies. A
   single dynamic `[slug].astro` over the `pages` collection would make a new info page a
@@ -145,10 +201,21 @@ remains below is what's still *unobserved*, not untried.
 - ~~**Revisit Buttondown's spam firewall once there's real subscriber traction**~~ — **TRIGGER
   FIRED 2026-07-27/29; settings re-enabled. Superseded by the hardening work below.** This item
   used to say the firewall was "all off" and should stay off; that is no longer true and the
-  advice no longer holds. Bot signups arrived (~12 over four days, then ~25 over three, scraped
-  B2B addresses), so the firewall is now: **Auditing Enabled, Attack mode Enabled, Handling
+  advice no longer holds. Bot signups arrived — **33 scraped addresses in 64.9 hours**
+  (2026-07-27T12:15:56Z → 2026-07-30T05:07:38Z, from 16 IPs across 7 /24s), so the firewall
+  is now: **Auditing Enabled, Attack mode Enabled, Handling
   blocked subscribers Enabled, IP-address auditing Disabled, Embed fingerprinting Disabled,
   Blocked domains: `immenseignite.info`.** Kept here as the record of what changed and why:
+  - **Figures corrected 2026-07-30.** This entry previously said "~12 over four days, then
+    ~25 over three" from recollection. The numbers above are derived from
+    `builds/buttondown-hardening/repro/spam-wave-masked.csv` and recomputable from it. The
+    earlier four-day wave has **no trace in the export** (oldest record 2026-07-27) and is
+    retracted; `immenseignite.info` likewise does not appear in the traffic, though it
+    remains in both blocklists. See that build's `build-notes.md` → *Figures that did not
+    survive the export*.
+  - **The firewall did most of the blocking, not our code.** 26 of the 33 (79%) were
+    `blocked` by Buttondown before any email went out; only 7 were ever emailed, of which 3
+    hard-bounced. Worth remembering before anyone proposes turning these settings back off.
   - **Attack mode acts, it does not merely warn.** It auto-enables aggressive + IP-address
     auditing on "a surge of unactivated subscribers" — which is indistinguishable from a
     successful launch. With the server-side proxy in place that means signups can break at the
@@ -159,7 +226,10 @@ remains below is what's still *unobserved*, not untried.
     signups *after* the change, not before.
   - **Double opt-in is not the spam gate.** It stops list poisoning, not list bombing — the
     confirmation email is the payload, and strangers received them. Controls belong in front of
-    the Buttondown call.
+    the Buttondown call. **Now evidenced from the other direction too:** one wave address
+    confirmed on 2026-07-30T15:22:34Z, so a confirmation is not proof of a human either —
+    a curious victim and a corporate link-scanner both produce one. Unclassified on purpose;
+    it is the account's first and only confirmed subscriber.
   - **The preview test convention needs re-checking now that auditing is back on.** PROCESS
     ("Testing the newsletter proxy on a preview") standardises disposable
     `jigg.ai.biz+test-YYYYMMDD@gmail.com` addresses. That convention was written while the
@@ -383,6 +453,31 @@ captured; embed built + verified at desktop/mobile. Still-open items are follow-
   precedent to avoid two drifting copies of the same prose. Either drop `post.md` from the
   template and reword PROCESS §4, or define what it's for. Flag for the PROCESS retro.
 
+## Repro packs — the model itself needs deciding (opened 2026-07-30, build #4)
+
+Build #4 published with a **deliberately partial** pack: the spam-wave evidence (masked
+CSV, masked screenshot, a README stating the masking rule and what the data does *not*
+substantiate) and nothing else. No control-order walkthrough, no check-reproduction steps.
+The build page says so plainly rather than promising them.
+
+**This was a decision, not an oversight** — taken at publish so the build could merge, with
+the pack model to be settled in its own session. PROCESS §5 says "generate it, don't defer
+it", and this is a knowing, recorded exception to that, which is the only kind allowed: the
+page under-promises, so nothing rots into a permanent unkept promise the way build #1's did.
+
+What that session has to decide:
+- **Where packs live.** In-repo public (build #1's answer) doesn't obviously scale to
+  anything large or binary, and git history is forever — a mistake in a pack can't be
+  unpublished.
+- **Whether "gated" comes back at all.** `repro_pack: true` originally meant an
+  email-gated download. That gate was removed from build #1 because charging an address for
+  a pack contradicts the site's own "no database, no lock-in" claim. Re-introducing it needs
+  a better argument than lead capture.
+- **`repro_pack` is still a schema field nothing reads** (see the drift item below). Decide
+  its meaning in the same pass, or drop it.
+- **What a pack owes per build type.** A site build, a chatbot build and a security build
+  substantiate different things; build #1's four-file shape was written for the first.
+
 ## Not built yet
 
 - ~~**The repro pack itself**~~ — **BUILT 2026-07-23.** Build #1's pack now exists and is
@@ -414,9 +509,11 @@ These are cheap to clear once builds #2/#3 land, and near-impossible before:
   `rel="sponsored nofollow noopener"`, while `Built with:` renders "Claude Opus 4.8,
   Claude Code" as plain text. The empty `stack` segment is omitted rather than padded, as
   CONTEXT §3 specifies. Kept here as the record; delete on the next backlog sweep.
-- **Tools-index aggregation ("most-recent wins")** — when several builds share a `tool`,
-  `src/lib/builds.ts` sums the build count and uses the most-recent build's `tool_*`
-  fields. Documented, but never exercised with two builds on one tool.
+- ~~**Tools-index aggregation ("most-recent wins")**~~ — **EXERCISED 2026-07-30** by build #4,
+  the second Claude Code build. `/tools` correctly renders one Claude Code entry reading
+  "2 builds" rather than two entries. The tie-break behaviour while one is a draft, and what
+  changes at publish, are written up in the deploy-model section above. Still to confirm on a
+  Deploy Preview rather than `npm run dev` — blocked on the draft-visibility item above.
 - ~~**Repro-pack copy consistency**~~ — **RESOLVED 2026-07-23.** The post claimed the
   model-critique back-and-forth was "in the repro pack"; it was in neither the delivered
   pack (which didn't exist) nor the planned contents. Root cause: the session was never

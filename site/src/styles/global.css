@@ -177,6 +177,21 @@ main { flex: 1 0 auto; }
   padding: 0;
   font-size: inherit;
 }
+/* Asides: an author writes `> ...` and gets a side-note that reads as a step out of
+   the argument — a cost footnote, a caveat, a "proven the hard way" note. Marked with
+   a brand rule and set slightly smaller/muted so it's clearly subordinate to the body
+   without becoming a pull-quote competing with it. No new hue (see the post kit's
+   colour rule); the brand tint is the one already in use for emphasis. */
+.prose blockquote {
+  border-left: 3px solid var(--brand);
+  background: var(--surface-2);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 0.9rem 1.15rem;
+  color: var(--ink-muted);
+  font-size: 0.94em;
+}
+.prose blockquote > * + * { margin-top: 0.7em; }
+.prose blockquote :is(strong, b) { color: var(--ink); }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

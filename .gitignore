@@ -8,3 +8,10 @@ dist/
 
 # Machine-local Claude Code settings (launch.json is shared and committed)
 .claude/settings.local.json
+
+# Raw subscriber exports never enter version control — they hold the addresses of
+# people who were scraped, not consenting subscribers. Only masked derivatives are
+# committed (see builds/buttondown-hardening/repro/README.md). Belt-and-braces: the
+# raw files are meant to live outside the repo entirely.
+*-export-Buttondown.csv
+*subscribers-export*.csv

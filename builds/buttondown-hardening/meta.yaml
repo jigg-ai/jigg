@@ -5,20 +5,27 @@
 # the build and belongs in `stack`, not `tool`. Build #1 also reviews Claude Code —
 # deliberate: that was greenfield scaffolding, this is adversarial debugging and
 # security work, which says something different about the same tool.
-title: "Hardening a public signup endpoint after the bots found it"
+title: "Hardening the email signup endpoint after the bots found it"
 slug: "buttondown-hardening"
 category: "websites"
 tool: "Claude Code"
-tool_version: ""      # still unknown — see BACKLOG; never guess a published version
+# The EMBEDDED Claude Code build, not the Claude for Mac app it runs inside (that is
+# 1.24012.9 — a different thing, and the wrong answer). Three independent sources agree:
+# the install dir ~/Library/Application Support/Claude/claude-code/2.1.219/, the `version`
+# key in ~/.claude/sessions/*.json, and anthropics/claude-code#82543.
+tool_version: "2.1.219"
 built_with: ["Claude Opus 5"]
 stack: ["Buttondown", "Netlify Functions", "Cloudflare Turnstile", "Astro 7.1"]
 runs_on_site: true    # the hardened form is the one on this site
-status: draft         # DRAFT — human verify pass (PROCESS step 5) not done
-summary: ""           # written at draft time, not stubbed here
+status: verified      # human verify pass (PROCESS step 5) signed off 2026-07-30
+summary: "The newsletter signup on this site was a public endpoint with no abuse controls, and bots found it: 33 scraped addresses in 65 hours, which meant confirmation emails landing on real strangers who never asked for them. Claude Code built the layered fix — honeypot, validation, origin check, server-verified Turnstile, failing closed — in a 2h21m session, and 12 of 13 acceptance checks pass. The caveat is the part you can't delegate: three separate times a test came back green because it wasn't running where production runs, and the tool hands you those green results without complaint."
 test_score: "12/13"   # acceptance tests passing; 1 deliberately skipped (see test.md)
 affiliate_url: ""
 repro_pack: false     # public in-repo, like build #1 — no email gate
-published: ""         # unset until verified + published
+# Set together, only after the human sign-off (PROCESS step 5) — which happened
+# 2026-07-30 against a claim-by-claim audit of the draft. `published` must match the
+# day the merge deploys, since the merge IS the publish; bump both if the merge slips.
+published: 2026-07-30
 last_verified: 2026-07-30
 pricing_as_of: ""     # no cost claim for the primary tool in this build
 
@@ -26,5 +33,5 @@ featured: false
 meta_line: "12/13 checks · 1 self-inflicted outage"
 
 tool_summary: "AI pair-builder in your terminal"
-tool_verdict: ""      # written at draft time
+tool_verdict: "Built the whole layered defence — honeypot, validation, server-verified Turnstile, fail-closed — in one 2h21m session, and got the ordering of the controls right without being asked. It will also hand you a passing test that never exercised production. Checking that the test matches reality is still yours."
 accessibility: "Advanced"
