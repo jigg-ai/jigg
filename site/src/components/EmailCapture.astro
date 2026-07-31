@@ -99,6 +99,10 @@ const {
     role_address: 'Please use a personal address rather than a shared inbox like support@ or info@.',
     blocked_domain: 'That email provider isn’t accepted. Please use a different address.',
     unsubscribed: 'That address previously unsubscribed, so it can’t be re-added from this form.',
+    // Two different situations produce a missing token, and they need opposite advice.
+    // This is the one where the script simply hasn't finished loading, so waiting works.
+    // When Cloudflare has escalated to a visible challenge, INTERACTION_REQUIRED is shown
+    // instead — telling that visitor to "wait" sends them round a loop that cannot resolve.
     turnstile_missing: 'Please wait a moment for the anti-spam check to finish, then try again.',
     turnstile_expired: 'That anti-spam check expired. Please try again.',
     turnstile_failed: 'The anti-spam check didn’t pass. Please reload the page and try again.',
@@ -106,6 +110,8 @@ const {
     server_not_configured: 'Signups are temporarily unavailable — please try again later.',
     default: 'Something went wrong. Please try again in a moment.',
   };
+  const INTERACTION_REQUIRED =
+    'Please complete the anti-spam check above, then try again.';
 
   // Load Turnstile once per page. Astro dedupes this hoisted script even when the
   // component renders more than once; the guard covers anything else on the page.
@@ -133,10 +139,34 @@ const {
       button.textContent = busy ? 'Subscribing…' : label;
     };
     // Turnstile tokens are single-use: once a submission consumes one, a retry needs
-    // a fresh token or it fails as `timeout-or-duplicate`. Reset on every error path.
-    const showError = (msg: string) => {
-      errorEl.textContent = msg;
+    // a fresh token or it fails as `timeout-or-duplicate`, so most error paths reset
+    // the widget.
+    //
+    // `turnstile_missing` is the exception, and getting it wrong is user-visible.
+    // No token was issued, so there is nothing to invalidate — and a rendered widget
+    // means Cloudflare escalated to a visible challenge that the visitor still has to
+    // complete. Resetting it there destroys the challenge they were about to click and
+    // sends them round the same loop. Observed in production from a VPN: the challenge
+    // appeared, submitting without it showed "wait a moment", and the reset made the
+    // challenge vanish. (It re-rendered and auto-passed on retry, so the signup went
+    // through — Turnstile was never bypassed, the token was just issued invisibly the
+    // second time. But that only holds while Cloudflare decides to auto-pass; a less
+    // trusted visitor loops instead.)
+    const showError = (code: string) => {
+      const awaitingInteraction = !!widget && widget.childElementCount > 0;
+      const missingToken = code === 'turnstile_missing';
+      errorEl.textContent =
+        missingToken && awaitingInteraction
+          ? INTERACTION_REQUIRED
+          : ERRORS[code] ?? ERRORS.default;
       errorEl.hidden = false;
+
+      if (missingToken) {
+        // Leave the widget alone; it's the visitor's to complete. Put it in front of
+        // them instead — on a long build log it can sit below the fold.
+        if (awaitingInteraction) widget!.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        return;
+      }
       const ts = (window as any).turnstile;
       if (ts && widget) ts.reset(widget);
     };
@@ -168,7 +198,7 @@ const {
         // The visible message stays generic; the console gets the real cause, so a
         // failed signup is diagnosable from devtools instead of being a dead end.
         console.error('[subscribe] request failed', err);
-        showError(ERRORS.default);
+        showError('default');
         setBusy(false);
         return;
       }
@@ -185,7 +215,7 @@ const {
           httpStatus,
           error: data.error ?? '(no JSON body)',
         });
-        showError(ERRORS[data.error ?? 'default'] ?? ERRORS.default);
+        showError(data.error ?? 'default');
         setBusy(false);
       }
     });
