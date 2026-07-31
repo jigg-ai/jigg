@@ -5,10 +5,12 @@ tool: "Claude Code"
 built_with: ["Claude Opus 5"]
 stack: ["Buttondown", "Netlify Functions", "Cloudflare Turnstile", "Astro 7.1"]
 runs_on_site: true
-status: "draft"
+status: "verified"
 summary: "The newsletter signup on this site was a public endpoint with no abuse controls, and bots found it: 33 scraped addresses in 65 hours, which meant confirmation emails landing on real strangers who never asked for them. Claude Code built the layered fix — honeypot, validation, origin check, server-verified Turnstile, failing closed — in a 2h21m session, and 12 of 13 acceptance checks pass. The caveat is the part you can't delegate: three separate times a test came back green because it wasn't running where production runs, and the tool hands you those green results without complaint."
 test_score: "12/13"
 repro_pack: false
+published: 2026-07-30
+last_verified: 2026-07-30
 featured: false
 meta_line: "12/13 checks · 1 self-inflicted outage"
 tool_summary: "AI pair-builder in your terminal"

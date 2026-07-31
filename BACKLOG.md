@@ -140,10 +140,22 @@ remains below is what's still *unobserved*, not untried.
 
 ## Unconfirmed facts
 
-- **Claude Code `tool_version`** — currently omitted from the build stamp. The CLI isn't
-  on PATH (Claude Desktop install), and an earlier guess turned out to be a feature-flag
-  `min_version`, not the real version (logged in `build-notes.md`). Get it from `/status`
-  in Claude Code and add it back. **Never guess a version** — it's a published claim.
+- **Claude Code `tool_version`** — still omitted from the build stamp, now on builds #1 and
+  #4. The CLI isn't on PATH (Claude Desktop install), and an earlier guess turned out to be
+  a feature-flag `min_version`, not the real version (logged in `build-notes.md`). Get it
+  from `/status` in Claude Code and add it back. **Never guess a version** — it's a
+  published claim.
+  - **Two wrong candidates, recorded so they don't get proposed a third time.**
+    (a) **The "Claude for Mac" version from the app's About panel — `1.24012.9 (03c61d)`
+    at build #4 — is the HOST APP, not Claude Code.** Claude Code runs inside it; they
+    version separately. Offered in good faith at build #4's publish and declined.
+    (b) The feature-flag `min_version` from the earlier attempt.
+  - **Best current candidate, still unconfirmed: `2.1.219`.** Read from the top-level
+    `version` key in `~/.claude/sessions/*.json`, a file whose siblings (`entrypoint`,
+    `peerProtocol`, `sessionId`) make it clearly a Claude Code session record. Plausible
+    and correctly shaped — but it is *inferred from an undocumented internal file*, which
+    is the same evidence class as both wrong answers above. `/status` is the authoritative
+    source and takes one keystroke; it just has to be a human's keystroke.
 
 ## Deliberate deferrals
 
@@ -439,6 +451,31 @@ captured; embed built + verified at desktop/mobile. Still-open items are follow-
   (the `.mdx` under `site/src/content/builds/` *is* the post) and build #2 followed that
   precedent to avoid two drifting copies of the same prose. Either drop `post.md` from the
   template and reword PROCESS §4, or define what it's for. Flag for the PROCESS retro.
+
+## Repro packs — the model itself needs deciding (opened 2026-07-30, build #4)
+
+Build #4 published with a **deliberately partial** pack: the spam-wave evidence (masked
+CSV, masked screenshot, a README stating the masking rule and what the data does *not*
+substantiate) and nothing else. No control-order walkthrough, no check-reproduction steps.
+The build page says so plainly rather than promising them.
+
+**This was a decision, not an oversight** — taken at publish so the build could merge, with
+the pack model to be settled in its own session. PROCESS §5 says "generate it, don't defer
+it", and this is a knowing, recorded exception to that, which is the only kind allowed: the
+page under-promises, so nothing rots into a permanent unkept promise the way build #1's did.
+
+What that session has to decide:
+- **Where packs live.** In-repo public (build #1's answer) doesn't obviously scale to
+  anything large or binary, and git history is forever — a mistake in a pack can't be
+  unpublished.
+- **Whether "gated" comes back at all.** `repro_pack: true` originally meant an
+  email-gated download. That gate was removed from build #1 because charging an address for
+  a pack contradicts the site's own "no database, no lock-in" claim. Re-introducing it needs
+  a better argument than lead capture.
+- **`repro_pack` is still a schema field nothing reads** (see the drift item below). Decide
+  its meaning in the same pass, or drop it.
+- **What a pack owes per build type.** A site build, a chatbot build and a security build
+  substantiate different things; build #1's four-file shape was written for the first.
 
 ## Not built yet
 
