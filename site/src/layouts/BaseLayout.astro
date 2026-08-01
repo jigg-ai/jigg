@@ -8,14 +8,22 @@ import BotpressWebchat from '../components/BotpressWebchat.astro';
 interface Props {
   title: string;
   description?: string;
+  /** Social card. Site-root-absolute path; defaults to the site-wide card. */
+  image?: string;
+  imageAlt?: string;
 }
 
 const {
   title,
   description = 'Real things built with AI tools, documented honestly — tested, timed, and reproducible. Jigg.AI builds in public with the tools it reviews.',
+  image = '/og-default.png',
+  imageAlt = 'Jigg.AI — real things built with AI, tested, timed, and documented honestly.',
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site);
+// og:image MUST be absolute — scrapers do not resolve relative paths, and several
+// silently render no card rather than reporting the problem.
+const ogImage = new URL(image, Astro.site);
 const siteName = 'Jigg.AI';
 const fullTitle = title === siteName ? title : `${title} · ${siteName}`;
 ---
@@ -36,6 +44,16 @@ const fullTitle = title === siteName ? title : `${title} · ${siteName}`;
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <!-- Declared dimensions let a scraper lay the card out on first pass instead of
+         fetching the file to measure it — the difference between a card appearing
+         immediately on paste and appearing on the second try. 1200x630 is the 1.91:1
+         size Facebook, X and LinkedIn all accept. -->
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={imageAlt} />
+    <!-- twitter:card only. X falls back to og:image, so a twitter:image would be a
+         second copy of the same URL to keep in sync. -->
     <meta name="twitter:card" content="summary_large_image" />
     <slot name="head" />
   </head>
