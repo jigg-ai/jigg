@@ -212,6 +212,40 @@ is after. Points worth not re-deriving:
   live domain, and that the production deploy log actually shows a `[indexnow] submitted`
   line with a 2xx. The preview proves only the *negative* (that it stayed silent).
 
+## ⚠️ The og:image artwork makes three claims the repo contradicts (opened 2026-07-31)
+
+The social card added on `chore/search-indexing` (`site/public/og-default.png`) is wired
+up correctly and looks right — house serif, the two-accent palette, "Jigg.AI" spelled in
+full, no star ratings. **The problem is its copy.** It is the most-shared single surface
+this site has, and three of its lines are the exact overclaim class that PROCESS §5 and
+the build-#1 audit were hardened against. Checked against the four `.mdx` frontmatters,
+not from memory:
+
+- **"30-question test on every build"** — false. That is the *chatbot* check set. PROCESS
+  §1 explicitly says to adapt the check to the build type ("30 representative questions
+  for a bot; foundation checks for a site build"). Actual `test_score` values: `26/30`
+  (#2), `12/13` (#4), a prose clarity verdict (#3), and **empty** (#1). One build in four.
+- **"Every prompt, flow, and cost included"** — the single claim this project has already
+  publicly retracted. Build #1's prompts were never captured and the promise was withdrawn
+  from the page by name; build #3's prompts live in HeyGen, which has no export, and are
+  marked TO ADD; build #4's repro pack is deliberately partial. On cost: `pricing_as_of` is
+  set on two builds of four — #2 ships with **no cost claim at all**, on purpose.
+  `repro_pack: false` on all four.
+- **"Timed · Real time to first working version"** — no build has a recorded time. #1's
+  "in one sitting" is logged above as an undocumented claim with no timing ever taken, and
+  #3's operational figures (render time, takes, credits) were left blank rather than
+  estimated.
+
+Also minor: the chips read **Website · Chatbot · Video · Email**, but `Email` is not in the
+category taxonomy (#4 is `websites`), so the card advertises a filter that does not exist.
+
+**Do not fix this by softening the repo to match the artwork.** The fix is to regenerate
+the card with claims the builds actually support — the honest versions are no weaker:
+"Tested — the check set written before the build", "Documented — dead ends included",
+"Reproducible — what we captured, and what we didn't". **Gate: this must be settled at the
+human verify pass, before the branch merges.** Shipping it as-is puts a retracted claim
+back into circulation on the surface most likely to be screenshotted.
+
 ## Unconfirmed facts
 
 - ~~**Claude Code `tool_version`**~~ — **RESOLVED 2026-07-30: `2.1.219`**, set on build #4.
