@@ -143,8 +143,8 @@ const {
     // the widget.
     //
     // `turnstile_missing` is the exception, and getting it wrong is user-visible.
-    // No token was issued, so there is nothing to invalidate — and a rendered widget
-    // means Cloudflare escalated to a visible challenge that the visitor still has to
+    // No token was issued, so there is nothing to invalidate — and a visible widget
+    // means Cloudflare escalated to a challenge that the visitor still has to
     // complete. Resetting it there destroys the challenge they were about to click and
     // sends them round the same loop. Observed in production from a VPN: the challenge
     // appeared, submitting without it showed "wait a moment", and the reset made the
@@ -152,8 +152,14 @@ const {
     // through — Turnstile was never bypassed, the token was just issued invisibly the
     // second time. But that only holds while Cloudflare decides to auto-pass; a less
     // trusted visitor loops instead.)
+    //
+    // "A challenge is on screen" is read from the container's height, not its children.
+    // In interaction-only mode Turnstile inserts its wrapper as soon as the script loads,
+    // so the container has a child even while the invisible check is still running and
+    // nothing is visible; it only gains height when a challenge appears (0px → ~72px,
+    // measured with the forced-challenge test sitekey).
     const showError = (code: string) => {
-      const awaitingInteraction = !!widget && widget.childElementCount > 0;
+      const awaitingInteraction = !!widget && widget.offsetHeight > 0;
       const missingToken = code === 'turnstile_missing';
       errorEl.textContent =
         missingToken && awaitingInteraction
