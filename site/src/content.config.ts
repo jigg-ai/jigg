@@ -114,4 +114,28 @@ const pages = defineCollection({
   }),
 });
 
-export const collections = { builds, pages };
+/**
+ * The studio's services (CONTEXT §16). One entry per pillar; `order` fixes their
+ * sequence on /services and the home page. Every service names its evidence, and
+ * evidence that points at a build references it by id, so the link and its title
+ * come from the builds collection and can't drift from it. `note` is where the
+ * attribution caveat goes (e.g. "internal builds, not client engagements").
+ */
+const services = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/services' }),
+  schema: z.object({
+    title: z.string(),
+    order: z.number().int(),
+    summary: z.string(),
+    scope: z.array(z.string()),
+    evidence: z.array(
+      z.union([
+        z.object({ build: z.string() }),             // a build id, e.g. "website"
+        z.object({ text: z.string() }),              // evidence that isn't a build
+      ]),
+    ),
+    note: z.string().optional(),
+  }),
+});
+
+export const collections = { builds, pages, services };
