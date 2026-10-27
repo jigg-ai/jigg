@@ -2,7 +2,7 @@
 import { render } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getServices } from '../lib/services';
-import { LEAD_PROMISE } from '../lib/site';
+import { LEAD_PROMISE, ENGAGEMENTS } from '../lib/site';
 
 const services = await getServices();
 const rendered = await Promise.all(services.map(async (s) => ({ ...s, Content: (await render(s.service)).Content })));
@@ -51,6 +51,32 @@ const rendered = await Promise.all(services.map(async (s) => ({ ...s, Content: (
         ))
       }
     </ol>
+
+    <section class="engage" id="engage" aria-labelledby="engage-title">
+      <h2 id="engage-title">Ways to work with Jigg.AI</h2>
+      <p class="engage-lead">
+        Three ways to start, across all three services. Every engagement begins with a free
+        conversation, and scope and price are agreed before any paid work. There are no
+        published prices.
+      </p>
+      <ul class="engagements">
+        {
+          ENGAGEMENTS.map((e) => (
+            <li class="engagement" id={e.id}>
+              <h3 class="eng-name">{e.name}</h3>
+              <p>{e.summary}</p>
+              {e.points.length > 0 && (
+                <ul class="eng-points">
+                  {e.points.map((pt) => <li>{pt}</li>)}
+                </ul>
+              )}
+              {e.note && <p class="note">{e.note}</p>}
+            </li>
+          ))
+        }
+      </ul>
+      <p class="engage-cta"><a class="btn" href="/contact">Discuss which fits →</a></p>
+    </section>
 
     <section class="privacy" id="privacy" aria-labelledby="privacy-title">
       <h2 id="privacy-title">Your project stays private</h2>
@@ -136,8 +162,19 @@ const rendered = await Promise.all(services.map(async (s) => ({ ...s, Content: (
   .plain a { text-decoration-color: var(--brand); }
   .note { color: var(--ink-faint); font-size: var(--step-small); margin-top: 0.6rem; }
   .body { max-width: var(--measure); margin-top: 1.25rem; color: var(--ink-muted); }
-  .privacy, .handling, .who { border-top: 1px solid var(--border); padding-top: 2rem; margin-top: 0.5rem; }
-  .privacy h2, .handling h2, .who h2 { font-size: var(--step-h2); }
+  .engage, .privacy, .handling, .who { border-top: 1px solid var(--border); padding-top: 2rem; margin-top: 0.5rem; }
+  .engage h2, .privacy h2, .handling h2, .who h2 { font-size: var(--step-h2); }
+  .engage { scroll-margin-top: 5rem; }
+  .engage-lead { max-width: var(--measure); margin-top: 0.8rem; color: var(--ink-muted); }
+  .engagements { list-style: none; padding: 0; margin-top: 1.25rem; max-width: 50rem; }
+  .engagement { border-top: 1px solid var(--border); padding-block: 1.25rem; scroll-margin-top: 5rem; }
+  .engagement:last-child { border-bottom: 1px solid var(--border); }
+  .eng-name { font-family: var(--font-serif); font-size: 1.25rem; font-weight: 500; text-transform: none; letter-spacing: -0.01em; color: var(--ink); }
+  .engagement > p { margin-top: 0.4rem; max-width: var(--measure); }
+  .eng-points { margin-top: 0.6rem; padding-left: 1.2em; max-width: var(--measure); color: var(--ink-muted); }
+  .eng-points li + li { margin-top: 0.25rem; }
+  .engage-cta { margin-top: 1.4rem; }
+  .privacy { margin-top: 2.5rem; }
   .privacy { scroll-margin-top: 5rem; }
   .privacy p { max-width: var(--measure); margin-top: 0.8rem; }
   .levels { max-width: var(--measure); margin-top: 1rem; }
