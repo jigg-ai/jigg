@@ -59,8 +59,10 @@ const recent = builds.slice(0, 4);
           <a class="view-all mono" href="/builds">All builds →</a>
         </div>
         <p class="section-lead">
-          Every build is documented in public: what was built, how it was tested, what it
-          cost, and what went wrong. It's how Jigg.AI shows its work before you get in touch.
+          Jigg.AI's own projects, documented in public: what was built, how it was tested,
+          what it cost, and what went wrong. It's how Jigg.AI shows its work before you get
+          in touch. Client work is different — it <a href="/services#privacy">stays private</a>
+          {' '}unless you choose to share it.
         </p>
         <ul class="rows">
           {recent.map((b) => <BuildRow build={b} variant="recent" />)}
@@ -107,6 +109,7 @@ const recent = builds.slice(0, 4);
   .view-all { text-decoration: none; color: var(--ink-muted); }
   .view-all:hover { color: var(--ink); }
   .journal .section-lead { margin-bottom: 0.9rem; }
+  .journal .section-lead a { color: var(--ink); text-decoration-color: var(--brand); }
   .rows { list-style: none; padding: 0; margin: 0; }
   .rows :global(.row:last-child) { border-bottom: 1px solid var(--border); }
   .svc { border-top: 1px solid var(--border); padding-block: 1.1rem; }

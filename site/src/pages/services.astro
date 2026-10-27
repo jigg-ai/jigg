@@ -17,7 +17,9 @@ const rendered = await Promise.all(services.map(async (s) => ({ ...s, Content: (
       <h1>Services</h1>
       <p class="lead">
         Three kinds of work, each with the evidence behind it. You work directly with
-        {' '}{FOUNDER.name}, who is accountable for every engagement.
+        {' '}{FOUNDER.name}, who is accountable for every engagement. The evidence is
+        Jigg.AI's own public builds; <a href="#privacy">client work stays private</a> unless
+        you choose to share it.
       </p>
     </header>
 
@@ -50,10 +52,36 @@ const rendered = await Promise.all(services.map(async (s) => ({ ...s, Content: (
       }
     </ol>
 
+    <section class="privacy" id="privacy" aria-labelledby="privacy-title">
+      <h2 id="privacy-title">Your project stays private</h2>
+      <p>
+        The build journal is Jigg.AI's own work, published on purpose. Client projects are
+        not build logs. Unless you decide otherwise, nothing about yours is published — not
+        the code, not the details, not even that you're a client.
+      </p>
+      <p>
+        Some clients are happy to share a little, and that's your call, at the level you
+        choose:
+      </p>
+      <dl class="levels">
+        <div>
+          <dt>Private</dt>
+          <dd>The default. Nothing is published.</dd>
+        </div>
+        <div>
+          <dt>Shared with permission</dt>
+          <dd>Only what you approve in writing — say, an anonymized write-up of the approach — and you review it before it goes out.</dd>
+        </div>
+        <div>
+          <dt>Case study</dt>
+          <dd>A named write-up, with your written permission and your review before it's published.</dd>
+        </div>
+      </dl>
+    </section>
+
     <section class="handling" aria-labelledby="handling-title">
       <h2 id="handling-title">How your code and data are handled</h2>
       <ul class="rules">
-        <li><strong>Confidential by default.</strong> Nothing from your project appears in the build journal, a screenshot or a post without your written permission.</li>
         <li><strong>AI tools are agreed with you first.</strong> You approve which tools touch your code or data before work starts. If your policies restrict third-party AI services, the work follows your policies.</li>
         <li><strong>Your code stays in your systems.</strong> Work happens in your repositories or a private workspace, with the minimum access the work needs.</li>
         <li><strong>A human reviews every change</strong> before it's delivered, and nothing is deployed to your environment without explicit approval.</li>
@@ -115,8 +143,23 @@ const rendered = await Promise.all(services.map(async (s) => ({ ...s, Content: (
   .plain a { text-decoration-color: var(--brand); }
   .note { color: var(--ink-faint); font-size: var(--step-small); margin-top: 0.6rem; }
   .body { max-width: var(--measure); margin-top: 1.25rem; color: var(--ink-muted); }
-  .handling, .who { border-top: 1px solid var(--border); padding-top: 2rem; margin-top: 0.5rem; }
-  .handling h2, .who h2 { font-size: var(--step-h2); }
+  .privacy, .handling, .who { border-top: 1px solid var(--border); padding-top: 2rem; margin-top: 0.5rem; }
+  .privacy h2, .handling h2, .who h2 { font-size: var(--step-h2); }
+  .privacy { scroll-margin-top: 5rem; }
+  .privacy p { max-width: var(--measure); margin-top: 0.8rem; }
+  .levels { max-width: var(--measure); margin-top: 1rem; }
+  .levels > div {
+    display: grid;
+    grid-template-columns: 12rem minmax(0, 1fr);
+    gap: 0.25rem 1.5rem;
+    padding-block: 0.6rem;
+    border-top: 1px solid var(--border);
+  }
+  .levels > div:last-child { border-bottom: 1px solid var(--border); }
+  .levels dt { font-weight: 560; }
+  .levels dd { margin: 0; color: var(--ink-muted); }
+  .handling { margin-top: 2.5rem; }
+  .lead a { color: var(--ink); text-decoration-color: var(--brand); }
   .rules { padding-left: 1.2em; margin-top: 1rem; max-width: var(--measure); }
   .rules li + li { margin-top: 0.6rem; }
   .who { margin-top: 2.5rem; }
@@ -124,5 +167,6 @@ const rendered = await Promise.all(services.map(async (s) => ({ ...s, Content: (
   .who .cta { margin-top: 1.5rem; }
   @media (max-width: 40rem) {
     .cols { grid-template-columns: 1fr; }
+    .levels > div { grid-template-columns: 1fr; }
   }
 </style>

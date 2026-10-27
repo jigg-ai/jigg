@@ -16,6 +16,8 @@ Human-directed isn't the same as hands-off. Even when AI writes every line, choo
 
 The [build logs](/builds) are Jigg.AI's own projects, documented in public: a website, a support chatbot, an explainer video, a hardened signup endpoint. Each one is tested against a check decided *before* building, and written up with the mistakes and dead ends left in. They're the evidence for the studio — you can see the method before you ever get in touch.
 
+Client work is separate, and private by default. Nothing about a client's project is published unless the client chooses to share it — then only what they approve in writing, and they review it first. [How sharing works](/services#privacy).
+
 The build logs are written in Jigg.AI's voice: the "I" in them is the builder persona, not a person. Builds and write-ups are produced using AI tools, under human direction. Results, limitations and verification status are documented for each project.
 
 ## Why transparency
