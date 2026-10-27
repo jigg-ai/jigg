@@ -13,8 +13,9 @@ export const LEAD_PROMISE =
 export const FOUNDER = {
   name: 'Sasha Matison',
   title: 'Founder & Principal Engineer',
-  credential:
-    'Jigg.AI is founded and led by Sasha Matison, a software engineer with 25+ years of experience, including engineering management at Amazon.',
+  // Verified facts, worded so About can follow the name line without repeating it.
+  summary:
+    'A software engineer with 25+ years of experience, including engineering management at Amazon',
   linkedin: 'https://www.linkedin.com/in/sashamatison',
 };
 

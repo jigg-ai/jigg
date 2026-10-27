@@ -94,8 +94,9 @@ Every build log pairs a tool with a real artifact built with it. Page anatomy:
 - **Credentials belong to the person, never the brand.** "25+ years… engineering
   management at Amazon" describes Sasha, so it appears only where Sasha is named, and is
   never worded as a property of Jigg.AI. Checked against LinkedIn by the founder,
-  2026-10-26: "Jigg.AI is founded and led by Sasha Matison, a software engineer with 25+
-  years of experience, including engineering management at Amazon." One number format
+  2026-10-26: "a software engineer with 25+ years of experience, including engineering
+  management at Amazon", on About under the name line "Sasha Matison, Founder & Principal
+  Engineer". One number format
   ("25+"). LinkedIn holds the full history: no résumé, no biography, no photo required.
   Person-specific facts live in one file (`site/src/lib/site.ts`), so the site changes in
   one place if the lead ever does.
