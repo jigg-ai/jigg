@@ -14,7 +14,7 @@
   # Exit 0 means "ignore this build", non-zero means "build it", so `git diff --quiet`
   # has exactly the right polarity: no changes in the watched paths → skip.
   #
-  # Three details here are load-bearing; all three fail silently if you get them wrong:
+  # Four details here are load-bearing; all four fail silently if you get them wrong:
   #
   # 1. `:/` anchors each pathspec to the REPO ROOT. This command runs from the base
   #    directory (site/), so a bare `-- site/` would resolve to site/site/, never match,
@@ -26,9 +26,13 @@
   # 3. netlify.toml is watched too. It sits at the repo root, outside site/, so a change
   #    to THIS file (Lighthouse thresholds, this rule) must still trigger a build.
   #
-  # If $CACHED_COMMIT_REF is empty (no cache, first build) the command errors, exits
-  # non-zero, and Netlify builds — the safe direction to fail in.
-  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- :/site/ :/netlify.toml"
+  # 4. With no build cache, build. Netlify then sets $CACHED_COMMIT_REF to the commit
+  #    being built, so the diff compares a commit with itself, finds nothing, and skips.
+  #    That cancelled PR #4's production deploy on 2026-10-27 ("Failed to fetch cache"
+  #    after three months without a build). An empty ref fails the same way: git reads
+  #    `diff --quiet "" X` as working tree vs X, which is clean. So the two guards come
+  #    first; if either fails, the && chain exits non-zero and Netlify builds.
+  ignore = '[ -n "$CACHED_COMMIT_REF" ] && [ "$CACHED_COMMIT_REF" != "$COMMIT_REF" ] && git diff --quiet "$CACHED_COMMIT_REF" "$COMMIT_REF" -- :/site/ :/netlify.toml'
 
 [build.environment]
   # Pin the Node version for reproducible builds (Astro 7 needs a current Node).

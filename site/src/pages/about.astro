@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getEntry, render } from 'astro:content';
+import { FOUNDER } from '../lib/site';
 
 const entry = await getEntry('pages', 'about');
 if (!entry) throw new Error('Missing content entry: pages/about.md');
@@ -13,6 +14,25 @@ const { Content } = await render(entry);
     <div class="prose stack">
       <Content />
     </div>
+
+    {/* The one place the current lead is named (CONTEXT §4). It reads from
+        lib/site.ts, the single source for person-specific facts; every other studio
+        page makes the role promise instead. */}
+    <section class="founder" id="lead" aria-labelledby="lead-title">
+      <h2 id="lead-title">Who leads Jigg.AI</h2>
+      <p class="name">{FOUNDER.name} <span class="mono">{FOUNDER.title}</span></p>
+      <p>
+        {FOUNDER.summary}, who leads every client engagement from the first conversation
+        to what's delivered.
+        {FOUNDER.linkedin && (
+          <>
+            {' '}
+            <a href={FOUNDER.linkedin} rel="me noopener">LinkedIn</a> has the full history.
+          </>
+        )}
+      </p>
+      <p class="cta"><a class="btn btn--primary" href="/contact">Discuss a project</a></p>
+    </section>
   </article>
 </BaseLayout>
 
@@ -27,4 +47,14 @@ const { Content } = await render(entry);
     font-size: 1.2rem;
     color: var(--ink-muted);
   }
+  .founder {
+    border-top: 1px solid var(--border);
+    margin-top: 2.5rem;
+    padding-top: 2rem;
+    scroll-margin-top: 5rem;
+  }
+  .founder > * + * { margin-top: 0.8rem; }
+  .name { font-family: var(--font-serif); font-size: 1.25rem; }
+  .name .mono { margin-left: 0.5rem; }
+  .cta { margin-top: 1.4rem; }
 </style>

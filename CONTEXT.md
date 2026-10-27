@@ -4,30 +4,50 @@ The canonical "what and why." Companion files: PROCESS.md (how), STYLE.md (voice
 and a per-build BRIEF.md in each build's folder (the site build's is site/BRIEF.md).
 This file is the source of truth and is mirrored into Claude Project knowledge.
 
+> **Revised October 2026 for the studio direction.** Jigg.AI began as an affiliate-funded
+> build-in-public publication; the July version of this file is in git history. It is
+> now an engineering studio with a public build journal. What changed commercially, and
+> the tradeoff that was accepted, is in §13. Section numbers are unchanged so existing
+> references still land on the right topic; Services is new, as §16.
+
 ## 1. What it is
-Jigg.AI is a build-in-public project that shows what's actually achievable with
-today's AI tools by building real things with them — a chatbot, a website, a piece
-of marketing — rather than listing features secondhand. Each entry pairs an AI tool
-worth your time with a unique thing genuinely built using it, tested and documented.
-The site earns affiliate revenue from the tools it features. The site itself is
-built with the tools it reviews.
+Jigg.AI is an AI-accelerated software engineering studio with a public build journal.
+- **The studio is the business.** It builds, modernizes and improves software for
+  organizations, under contract.
+- **The build journal is the evidence.** Real things built with AI tools, tested and
+  documented in public, failures included. It is Jigg.AI's own work.
+- **Client work is private by default.** Anything shared from it — a detail, an
+  anonymized write-up, a named case study — is the client's choice, made in writing
+  (PROCESS.md → Client work). The site says so wherever it talks about building in
+  public.
+- **AI does much of the execution** — coding, prototyping, testing, documentation. An
+  experienced engineer provides the direction, architecture, review and accountability.
+- **Guiding principle: Jigg.AI isn't selling AI.** It applies engineering judgment and AI
+  together to the problem in front of it, and recommends AI only where it earns its place.
+  A principle for decisions and copy, not a headline.
 
-One-liner: Anyone can build real things with AI — one tool, one honest case study at
-a time — and the site earns its keep from the tools it uses to prove it.
+Category: AI-Accelerated Software Engineering.
+Homepage headline: "Experienced engineering judgment. AI-accelerated execution."
 
-## 2. Mission, and why transparency is the strategy
-- Most people underestimate how capable and accessible AI tools already are. The goal
-  is to show that anyone can learn them, and that it's easier than they think.
-- Transparency is the differentiator AND the moat. First-hand, documented, tested
-  proof is exactly the content that survives the AI-search era — an engine can't
-  fabricate "it invented pricing on attempt one, here's the fix." Openness and
-  defensibility are the same property here.
-- Show the real, sometimes messy process — mistakes, dead ends, retries. That's what
-  makes "anyone can do this" credible.
-- The "you can make money too" message is deferred: saturated and low-trust to lead
-  with. Prove it later with real numbers (Phase 2).
+One-liner: Jigg.AI combines experienced software engineering judgment with AI-accelerated
+execution to build, modernize and improve real software. Its public build journal shows
+how that work is done.
 
-## 3. The core unit: the build log
+## 2. Why transparency is still the strategy
+- The journal is what makes the studio credible: a buyer can see the method, the tests
+  and the mistakes before making contact. First-hand, documented, tested proof is also
+  the content that survives the AI-search era — an engine can't fabricate "it invented
+  pricing on attempt one, here's the fix."
+- Show the real, sometimes messy process — mistakes, dead ends, retries. Unchanged.
+- "Anyone can build real things with AI" stays the journal's message. It does not lead
+  the homepage: placed next to "work with us," it argues against itself. The homepage
+  leads with the studio; the journal keeps its approachable voice.
+- Human-directed is not the same as no human involvement. Choosing goals, reviewing
+  results, making decisions and authorizing deployment are human work, even when AI
+  writes every line. Say that AI did the implementation; never claim the process is
+  autonomous.
+
+## 3. The journal's core unit: the build log
 Every build log pairs a tool with a real artifact built with it. Page anatomy:
 - Summary / citation hook up top — self-contained: what it is, worth it or not, the
   one caveat. (Written so an AI answer engine can cite it.)
@@ -48,17 +68,50 @@ Every build log pairs a tool with a real artifact built with it. Page anatomy:
   diagram, prompts, full test set).
 - The tool — plain verdict + disclosed affiliate CTA, placed AFTER the proof
   ("Build a bot like this with <tool>").
+- The studio link — one standard, unobtrusive line at the end of every build page,
+  rendered by a single shared component. Never inside the narrative: a build log is
+  not a sales page.
 
-## 4. Voice & production model
-- Voice: first person as Jigg.AI-the-builder — a consistent brand persona, not a
-  named individual. The About page is transparent that a human directs the tools and
-  the AI does the heavy lifting and narration.
-- No human face or voice: video/narration use AI voice/avatar, always disclosed
-  (platforms require it; disclosed AI content monetizes comparably). Being AI-made is
-  literally the product's message.
-- This also removes key-person risk, which matters for a future sale.
+## 4. Voice, identity & production model
+- **The journal's narrator is Jigg.AI-the-builder**, first person ("I"), a brand persona.
+  Unchanged from July.
+- **Studio pages** (home, Services, About, Contact) use "Jigg.AI" as the subject. Never a
+  "we" that implies a team that doesn't exist.
+- **The brand is independent of the person; accountability is not hidden.** Studio pages
+  make a permanent promise about the role — every engagement is guided by experienced
+  engineering judgment, and the client works directly with the engineering lead
+  responsible for their project — and name the person who fills that role today in one
+  place only, About. Copy stresses ownership and continuity, never interchangeability:
+  replaceability is an internal goal, not a sales point.
 
-## 5. Content model & taxonomy
+  | Layer | Identity |
+  |---|---|
+  | Public site (Home, Services, Contact) | Jigg.AI, with the engineering-lead promise; no name |
+  | About | The current lead, named once: Sasha Matison, Founder & Principal Engineer, with the verified credential line and LinkedIn |
+  | Discovery conversation | An introduction to the lead who would own the project |
+  | Contract | The named lead, qualifications, responsibilities and agreed substitution terms (PROCESS → Client work) |
+
+- **Credentials belong to the person, never the brand.** "25+ years… engineering
+  management at Amazon" describes Sasha, so it appears only where Sasha is named, and is
+  never worded as a property of Jigg.AI. Checked against LinkedIn by the founder,
+  2026-10-26: "a software engineer with 25+ years of experience, including engineering
+  management at Amazon", on About under the name line "Sasha Matison, Founder & Principal
+  Engineer". One number format
+  ("25+"). LinkedIn holds the full history: no résumé, no biography, no photo required.
+  Person-specific facts live in one file (`site/src/lib/site.ts`), so the site changes in
+  one place if the lead ever does.
+- **Journal disclosure:** "Builds and write-ups are produced using AI tools, under human
+  direction. Results, limitations and verification status are documented for each
+  project."
+- **AI presenters and voices** may still appear in the journal, always disclosed. Buyers
+  should meet engineering evidence before promotional video, so the studio homepage
+  doesn't lead with one (whether build #3's video stays featured anywhere is open, §15).
+- The July version said "not a named individual" and "no human face or voice," partly
+  to remove key-person risk for a sale. A services business is founder-led today, and
+  naming the current lead on About is the honest consequence; keeping the brand and the
+  promise role-based is how that risk is managed instead (§13).
+
+## 5. Journal content model & taxonomy
 - Primary organizing dimension: functional category (chatbots, video, websites,
   automation, writing, research, design, agents, ...). Categories live as FILTERS and
   hub pages, not as a growing list in the top nav.
@@ -83,37 +136,70 @@ Every build log pairs a tool with a real artifact built with it. Page anatomy:
   (GitHub, Netlify, Cloudflare). Versions are perishable — they live in the dated
   build log, never in evergreen copy, and a major release is what trips a build into
   recheck-due.
-- Tool selection gate: revenue potential (commission structure + real buyer intent),
-  accessibility (can a beginner get a real result quickly?), and being worth your time
-  — never chosen merely for being "popular." Occasionally cover overlooked / early
-  tools as a low-cost hedge on being early.
+- **Time and cost are recorded per build from build #5 on**, so speed and cost claims rest
+  on numbers:
+  - `human_time` and `agent_time` — minutes, each with a basis: measured, estimated or
+    unavailable. Time spent directing and reviewing is a different measure from how long
+    the AI ran, and the AI-acceleration claim lives in the gap between them. Build #4's
+    "2h21m" is a session length, which is neither.
+  - Paid plans used — tool, plan, price, billing period — listed, not summed into one
+    figure, because a subscription isn't a per-build cost.
+  - Verification dates reuse `last_verified`.
+  - The four existing builds are not backfilled. What wasn't recorded stays unrecorded.
+- Tool selection gate: accessibility (can a beginner get a real result quickly?), being
+  worth your time, and revenue potential (commission structure + real buyer intent) —
+  never chosen merely for being "popular." Occasionally cover overlooked / early tools as
+  a low-cost hedge on being early.
 
-## 6. The site: four views
-- Home — a featured build leading with a visible artifact preview, then recent builds
-  (auto-populated: caps at 4, excludes whichever build is featured, so promoting a new
-  build to featured auto-demotes the prior one with no manual editing), email capture
-  with a concrete benefit.
-- Build log detail — the full report (section 3), opening with the metadata stamp.
-- Archive — timeline of all builds; categories as filter chips; dates, tool versions,
-  and freshness state visible.
-- Tools index — no star ratings; leads with what was actually built with each tool,
-  a plain verdict, an accessibility read, and "Runs on this site" where true.
+## 6. The site
+- **Home** — the studio homepage. Two clear paths: "Discuss a project" and "Explore the
+  builds." One line with the engineering-lead promise, linked to About. Selected builds as evidence.
+- **Services** — the three pillars with their evidence (§16), how client code and data are
+  handled (PROCESS.md → Client work), and who the client works with.
+- **Builds** — the journal archive: timeline, category filter chips, dates, tool versions
+  and freshness state visible. URLs unchanged.
+- **Build detail** — the full report (§3), unchanged apart from the studio link at the end.
+- **Tools index** — secondary: linked from Builds, still indexed. No star ratings; leads
+  with what was actually built with each tool, a plain verdict, an accessibility read, and
+  "Runs on this site" where true.
+- **About** — the human-directed, AI-executed model, and who leads Jigg.AI today.
+- **Contact** — the primary commercial conversion, so it is a launch requirement, not a
+  nice-to-have: reliable delivery, the same bot defenses as the signup form (Turnstile,
+  honeypot, origin check), clear error handling, and source attribution. **The studio
+  homepage does not go live until Contact has been tested end to end on a Deploy Preview.**
+- **Work** — client case studies. Not shown until there is a publishable project with
+  written client permission. Then it becomes a collection (one file per case study) and
+  joins the navigation.
+- **Subscribe, Privacy, Affiliate disclosure** — secondary pages.
 
-Design direction: editorial, not a directory grid. Clean, fast, semantic HTML
-(citation-friendly). Serif display headline, restrained palette (one warm brand
-accent; green for status; nothing else). Playful/approachable, not generic SaaS.
+Architecture: the `builds` collection still drives every journal view, and adding a build
+is still one markdown file — never a page-code change. Studio content (services, later
+case studies) lives in its own collections. Existing URLs stay as they are.
+
+Design direction: editorial, not a directory grid, and not a generic agency template.
+Clean, fast, semantic HTML (citation-friendly). Serif display headline, restrained
+palette (one warm brand accent; green for status; nothing else). Approachable, not
+generic SaaS.
 
 ## 7. Navigation
-Top nav is simple: Builds · Tools · About · Subscribe. Categories are filters/hubs
-underneath, not header items.
+Top nav: Services · Builds · About · Contact. Contact is the primary call to action.
+Subscribe stays reachable from Builds and the footer; Tools from Builds. Categories are
+filters/hubs under Builds, not header items. Work joins the nav once it has content.
 
-## 8. Distribution & owned audience
-- Brand-first, owned-audience, citation-friendly (not pure SEO-rank-and-collect).
-- Email list from day one. Benefit-led: "one honest build in your inbox — prompts,
-  costs, and files included," one email per new build.
-- Repurpose each build into multiple outputs (site log, video, social, newsletter).
-- Structure content for citation (summaries near the top, clean headers). Reddit/forum
-  presence matters, since answer engines lean on it.
+## 8. Audience, distribution & measurement
+- Two audiences: organizations and technical decision-makers (the studio); builders and
+  the AI-curious (the journal).
+- Commercially, the studio's channels come first: LinkedIn, the professional network,
+  referrals, targeted outreach and qualified inbound. The journal's channels (X, YouTube,
+  vendor communities, selective forums, the newsletter) keep feeding discovery.
+- Structure content for citation (summaries near the top, clean headers). Repurpose each
+  build into multiple outputs (site log, video, social, newsletter).
+- **Principal metric: qualified project inquiries, and how many become engagements.**
+  Newsletter subscribers and affiliate clicks are secondary. A few hundred relevant
+  visitors who produce two credible inquiries beat tens of thousands who produce none.
+- Contact telemetry: self-reported "how did you find Jigg.AI", plus referrer/UTM where
+  present. Count successful submissions and server-side rejections and failures. Never
+  count rejected spam as leads; never send inquiry contents to analytics.
 
 ## 9. Content-integrity systems
 - Separate perishable facts (version, pricing) from the evergreen narrative and method
@@ -123,20 +209,24 @@ underneath, not header items.
   fundamentally changed/discontinued builds → archived as history.
 - Freshness states: verified · recheck-due · archived. Never imply an old build still
   works just because the page exists.
+- Claims about the engineering lead and the services follow the same rule as build claims:
+  verified before they are published, and rechecked when they change.
 - Reproducibility pack does triple duty: lead magnet, compounding transferable asset,
   and seed of a future paid/recurring layer. Keep enough evidence public to
   substantiate and feed citations; gate the complete files.
 
 ## 10. Tech foundation
-- Astro. Content collections = the data model (a build = one markdown entry; all four
+- Astro. Content collections = the data model (a build = one markdown entry; all journal
   views read from the same collection). Islands = sandboxed interactive demos that
   can't break the core.
 - Deploy on Netlify (free tier; commercial use allowed). DNS on Cloudflare, set
   DNS-only (grey cloud) for the Netlify records. Git-based, so everything is
   versioned, documented, and transferable.
+- Newsletter signups go through a Netlify Function proxy to Buttondown's API, hardened in
+  build #4 (honeypot, validation, origin check, server-verified Turnstile). The Contact
+  form follows the same pattern; how inquiries are delivered is open (§15).
 - Later, not now: a git-based CMS (Keystatic/TinaCMS) for friendlier publishing.
-  Email backend is Buttondown (redirect-to-form for now; on-site API submission is a
-  known revisit). Markdown files are fine to start.
+  Markdown files are fine to start.
 
 ## 11. Repo & process
 - ONE repo for the site and all builds (github.com/jigg-ai/jigg). Each build is an
@@ -144,25 +234,42 @@ underneath, not header items.
   transient.
 - PROCESS.md is the repeatable pipeline; it improves itself via a retro step after
   each build.
+- Client work follows PROCESS.md → Client work. Client code, data and deliverables never
+  enter this public repo or a build log without written authorization.
 
-## 12. Sequencing & first builds
-- Phase 1 (now): capability — build logs, case studies. Affiliate links live from day
-  one, but revenue isn't the story.
-- Phase 2 (later): transparent revenue reporting once there are real, defensible
-  numbers.
-- Build #1 (shipped): the site itself, built with Claude Code + Astro — logged as it
-  was built, published as the first build log, live at jigg.ai.
-- Build #2 (next, not started): a support chatbot with Botpress (embeddable; runs on
-  the site) — the first build with a real affiliate link and the 30-question test
-  format.
+## 12. Sequencing
+- Shipped: build #1 (the site itself, Claude Code + Astro), #2 (a Botpress support bot),
+  #3 (a HeyGen explainer video), #4 (hardening the email signup endpoint).
+- Now: the studio site — these docs, then home, Services, About and Contact, on one
+  branch with one merge. It is a site revision, recorded in `builds/website/build-notes.md`
+  rather than as a build log of its own: not every site change earns one.
+- Next build (#5): AI-assisted modernization of an aging, permissively licensed
+  open-source application with an identifiable maintenance problem. Characterization tests
+  before any change, a bounded migration, compatibility verification, documented failures,
+  measured human and agent time, real costs. An upstream pull request only after checking
+  the project's contribution policy and asking its maintainers. It demonstrates process
+  and capability, not enterprise-scale outcomes — and says so.
 
-## 13. Business & exit context
-- Long-term: build, make profitable, potentially sell as a well-documented asset.
-  Aspirational target ~$20M (far-off).
-- Reaching real scale needs an owned/recurring layer beyond pure affiliate commission;
-  affiliate income proves the audience exists. Avoid single-affiliate concentration
-  and key-person risk; keep everything documented and transferable — this repo IS that
-  documentation.
+## 13. Business model, and the tradeoff taken
+- **Revenue: client engineering contracts.** Affiliate links remain in the journal only,
+  always disclosed, placed after the proof.
+- **Procurement policy:** client engagements never generate referral compensation from
+  vendors. Tools and vendors are recommended to clients on merit, and no commission is
+  earned on those recommendations, disclosed or not.
+- **The tradeoff, accepted on purpose.** The July thesis was a scalable, largely faceless
+  media/affiliate asset with low key-person risk, potentially sellable (a far-off ~$20M
+  aspiration). A founder-led studio can earn much sooner and uses existing professional
+  experience directly, but it is founder-dependent and harder to scale or sell. Reaching
+  that kind of scale would now take something beyond founder-delivered services: a
+  broader engineering operation, recurring products, or proprietary software.
+- **Jigg.AI owns the method, the client relationships, the engineering process and the
+  accumulated knowledge; the engineering lead supplies judgment and accountability, but
+  doesn't define the brand.** That's the direction to design toward. Note what it takes:
+  transferability is operational, not a branding question. Removing a name from the site
+  changes nothing while one person interprets requirements, directs and reviews the AI,
+  makes architecture calls, manages clients and approves delivery. Documented process,
+  reproducible testing and shared project knowledge are what make it real.
+- Keep everything documented and transferable anyway — this repo is that documentation.
 
 ## 14. Brand name note
 Keep Jigg.AI; do not rename. The surrounding namespace is crowded (a "Jigg" fishing
@@ -171,7 +278,32 @@ app; several "Jiggy/Jiggle" AI tools), so: always present as "Jigg.AI," never ba
 so the brand out-signals the noise.
 
 ## 15. Still open
-- Whether/how to niche the audience vs. staying general "AI builder".
-- Lead publishing channel emphasis over time (site/SEO vs video vs newsletter).
+- Revisit naming the lead on the site once there are independently verifiable client
+  outcomes and delivery no longer depends on one person.
+- Jigg.AI owning client relationships assumes engagements are contracted by Jigg.AI as a
+  business entity, not by an individual. Settle the entity before the first engagement.
+- **The thesis to prove:** that a founder-led, AI-native operation can deliver results
+  comparable to a conventional engineering team, with less overhead and no loss of quality.
+  Measured first by build #5's human and agent time and real costs, then by client
+  outcomes. Until there is evidence, it stays out of site copy.
+- How Contact inquiries are delivered (Netlify Forms, or a function that sends email).
+- Whether build #3's AI-presenter video stays featured anywhere on the studio site.
+- The exact credential line, pending LinkedIn verification.
+- Which open-source project build #5 modernizes.
 - Final category set and which get hub pages first (start with only categories that
   have real posts — avoid thin pages).
+## 16. Services
+Three pillars. Each one names its evidence, and the evidence is attributed honestly: an
+internal build demonstrates a method; it is not a completed client engagement.
+
+| Service | Scope | Evidence today |
+|---|---|---|
+| Rapid Prototyping & Product Delivery | Prototypes, MVPs, proofs of concept, custom applications, websites | Builds #1–#4 (internal); founder experience |
+| Legacy Modernization & Systems Engineering | Upgrades, refactoring, integrations, architecture improvements | The engineering lead's professional experience (on About); build #5 is planned to add public evidence |
+| AI Integration & Automation | AI assistants, workflow automation, operational improvements | Builds #2 and #4 (internal) |
+
+- The builds show how Jigg.AI works. They don't set the limits of what it can deliver.
+- Until real modernization examples exist, that pillar's copy says only what the
+  engineering lead's verified experience supports: no client logos, no outcome claims.
+- Website design sits under product delivery, not as a pillar of its own.
+

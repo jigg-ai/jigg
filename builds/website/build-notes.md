@@ -204,6 +204,42 @@ Write as you go. Messy is correct — this is the first published build log.
   When a result depends on network origin, the test has to run from the same origin as
   production — or the green is a lie.
 
+## Revisions
+
+Site changes after build #1 that don't earn a build log of their own (PROCESS step 0).
+
+- **Studio repositioning** (2026-10-26, `feat/studio`, one PR and one merge) — Jigg.AI
+  became an engineering studio with a public build journal (CONTEXT, October revision).
+  The homepage now leads with the studio ("Experienced engineering judgment.
+  AI-accelerated execution.") with two paths, Discuss a project and Explore the builds;
+  the newsletter form moved off the hero to Builds and the footer. New: Services (a
+  `services` collection whose evidence references builds by id, so a link can't drift
+  from its build), About rewritten around the human-directed, AI-executed model,
+  Contact, and one quiet studio line at the end of every build page. Nav is
+  Services · Builds · About · Contact. Optional `human_time` / `agent_time` /
+  `paid_plans` fields went into the schema for build #5 on; the four existing builds
+  are deliberately not backfilled.
+- **Contact delivery** — a Netlify Function (`contact.mjs`) with the signup form's
+  controls in the same order (origin, honeypot, validation, server-verified Turnstile),
+  delivering each inquiry by email through Resend with the visitor as Reply-To.
+  Netlify Forms was the no-new-account option, but it can't run the Turnstile/origin
+  checks or the attribution counts CONTEXT §8 asks for. Preview and branch deploys
+  prefix the subject with the deploy context so a test inquiry can't pass for a real
+  one. Tested locally with a stubbed harness (24 checks, including that the function's
+  log never carries the name, message or full address); the real send path can only
+  be proven on a Deploy Preview with the Resend key set.
+- **Dead end [my setup]: PR #4's merge never deployed.** The build `ignore` rule
+  assumed a missing cache would make `$CACHED_COMMIT_REF` empty and fail toward
+  building. Netlify actually sets it to the commit being built, so after three months
+  without a build the rule diffed a commit against itself and cancelled the deploy.
+  An empty ref skips too (`git diff --quiet "" X` compares the working tree). The fix
+  rides on this branch, so the studio merge is also the fixed rule's first production
+  run, and it publishes PR #4's changes, which never went live.
+- **The Turnstile fix had a gap [my setup].** "Is a challenge showing?" was read from
+  the widget's child count, but Turnstile adds a zero-height wrapper as soon as it loads.
+  Measured: 0px while the invisible check runs, 72px with a challenge. Height is the
+  signal now, in a shared `turnstile-client.ts` used by both forms.
+
 ## Artifacts
 <!-- screenshots of each view; the deploy URL; a short screen recording if useful -->
 - Repo: https://github.com/jigg-ai/jigg — build #1 scaffold pushed to `main`.

@@ -1,0 +1,79 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ContactForm from '../../components/ContactForm.astro';
+import { LEAD_PROMISE, CONTACT_EMAIL } from '../../lib/site';
+---
+
+<BaseLayout
+  title="Discuss a project"
+  description="Tell Jigg.AI what you're trying to build, fix or modernize. You'll get a reply from the engineering lead who would own the project."
+>
+  <section class="container contact-page">
+    <header class="head">
+      <h1>Discuss a project</h1>
+      <p class="lead">
+        Tell Jigg.AI what you're trying to build, fix or modernize. You'll get a reply
+        from the engineering lead who would own the project — the person accountable for
+        the work, not a sales team.
+      </p>
+    </header>
+
+    <div class="grid">
+      <div class="form-col"><ContactForm /></div>
+
+      <aside class="side">
+        <h2>Who you'll hear from</h2>
+        <p>{LEAD_PROMISE} <a href="/about#lead">Who leads Jigg.AI</a>.</p>
+
+        <h2>Your project stays private</h2>
+        <p>
+          Client work isn't published. Nothing about your project appears here or anywhere
+          else unless you choose to share it, in writing. <a href="/services#privacy">How
+          sharing works</a>.
+        </p>
+
+        <h2>Prefer email?</h2>
+        <p>Write to <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</p>
+
+        <h2>What happens to what you send</h2>
+        <p>
+          It's emailed to Jigg.AI and used only to reply to you. It isn't added to the
+          newsletter. Details are in the <a href="/privacy">privacy page</a>.
+        </p>
+      </aside>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .contact-page { padding-top: clamp(2rem, 5vw, 3.5rem); }
+  .head h1 { font-size: var(--step-h1); font-weight: 460; }
+  .lead {
+    color: var(--ink-muted);
+    font-size: clamp(1.1rem, 1rem + 0.4vw, 1.25rem);
+    line-height: 1.5;
+    max-width: 38rem;
+    margin-top: 1rem;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 18rem);
+    gap: 2.5rem 3.5rem;
+    margin-top: 2.25rem;
+    align-items: start;
+  }
+  .form-col { max-width: 38rem; }
+  .side {
+    border-top: 1px solid var(--border);
+    padding-top: 1.25rem;
+    color: var(--ink-muted);
+    font-size: 0.98rem;
+  }
+  .side h2 { font-size: 1.05rem; font-weight: 500; }
+  .side h2 + p { margin-top: 0.4rem; }
+  .side p + h2 { margin-top: 1.5rem; }
+  .side a { color: var(--ink); }
+  @media (max-width: 52rem) {
+    .grid { grid-template-columns: 1fr; }
+  }
+</style>

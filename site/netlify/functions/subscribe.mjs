@@ -40,8 +40,22 @@ const MAX_EMAIL_LEN = 254; // RFC 5321 practical ceiling
 // Hosts allowed to submit. Preview/branch deploys run on *.netlify.app and must
 // keep working, or the whole preview-verification workflow breaks.
 const ALLOWED_HOSTS = new Set(['jigg.ai', 'www.jigg.ai', 'localhost', '127.0.0.1']);
+// This site's own Netlify hosts only: the site itself and its deploy previews and
+// branch deploys (deploy-preview-5--<site>, feat-studio--<site>). Any other
+// *.netlify.app is somebody else's site, so it no longer passes.
+const NETLIFY_SITE = 'candid-gingersnap-6c4b87.netlify.app';
 const isAllowedHost = (host) =>
-  ALLOWED_HOSTS.has(host) || host.endsWith('.netlify.app');
+  ALLOWED_HOSTS.has(host) || host === NETLIFY_SITE || host.endsWith(`--${NETLIFY_SITE}`);
+// Cloudflare's published test secrets (1x/2x/3x…AA), used on previews and locally.
+// What hostname they report is undocumented, so the token-hostname check below
+// applies to real keys only.
+const isTestSecret = (s) => /^[123]x0+AA$/.test(s);
+// The deploy context comes from Netlify's handler context (context.deploy.context:
+// production, deploy-preview, branch-deploy, dev). NOT process.env.CONTEXT: that is
+// a build-time variable, and Netlify doesn't provide it to functions at runtime.
+// The env var is only a fallback for local runs and the test harness.
+const deployContextOf = (context) => context?.deploy?.context || process.env.CONTEXT || 'local';
+
 
 // Shared/role mailboxes. Nobody subscribes to a newsletter from one, and observed
 // bot traffic used exactly these. Deliberately NOT including `hello@` — it's a
@@ -70,7 +84,7 @@ const BLOCKED_DOMAINS = new Set([
 const log = (evt, data = {}) => console.log(JSON.stringify({ evt, ...data }));
 const domainOf = (email) => String(email).split('@')[1] || '';
 
-export default async (req) => {
+export default async (req, context) => {
   // 1. Method
   if (req.method !== 'POST') return json({ ok: false, error: 'method_not_allowed' }, 405);
 
@@ -166,6 +180,13 @@ export default async (req) => {
     console.error('TURNSTILE_SECRET_KEY is not set');
     return reply({ ok: false, error: 'server_not_configured' }, 500, '/subscribe?error=failed');
   }
+  // Cloudflare's test secrets pass dummy tokens predictably, so they must never run
+  // in production. Fail closed rather than quietly skipping the hostname check.
+  if (deployContextOf(context) === 'production' && isTestSecret(turnstileSecret)) {
+    console.error('subscribe: a Turnstile TEST secret is configured in production');
+    log('config_error', { reason: 'test_turnstile_secret_in_production' });
+    return reply({ ok: false, error: 'server_not_configured' }, 500, '/subscribe?error=failed');
+  }
 
   if (!turnstileToken) {
     // No token at all: a direct POST, or a no-JS submission. Both are rejected —
@@ -195,6 +216,11 @@ export default async (req) => {
         403,
         '/subscribe?error=turnstile'
       );
+    }
+    // A valid token must also have been solved on one of our own hosts.
+    if (!isTestSecret(turnstileSecret) && !isAllowedHost(String(verify.hostname || ''))) {
+      log('turnstile_fail', { reason: 'hostname_mismatch', hostname: verify.hostname || null, domain });
+      return reply({ ok: false, error: 'turnstile_failed' }, 403, '/subscribe?error=turnstile');
     }
   } catch (err) {
     // Fail closed. Losing an occasional signup to a Cloudflare blip beats accepting

@@ -1,13 +1,14 @@
 ---
-// Nav follows the BRIEF (Builds · Tools · About · Subscribe), not the mockup's
-// category-name nav: categories are filters on /builds, never top-level items.
+// Nav follows CONTEXT §7: Services · Builds · About, with Contact as the one
+// call to action. Tools and Subscribe are secondary (linked from /builds and the
+// footer); categories stay filters on /builds, never top-level items.
 const path = Astro.url.pathname;
 const isActive = (href: string) =>
   href === '/' ? path === '/' : path.startsWith(href);
 
 const links = [
+  { href: '/services', label: 'Services' },
   { href: '/builds', label: 'Builds' },
-  { href: '/tools', label: 'Tools' },
   { href: '/about', label: 'About' },
 ];
 ---
@@ -35,7 +36,11 @@ const links = [
           </a>
         ))
       }
-      <a href="/subscribe" class="btn btn--primary cta">Subscribe</a>
+      <a
+        href="/contact"
+        class="btn btn--primary cta"
+        aria-current={isActive('/contact') ? 'page' : undefined}
+      >Contact</a>
     </nav>
   </div>
 </header>

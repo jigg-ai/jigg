@@ -10,6 +10,42 @@ point. See `builds/website/test.md` for the per-check detail on build #1.
 
 ---
 
+## Studio launch — gates before `feat/studio` merges (opened 2026-10-26)
+
+The studio pages are built; these are what stand between the PR and its one merge.
+
+- ~~**Resend setup**~~ — **done 2026-10-27**: account created, `jigg.ai` verified through
+  Cloudflare Domain Connect (CNAMEs `send` and `rsend` to `*.forge.rmta.net`, DKIM TXT on
+  `resend._domainkey`; the root Google MX and SPF untouched), a sending-only key in
+  Netlify for Production, Deploy Previews and Branch deploys. Not for Preview Servers or
+  the CLI.
+- ~~**Contact end to end on the Deploy Preview**~~ — **done 2026-10-27**: a real inquiry
+  from a tagged link arrived in the inbox (not spam) as "[deploy-preview] Project inquiry
+  from …", with the source and `Campaign: test / e2e / launch-check` in the body; Reply
+  went to the sender; the log shows `contact_sent` with source, UTM tags, domain only and
+  `"context":"deploy-preview"`. Token-less and foreign-origin probes were rejected and
+  logged before anything was sent.
+- ~~**Founder credential line against LinkedIn**~~ — **done 2026-10-26**: the founder
+  confirmed it matches the profile, and the LinkedIn URL is linked from About, the one
+  page that names the lead (CONTEXT §4).
+- **Full-site review on the preview**, then merge with a merge commit. Afterwards the
+  production deploy log should show a real build (not "Canceled") and
+  `[indexnow] submitted` with a 2xx — the first production run of both the fixed
+  `ignore` rule and the IndexNow plugin.
+  Also one real signup on production: it is the first real-key run of the token-hostname
+  check added to both functions.
+
+Follow-ups, not gates:
+- `contact_sent` means Resend *accepted* the message, not that it was delivered. Wire
+  Resend's delivery and bounce events (`email.delivered`, `email.bounced`) into the
+  function log, so a failed delivery is visible without waiting for a client to say so.
+- The /builds legend shows verified and recheck-due but not archived. Add the archived
+  key when the first build is archived; until then it would describe nothing on the page.
+- `contact.mjs` duplicates the origin allowlist, disposable-domain list and Turnstile
+  verification from `subscribe.mjs`, deliberately, to avoid touching the proven signup
+  path in this PR. Extract a shared module once both are live, and re-test both.
+- The og:image card (section below) gets redone with the studio copy.
+
 ## Verification debt (build #1)
 
 - **Lighthouse performance pass** — `test.md` check #7. **BASELINE CAPTURED 2026-07-29:**

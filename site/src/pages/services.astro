@@ -1,0 +1,165 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getServices } from '../lib/services';
+import { LEAD_PROMISE } from '../lib/site';
+
+const services = await getServices();
+const rendered = await Promise.all(services.map(async (s) => ({ ...s, Content: (await render(s.service)).Content })));
+---
+
+<BaseLayout
+  title="Services"
+  description="Rapid prototyping and product delivery, legacy modernization and systems engineering, and AI integration and automation — each backed by evidence you can check."
+>
+  <div class="container services-page">
+    <header class="head">
+      <h1>Services</h1>
+      <p class="lead">
+        Three kinds of work, each with the evidence behind it, and one engineering lead
+        who owns your project and answers for what's delivered. The evidence is
+        Jigg.AI's own public builds; <a href="#privacy">client work stays private</a> unless
+        you choose to share it.
+      </p>
+    </header>
+
+    <ol class="services">
+      {
+        rendered.map(({ id, service, evidence, Content }) => (
+          <li class="service" id={id}>
+            <h2>{service.data.title}</h2>
+            <p class="summary">{service.data.summary}</p>
+            <div class="cols">
+              <div>
+                <h3>What it covers</h3>
+                <ul class="plain">
+                  {service.data.scope.map((s) => <li>{s}</li>)}
+                </ul>
+              </div>
+              <div>
+                <h3>Evidence</h3>
+                <ul class="plain">
+                  {evidence.map((e) => (
+                    <li>{e.href ? <a href={e.href}>{e.text}</a> : e.text}</li>
+                  ))}
+                </ul>
+                {service.data.note && <p class="note">{service.data.note}</p>}
+              </div>
+            </div>
+            <div class="body prose"><Content /></div>
+          </li>
+        ))
+      }
+    </ol>
+
+    <section class="privacy" id="privacy" aria-labelledby="privacy-title">
+      <h2 id="privacy-title">Your project stays private</h2>
+      <p>
+        The build journal is Jigg.AI's own work, published on purpose. Client projects are
+        not build logs. Unless you decide otherwise, nothing about yours is published — not
+        the code, not the details, not even that you're a client.
+      </p>
+      <p>
+        Some clients are happy to share a little, and that's your call, at the level you
+        choose:
+      </p>
+      <dl class="levels">
+        <div>
+          <dt>Private</dt>
+          <dd>The default. Nothing is published.</dd>
+        </div>
+        <div>
+          <dt>Shared with permission</dt>
+          <dd>Only what you approve in writing — say, an anonymized write-up of the approach — and you review it before it goes out.</dd>
+        </div>
+        <div>
+          <dt>Case study</dt>
+          <dd>A named write-up, with your written permission and your review before it's published.</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="handling" aria-labelledby="handling-title">
+      <h2 id="handling-title">How your code and data are handled</h2>
+      <ul class="rules">
+        <li><strong>AI tools are agreed with you first.</strong> You approve which tools touch your code or data before work starts. If your policies restrict third-party AI services, the work follows your policies.</li>
+        <li><strong>Your code stays in your systems.</strong> Work happens in your repositories or a private workspace, with the minimum access the work needs.</li>
+        <li><strong>A human reviews every change</strong> before it's delivered, and nothing is deployed to your environment without explicit approval.</li>
+        <li><strong>Test results say who verified them.</strong> AI-generated test results are reported separately from independently verified outcomes.</li>
+        <li><strong>You own what you pay for,</strong> as set out in the engagement agreement.</li>
+        <li><strong>No referral fees.</strong> Tools and vendors are recommended on merit; Jigg.AI earns nothing from them on client work.</li>
+      </ul>
+    </section>
+
+    <section class="who" aria-labelledby="who-title">
+      <h2 id="who-title">Who you work with</h2>
+      <p>
+        {LEAD_PROMISE} <a href="/about#lead">Who leads Jigg.AI →</a>
+      </p>
+      <p class="cta"><a class="btn btn--primary" href="/contact">Discuss a project</a></p>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .services-page { padding-top: clamp(2rem, 5vw, 3.5rem); }
+  .head h1 { font-size: var(--step-h1); font-weight: 460; }
+  .lead {
+    color: var(--ink-muted);
+    font-size: clamp(1.1rem, 1rem + 0.4vw, 1.25rem);
+    line-height: 1.5;
+    max-width: 40rem;
+    margin-top: 1rem;
+  }
+  .services { list-style: none; padding: 0; margin-top: 2.5rem; }
+  .service { border-top: 1px solid var(--border); padding-block: 2rem; scroll-margin-top: 5rem; }
+  .service h2 { font-size: var(--step-h2); }
+  .summary { color: var(--ink-muted); max-width: 42rem; margin-top: 0.6rem; font-size: 1.08rem; }
+  .cols {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem 3rem;
+    margin-top: 1.4rem;
+    max-width: 50rem;
+  }
+  h3 {
+    font-family: var(--font-mono);
+    font-size: var(--step-small);
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+  }
+  .plain { list-style: none; padding: 0; margin-top: 0.6rem; }
+  .plain li { padding-block: 0.35rem; border-bottom: 1px solid var(--border); }
+  .plain li:first-child { border-top: 1px solid var(--border); }
+  .plain a { text-decoration-color: var(--brand); }
+  .note { color: var(--ink-faint); font-size: var(--step-small); margin-top: 0.6rem; }
+  .body { max-width: var(--measure); margin-top: 1.25rem; color: var(--ink-muted); }
+  .privacy, .handling, .who { border-top: 1px solid var(--border); padding-top: 2rem; margin-top: 0.5rem; }
+  .privacy h2, .handling h2, .who h2 { font-size: var(--step-h2); }
+  .privacy { scroll-margin-top: 5rem; }
+  .privacy p { max-width: var(--measure); margin-top: 0.8rem; }
+  .levels { max-width: var(--measure); margin-top: 1rem; }
+  .levels > div {
+    display: grid;
+    grid-template-columns: 12rem minmax(0, 1fr);
+    gap: 0.25rem 1.5rem;
+    padding-block: 0.6rem;
+    border-top: 1px solid var(--border);
+  }
+  .levels > div:last-child { border-bottom: 1px solid var(--border); }
+  .levels dt { font-weight: 560; }
+  .levels dd { margin: 0; color: var(--ink-muted); }
+  .handling { margin-top: 2.5rem; }
+  .lead a { color: var(--ink); text-decoration-color: var(--brand); }
+  .rules { padding-left: 1.2em; margin-top: 1rem; max-width: var(--measure); }
+  .rules li + li { margin-top: 0.6rem; }
+  .who { margin-top: 2.5rem; }
+  .who p { max-width: var(--measure); margin-top: 0.8rem; }
+  .who .cta { margin-top: 1.5rem; }
+  @media (max-width: 40rem) {
+    .cols { grid-template-columns: 1fr; }
+    .levels > div { grid-template-columns: 1fr; }
+  }
+</style>
