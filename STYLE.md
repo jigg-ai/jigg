@@ -32,6 +32,10 @@ Two surfaces, two voices (CONTEXT §4). The rules under "Both" apply everywhere.
   with the client's written permission. A prospective client should never come away
   thinking their project will be published.
 - No affiliate links on studio pages.
+- Engagement names are fixed: **Scoped Engineering Pilot**, **Engineering Project**,
+  **Fractional Technology Leadership** (explained as "a part-time technology lead"). "CTO"
+  appears only as an explanation ("without hiring a full-time CTO"), never as a role
+  Jigg.AI takes on, because buyers read it as owning their whole technology operation.
 
 ## Both
 - Concrete proof over adjectives: times, costs, test scores, screenshots. Speed and
