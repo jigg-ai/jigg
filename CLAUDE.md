@@ -4,11 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-Jigg.AI is a build-in-public project: real artifacts built with AI tools, documented
-honestly (tested, timed, reproducible), published as build logs. The site that
-publishes them is itself build #1, and is built with the tools it reviews. **The repo
-is the durable source of truth** — chats/sessions are scratchpads. Log decisions and
-process into the files described below, not just into conversation.
+Jigg.AI is an AI-accelerated software engineering studio with a public build journal.
+The studio is the business (client engineering work); the journal is the evidence: real
+artifacts built with AI tools, documented honestly (tested, timed, reproducible),
+published as build logs. The site is itself build #1, and is built with the tools it
+reviews. **The repo is the durable source of truth** — chats/sessions are scratchpads.
+Log decisions and process into the files described below, not just into conversation.
 
 Read in this order before doing substantive work:
 1. [`CONTEXT.md`](CONTEXT.md) — the what/why, canonical source of truth for the product.
@@ -16,13 +17,12 @@ Read in this order before doing substantive work:
 3. [`STYLE.md`](STYLE.md) — house voice for anything published.
 4. [`site/BRIEF.md`](site/BRIEF.md) — the spec for the site build specifically.
 
-Current state: the Astro site under `site/` **is scaffolded** (build #1) — the `builds`
-collection, the four views, the MDX authoring kit, and one real entry
-(`site/src/content/builds/website.mdx`) all exist and build clean. Not yet done:
-deployed to a live URL, Lighthouse pass, formal a11y audit, and the human verify pass
-(PROCESS step 5). See `builds/website/test.md` for exactly which checks have and
-haven't been run. When extending the site, follow `site/BRIEF.md` rather than
-inventing a different architecture.
+Current state: the site is live at https://jigg.ai (Netlify) with four published
+builds (#1 the site, #2 Botpress, #3 HeyGen explainer, #4 signup hardening). The studio
+repositioning (CONTEXT.md, October 2026) is in progress on one branch, `feat/studio`, to
+ship as one PR and one merge. See each `builds/<slug>/test.md` for which checks have and
+haven't been run. When extending the site, follow `site/BRIEF.md` and CONTEXT §6 rather
+than inventing a different architecture.
 
 ## Commands
 
@@ -40,7 +40,7 @@ type-checks .astro, validates every entry against the zod schema, and fails on a
 frontmatter field). The build-log check set lives in `builds/<slug>/test.md` and is
 run by hand, not by a framework.
 
-To verify the core invariant (one new markdown file lights up all four views), add a
+To verify the core invariant (one new markdown file lights up every journal view), add a
 temporary `.mdx` under `site/src/content/builds/`, `npm run build`, and grep
 `site/dist/` for its title in `index.html`, `builds/index.html`, and `tools/index.html`
 — then delete it. That is how it was checked in build #1.
@@ -55,11 +55,12 @@ temporary `.mdx` under `site/src/content/builds/`, `npm run build`, and grep
 - `builds/` — one folder per build, each an isolated unit:
   - `builds/_template/` — copy this to start a new build (`meta.yaml`, `build-notes.md`,
     `test.md`, `post.md`, `repro/README.md`).
-  - `builds/website/` — build #1, the site itself (in progress).
+  - `builds/website/` — build #1, the site itself. Later site revisions (like the
+    studio pages) are logged in its `build-notes.md` rather than as new builds.
   - `builds/<slug>/meta.yaml` — perishable facts (tool version, pricing, dates,
     status) kept separate from narrative so they update in one place; this is also
     the shape of the Astro content-collection schema (see below).
-- `site/` — the Astro site (not yet scaffolded). `site/BRIEF.md` is its spec;
+- `site/` — the Astro site. `site/BRIEF.md` is its original spec;
   `site/design/mockups/` has reference screenshots (visual reference only — see
   Design constraints below).
 
@@ -89,8 +90,10 @@ asked to work on a build, find where it is in this pipeline before proceeding:
 ## Writing in house style (STYLE.md)
 
 Applies to anything destined for `post.md` / publication:
-- Voice: first person as "Jigg.AI-the-builder" — a consistent brand persona, not a
-  named individual.
+- Two voices. Build logs: first person as "Jigg.AI-the-builder", a brand persona.
+  Studio pages (home, Services, About, Contact): "Jigg.AI" as the subject, never a "we"
+  that implies a team; the founder is named only where accountability matters
+  (CONTEXT §4). No selling inside build logs.
 - Honest over polished: show mistakes, retries, dead ends explicitly.
 - Lead with a self-contained summary (the citation hook): what it is, worth it or
   not, the one caveat.
@@ -106,19 +109,22 @@ Applies to anything destined for `post.md` / publication:
 
 ## Site architecture (site/BRIEF.md) — for when `site/` is built or extended
 
-The core architectural rule: **one `builds` content collection drives all four
-views.** Adding a new build must mean adding one markdown entry — never touching page
-code. Keep this invariant when extending the site.
+The core architectural rule: **one `builds` content collection drives every journal
+view.** Adding a new build must mean adding one markdown entry — never touching page
+code. Keep this invariant when extending the site. Studio content (services, later
+client case studies) gets its own collections; see CONTEXT §6 for the full view list
+and §7 for the nav (Services · Builds · About · Contact).
 
 - Stack: Astro, content collections, islands for interactive/sandboxed demos.
   Markdown/MDX content, no CMS yet. TypeScript is fine. Keep dependencies light.
-  Deploy target: Vercel or Netlify.
+  Deployed on Netlify.
 - Collection schema mirrors `builds/_template/meta.yaml`: title, slug, category,
   tool, tool_version, runs_on_site, status (draft|verified|recheck-due|archived),
   summary, test_score, affiliate_url, repro_pack, published, last_verified,
   pricing_as_of.
-- Four views, all reading from that one collection:
-  - `/` — home: featured build with artifact preview, recent builds, email capture.
+- Journal views, all reading from that one collection:
+  - `/` — the home page shows selected builds as evidence (it becomes the studio
+    homepage in the repositioning; CONTEXT §6).
   - `/builds` — archive: timeline, category filter chips, dates/version/freshness
     visible.
   - `/builds/[slug]` — build detail: the full report (see `CONTEXT.md` section 3 for
@@ -126,12 +132,13 @@ code. Keep this invariant when extending the site.
     reproduce-this, stamps, tool verdict+CTA).
   - `/tools` — tools index: **no star ratings**; leads with what was actually built,
     a plain verdict, an accessibility read, "Runs on this site" badge where true.
-- Nav is just: Builds · Tools · About · Subscribe. Categories are filters/hub pages
-  underneath, not nav items — and only get hub pages once they have real content
-  (avoid thin pages).
+- Categories are filters/hub pages under Builds, not nav items — and only get hub pages
+  once they have real content (avoid thin pages). Tools and Subscribe are secondary
+  destinations, linked from Builds and the footer.
 - Deferred, do not build yet: git-based CMS, live third-party island demos (use a
-  screenshot stub), full visual/illustration polish, analytics, newsletter backend,
-  category hub pages without real content.
+  screenshot stub), full visual/illustration polish, analytics beyond the Contact counts
+  in CONTEXT §8, category hub pages without real content, and a Work section before
+  there is a client case study with written permission.
 
 ### Design constraints
 - `site/design/mockups/` (`home*.png`, `build-log*.png`, `all-build-logs.png`,
@@ -175,23 +182,22 @@ for the build story, so write them that way.
 - Commits are authored as **Jigg.AI Bot <jigg.ai.biz@gmail.com>** (set repo-locally,
   overriding any global identity); the remote is **github.com/jigg-ai/jigg** (SSH,
   authenticates as the `jigg-ai` account).
-- **Pushing: SSH is the path; HTTPS via `gh` is the fallback when it isn't.** From a
-  human terminal SSH works normally. From an agent's shell it fails with
-  `Permission denied (publickey)` — the key is passphrase-protected and the shell gets a
-  *different, empty* ssh-agent than the user's session. Verified 2026-07-30 that this is
-  not the sandbox (it fails with sandboxing off) and not fixable with
-  `ssh-add --apple-use-keychain`: the passphrase lands in the data-protection keychain,
-  which is bound to the GUI login session and unreachable from a non-interactive shell.
-  Don't re-debug it, and **never "fix" it by stripping the key's passphrase** — that
-  leaves an unencrypted private key on disk, a worse trade than the fallback. Use:
-
-  ```
-  git -c credential.helper='!gh auth git-credential' push https://github.com/jigg-ai/jigg.git <branch>
-  ```
-
-  `gh` is authenticated as `jigg-ai`, so this is the same account and produces identical
-  commits; `gh pr create` / `gh pr merge` work normally. Leave `origin` as SSH and pass
-  the HTTPS URL explicitly. One gotcha: `git fetch origin` still fails, so `origin/main`
-  goes stale and "unpushed commit" counts read wrong — refresh with an explicit refspec,
-  `fetch https://github.com/jigg-ai/jigg.git 'refs/heads/main:refs/remotes/origin/main'`.
+- **Pushing: SSH only, with the jigg key pinned.** The clone's repo-local config sets
+  `core.sshCommand = ssh -i ~/.ssh/id_ed25519_jigg2 -o IdentitiesOnly=yes`, so a plain
+  `git push` / `git fetch origin` authenticates as `jigg-ai` and can never offer another
+  key. On the current machine this works from an agent's shell too (verified 2026-10-26:
+  `ssh -T git@github.com` with that key answers "Hi jigg-ai!"). The key's comment reads
+  `jigg-ai-deploy`, but it is the account-level key; `id_ed25519_jigg` is an older,
+  wrong one. **Never "fix" an SSH problem by stripping the key's passphrase** — that
+  leaves an unencrypted private key on disk.
+- **HTTPS is deliberately disabled for this repo** (repo-local `credential.helper` set to
+  empty), so it can never borrow the stored credentials of a different GitHub account.
+  Other projects on this machine push as that other account, and nothing done here may
+  change that: don't switch the active `gh` account, and never run `gh auth setup-git`
+  (or answer "Yes" to "Authenticate Git" during `gh auth login`) — it makes `gh` git's
+  credential source machine-wide. The HTTPS-via-`gh` fallback documented here in July
+  applied to the old laptop and is retired.
+- **PRs and merges use `gh` with the jigg-ai token, per command:**
+  `GH_TOKEN=$(gh auth token --user jigg-ai) gh pr create …` (same for `gh pr merge`).
+  Merge with a merge commit; squash and rebase are disabled on the repo.
 - Do NOT add a `Co-Authored-By` or any other AI-attribution trailer to commits.
