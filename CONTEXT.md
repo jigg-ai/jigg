@@ -197,8 +197,9 @@ filters/hubs under Builds, not header items. Work joins the nav once it has cont
 - **Principal metric: qualified project inquiries, and how many become engagements.**
   Newsletter subscribers and affiliate clicks are secondary. A few hundred relevant
   visitors who produce two credible inquiries beat tens of thousands who produce none.
-- Contact telemetry: self-reported "how did you find Jigg.AI", plus referrer/UTM where
-  present. Count successful submissions and server-side rejections and failures. Never
+- Contact telemetry: self-reported "how did you find Jigg.AI" and "what kind of help"
+  (an engagement model, "not sure yet", or not answered — kept distinct), plus
+  referrer/UTM where present. Count successful submissions and server-side rejections and failures. Never
   count rejected spam as leads; never send inquiry contents to analytics.
 
 ## 9. Content-integrity systems
@@ -306,4 +307,25 @@ internal build demonstrates a method; it is not a completed client engagement.
 - Until real modernization examples exist, that pillar's copy says only what the
   engineering lead's verified experience supports: no client logos, no outcome claims.
 - Website design sits under product delivery, not as a pillar of its own.
+
+### Ways to engage
+The services say what Jigg.AI does; these say how a client works with it. They are not
+three more services: each one spans all three above.
+
+| Engagement | What it is | Commercial model |
+|---|---|---|
+| **Scoped Engineering Pilot** | Assess one problem, implement one bounded improvement where that can be done safely, verify it, and hand over the result, the findings and a proposal | Free discovery conversation; the assessment and pilot are paid, with scope and price agreed before work starts |
+| **Engineering Project** | A defined prototype, modernization, integration or automation, with agreed deliverables and acceptance criteria | Individually scoped |
+| **Fractional Technology Leadership** | A part-time technology lead: direction, planning, vendor evaluation, oversight and the next improvements, for organizations without one | Monthly retainer; hours, responsibilities and availability set in the agreement; implementation scoped separately or through an explicit allowance |
+
+- No public prices for now; scope and price come out of the discovery conversation.
+- A pilot can end with an assessment and a plan instead of a change, when a system
+  doesn't allow a safe change inside a small pilot. The offer says so up front.
+- **Fractional Technology Leadership is initially an additional engagement model, not a
+  replacement for Jigg.AI's engineering services or its broader market positioning. Its
+  prominence will be determined by qualified customer demand** — measured by the Contact
+  form's "What kind of help?" answers (§8), not by drafts.
+- It is also the most founder-dependent offering (a client buys the lead's judgment and
+  time), so capacity is the constraint: a few retainers alongside delivery work, not many.
+  Recurring revenue improves predictability, not transferability (§13).
 

@@ -230,6 +230,12 @@ default. These rules are written before the first engagement, not discovered dur
   say-so.
 - **Test results are labelled by who verified them.** Deliverables keep AI-generated test
   results separate from independently verified outcomes, and say which is which.
+- **Every engagement's terms are written down before work starts:** responsibilities,
+  hours or availability, deliverables, and what's excluded. Fractional Technology
+  Leadership is not an on-call IT service — 24/7 availability, IT support and emergencies
+  are excluded unless contracted separately — and implementation is scoped separately or
+  through an explicit allowance. A Scoped Engineering Pilot starts with a free discovery
+  conversation; the paid scope and price are agreed before any assessment work.
 - **The contract names the people.** It names the engineering lead, their relevant
   qualifications and responsibilities, and agreed terms for substitution. The site makes
   the role promise; the contract makes it specific.

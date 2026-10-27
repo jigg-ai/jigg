@@ -65,6 +65,19 @@ const SOURCES = {
   other: 'Other',
 };
 
+// "What kind of help?" — the ids ENGAGEMENTS in src/lib/site.ts sends, plus "Not
+// sure yet". Skipping the field and choosing "not sure" are different answers and
+// are logged differently (not_answered vs not_sure); anything off the list is
+// "other", so the field can't write arbitrary text into the log.
+const ENGAGEMENTS = {
+  pilot: 'Scoped Engineering Pilot',
+  project: 'Engineering Project',
+  leadership: 'Fractional Technology Leadership',
+  'not-sure': 'Not sure yet',
+};
+const engagementOf = (v) =>
+  !v ? 'not_answered' : Object.hasOwn(ENGAGEMENTS, v) ? v.replace('-', '_') : 'other';
+
 const log = (evt, data = {}) => console.log(JSON.stringify({ evt, ...data }));
 const domainOf = (email) => String(email).split('@')[1] || '';
 // Single-line, trimmed, length-capped. Subjects and log fields must never carry a
@@ -125,6 +138,7 @@ export default async (req, context) => {
   const organization = oneLine(body.organization, LIMITS.organization + 1);
   const message = String(body.message ?? '').replace(/\r\n/g, '\n').trim();
   const source = Object.hasOwn(SOURCES, body.source) ? body.source : body.source ? 'other' : '';
+  const engagement = engagementOf(body.engagement);
   const attribution = {
     ref_host: tag(body.ref_host),
     utm_source: tag(body.utm_source),
@@ -203,6 +217,9 @@ export default async (req, context) => {
     `Name: ${name}`,
     `Email: ${email}`,
     `Organization: ${organization || '(not given)'}`,
+    `Kind of help: ${
+      engagement === 'not_answered' ? '(not answered)' : engagement === 'other' ? 'Other' : ENGAGEMENTS[body.engagement]
+    }`,
     `How they found Jigg.AI: ${source ? SOURCES[source] : '(not answered)'}`,
     `Referrer: ${attribution.ref_host || '(none recorded)'}`,
     ...(attribution.utm_source
@@ -245,7 +262,7 @@ export default async (req, context) => {
 
   // Resend ACCEPTED the message; that is not proof it was delivered. Delivery and
   // bounces are separate Resend events, not wired up yet (BACKLOG).
-  log('contact_sent', { source: source || null, ...attribution, domain, context: deployContext });
+  log('contact_sent', { engagement, source: source || null, ...attribution, domain, context: deployContext });
   return reply({ ok: true }, 200, '/contact/sent');
 };
 
