@@ -18,9 +18,9 @@ Your email is stored with Buttondown (the newsletter service that sends these em
 
 ## If you send a project inquiry
 
-The contact form sends your name, email address, organization (if you give one), your message, and your answer to "How did you find Jigg.AI?". It also sends where your visit began: the website that linked you here, if any, and any campaign tags in that link (such as `utm_source`). Your browser keeps that note in session storage for the length of the visit only — it isn't a cookie, it disappears when you close the tab, and it's sent nowhere unless you submit the form.
+The contact form sends your name, email address, organization (if you give one), your message, and your answers to "What kind of help?" and "How did you find Jigg.AI?" (both optional). It also sends where your visit began: the website that linked you here, if any, and any campaign tags in that link (such as `utm_source`). Your browser keeps that note in session storage for the length of the visit only — it isn't a cookie, it disappears when you close the tab, and it's sent nowhere unless you submit the form.
 
-The inquiry is delivered by email to Jigg.AI's inbox through Resend (an email delivery service), and used only to reply to you. It isn't added to the newsletter. Jigg.AI counts inquiries and where they came from, so it knows which channels work; those counts never include what you wrote. Ask at hello@jigg.ai and your inquiry is deleted from Jigg.AI's inbox. Resend keeps its own logs of the emails it delivers, which expire under its retention policy rather than on request to Jigg.AI.
+The inquiry is delivered by email to Jigg.AI's inbox through Resend (an email delivery service), and used only to reply to you. It isn't added to the newsletter. Jigg.AI counts inquiries, the kind of help asked for and where they came from, so it knows what people need and which channels work; those counts never include what you wrote. Ask at hello@jigg.ai and your inquiry is deleted from Jigg.AI's inbox. Resend keeps its own logs of the emails it delivers, which expire under its retention policy rather than on request to Jigg.AI.
 
 ## The support chat widget
 
@@ -38,4 +38,4 @@ The site is hosted on Netlify and served through Cloudflare. Like any website, t
 
 Email hello@jigg.ai and you'll get a real (human-directed) answer.
 
-*Last updated: October 26, 2026.*
+*Last updated: October 27, 2026.*
