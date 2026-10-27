@@ -15,4 +15,13 @@ if (!configuredSitekey && process.env.NETLIFY) {
       '(production: the real sitekey; preview/branch/local: 1x00000000000000000000AA).'
   );
 }
+// Cloudflare's test sitekeys (1x/2x/3x…) never belong on the live site: paired with
+// a test secret they let any dummy token through. CONTEXT is set at build time on
+// Netlify, so a production build with one fails here instead of shipping it.
+if (process.env.NETLIFY && process.env.CONTEXT === 'production' && /^[123]x0+[A-F]{2}$/i.test(configuredSitekey)) {
+  throw new Error(
+    'PUBLIC_TURNSTILE_SITEKEY is a Cloudflare TEST sitekey in a production build. ' +
+      'Set the real sitekey for the Production context.'
+  );
+}
 export const SITEKEY = configuredSitekey || TEST_SITEKEY;
