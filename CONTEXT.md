@@ -22,6 +22,9 @@ Jigg.AI is an AI-accelerated software engineering studio with a public build jou
   public.
 - **AI does much of the execution** — coding, prototyping, testing, documentation. An
   experienced engineer provides the direction, architecture, review and accountability.
+- **Guiding principle: Jigg.AI isn't selling AI.** It applies engineering judgment and AI
+  together to the problem in front of it, and recommends AI only where it earns its place.
+  A principle for decisions and copy, not a headline.
 
 Category: AI-Accelerated Software Engineering.
 Homepage headline: "Experienced engineering judgment. AI-accelerated execution."
@@ -263,6 +266,10 @@ app; several "Jiggy/Jiggle" AI tools), so: always present as "Jigg.AI," never ba
 so the brand out-signals the noise.
 
 ## 15. Still open
+- **The thesis to prove:** that a founder-led, AI-native operation can deliver results
+  comparable to a conventional engineering team, with less overhead and no loss of quality.
+  Measured first by build #5's human and agent time and real costs, then by client
+  outcomes. Until there is evidence, it stays out of site copy.
 - How Contact inquiries are delivered (Netlify Forms, or a function that sends email).
 - Whether build #3's AI-presenter video stays featured anywhere on the studio site.
 - The exact credential line, pending LinkedIn verification.

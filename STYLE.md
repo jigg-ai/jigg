@@ -35,5 +35,8 @@ Two surfaces, two voices (CONTEXT §4). The rules under "Both" apply everywhere.
 - Concrete proof over adjectives: times, costs, test scores, screenshots. Speed and
   cost claims come only from recorded numbers (CONTEXT §5), never from impressions.
 - Human-directed, AI-executed — never "autonomous".
+- Don't claim the approach is new. Human–AI collaboration isn't Jigg.AI's invention; the
+  difference is how openly and how well it's done, and the evidence for that is the build
+  logs, not words like "unique" or "first".
 - Plain naming: "Builds", "Tools", "Services" — no forced "jig" wordplay.
 - Brand name: always "Jigg.AI", never bare "Jigg".
