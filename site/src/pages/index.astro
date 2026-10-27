@@ -49,6 +49,17 @@ const recent = builds.slice(0, 4);
         ))
       }
     </ul>
+
+    {/* One specific scenario, deliberately secondary: it adds a reason to get in touch
+        without suggesting that organizations with a technology lead aren't customers. */}
+    <aside class="no-lead" aria-labelledby="no-lead-title">
+      <h3 id="no-lead-title">No technology lead on staff?</h3>
+      <p>
+        Jigg.AI provides part-time technical leadership and AI-accelerated engineering to
+        help organizations modernize systems, automate workflows and make better technology
+        decisions. <a href="/services#leadership">Fractional Technology Leadership →</a>
+      </p>
+    </aside>
   </section>
 
   {
@@ -122,4 +133,15 @@ const recent = builds.slice(0, 4);
   }
   .svc-title:hover { text-decoration: underline; text-decoration-color: var(--brand); }
   .svc-summary { color: var(--ink-muted); max-width: 44rem; margin-top: 0.3rem; }
+  .no-lead {
+    margin-top: 1.5rem;
+    padding: 1rem 1.15rem;
+    border-left: 3px solid var(--brand);
+    background: var(--surface-2);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    max-width: 44rem;
+  }
+  .no-lead h3 { font-size: 1.05rem; }
+  .no-lead p { color: var(--ink-muted); margin-top: 0.35rem; font-size: 0.98rem; }
+  .no-lead a { color: var(--ink); text-decoration-color: var(--brand); white-space: nowrap; }
 </style>
