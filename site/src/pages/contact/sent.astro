@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { FOUNDER } from '../../lib/site';
+
+// Where the contact function redirects a no-JS (or fetch-failed) submission that
+// went through. The JS path shows the same confirmation inline. Transactional, so
+// noindex and kept out of the sitemap (filter in astro.config.mjs).
+---
+
+<BaseLayout title="Message sent" description="Your message to Jigg.AI was sent.">
+  <Fragment slot="head">
+    <meta name="robots" content="noindex, follow" />
+  </Fragment>
+
+  <section class="container container--prose sent">
+    <p class="eyebrow">Message sent</p>
+    <h1>Thanks — it's on its way.</h1>
+    <p class="lead">
+      You'll get a reply from {FOUNDER.name} directly, at the address you gave.
+    </p>
+    <div class="actions">
+      <a class="btn btn--primary" href="/builds">Read the build logs</a>
+      <a class="btn" href="/">Back to home</a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .sent { padding-top: clamp(2.5rem, 6vw, 4.5rem); }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--step-small);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--brand);
+    margin-bottom: 0.75rem;
+  }
+  .sent h1 { font-size: var(--step-h1); font-weight: 460; max-width: 16ch; }
+  .lead { color: var(--ink-muted); font-size: 1.2rem; line-height: 1.5; margin-top: 1rem; max-width: 36rem; }
+  .actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2rem; }
+</style>

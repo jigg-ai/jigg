@@ -1,0 +1,225 @@
+---
+// Project-inquiry form. Posts to our own same-origin Netlify Function
+// (/.netlify/functions/contact), which runs the same abuse controls as the
+// newsletter proxy and emails the inquiry (see contact.mjs).
+//
+// Like EmailCapture, JavaScript is REQUIRED to send: Turnstile needs it, and the
+// function rejects token-less posts. The urlencoded/303 path still works for the
+// case where JS rendered the widget but the fetch itself failed. A visitor without
+// JS is pointed at the email address instead.
+import { SITEKEY } from '../lib/turnstile';
+import { CONTACT_EMAIL } from '../lib/site';
+
+const ACTION = '/.netlify/functions/contact';
+
+// Same keys and labels as SOURCES in contact.mjs; the function records anything
+// else as "other".
+const SOURCES = [
+  ['linkedin', 'LinkedIn'],
+  ['referral', 'A referral or someone I know'],
+  ['search', 'Search'],
+  ['build-log', 'A Jigg.AI build log'],
+  ['social', 'Social media (X, YouTube)'],
+  ['other', 'Other'],
+];
+---
+
+<div class="contact-shell">
+  <form class="contact" action={ACTION} method="post" novalidate>
+    <div class="field">
+      <label for="cf-name">Name</label>
+      <input id="cf-name" name="name" type="text" autocomplete="name" maxlength="120" required />
+    </div>
+    <div class="field">
+      <label for="cf-email">Email</label>
+      <input id="cf-email" name="email" type="email" inputmode="email" autocomplete="email" maxlength="254" required />
+    </div>
+    <div class="field">
+      <label for="cf-org">Organization <span class="optional">(optional)</span></label>
+      <input id="cf-org" name="organization" type="text" autocomplete="organization" maxlength="160" />
+    </div>
+    <div class="field">
+      <label for="cf-message">What are you trying to build, fix or modernize?</label>
+      <textarea id="cf-message" name="message" rows="7" minlength="20" maxlength="5000" required></textarea>
+      <p class="hint">A few sentences is plenty: what exists today, what needs to change, and any deadline.</p>
+    </div>
+    <div class="field">
+      <label for="cf-source">How did you find Jigg.AI? <span class="optional">(optional)</span></label>
+      <select id="cf-source" name="source">
+        <option value="">Choose one</option>
+        {SOURCES.map(([value, label]) => <option value={value}>{label}</option>)}
+      </select>
+    </div>
+
+    {/* Honeypot — same decoy as EmailCapture: off-screen, out of the tab order and
+        the accessibility tree, with a name no autofill category maps to. */}
+    <input class="contact__decoy" type="text" name="contact_reason" autocomplete="off" tabindex="-1" aria-hidden="true" />
+
+    <div class="cf-turnstile contact__turnstile" data-sitekey={SITEKEY} data-appearance="interaction-only"></div>
+
+    <p class="contact__error" role="alert" hidden></p>
+    <div class="actions">
+      <button type="submit" class="btn btn--primary">Send inquiry</button>
+    </div>
+    <noscript>
+      <p class="hint">
+        This form needs JavaScript for its anti-spam check. Write to
+        <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> instead.
+      </p>
+    </noscript>
+  </form>
+  <p class="contact__success" role="status" tabindex="-1" hidden></p>
+</div>
+
+<script>
+  import { loadTurnstile, handleTurnstileError } from '../lib/turnstile-client';
+
+  const SENT =
+    'Thanks — your message is on its way. You’ll get a reply from Sasha Matison directly, at the address you gave.';
+  const ERRORS: Record<string, string> = {
+    invalid_name: 'Please add your name.',
+    invalid_email: 'That doesn’t look like a valid email address.',
+    blocked_domain: 'That email provider isn’t accepted. Please use a different address.',
+    invalid_organization: 'That organization name is too long.',
+    message_too_short: 'Please say a little more about the project — a few sentences is plenty.',
+    message_too_long: 'That message is over 5,000 characters. Please shorten it, or email it instead.',
+    too_many_links: 'Please include no more than three links.',
+    turnstile_missing: 'Please wait a moment for the anti-spam check to finish, then try again.',
+    turnstile_expired: 'That anti-spam check expired. Please try again.',
+    turnstile_failed: 'The anti-spam check didn’t pass. Please reload the page and try again.',
+    turnstile_unavailable: 'The anti-spam check is temporarily unavailable. Please try again shortly.',
+    default: 'Something went wrong and the message wasn’t sent. Please try again, or email hello@jigg.ai.',
+  };
+  const INTERACTION_REQUIRED = 'Please complete the anti-spam check above, then try again.';
+
+  // Where this visit came from, as recorded on its first page by BaseLayout.
+  // Read-only here; sent only when the visitor submits.
+  const attribution = (): Record<string, string> => {
+    try {
+      return JSON.parse(sessionStorage.getItem('jg_attr') || '{}');
+    } catch {
+      return {};
+    }
+  };
+
+  loadTurnstile();
+
+  document.querySelectorAll<HTMLFormElement>('form.contact').forEach((form) => {
+    const shell = form.closest('.contact-shell')!;
+    const success = shell.querySelector<HTMLElement>('.contact__success')!;
+    const errorEl = form.querySelector<HTMLElement>('.contact__error')!;
+    const button = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+    const widget = form.querySelector<HTMLElement>('.cf-turnstile');
+    const label = button.textContent;
+    const field = (name: string) =>
+      form.querySelector<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>(`[name="${name}"]`)!;
+
+    const setBusy = (busy: boolean) => {
+      button.disabled = busy;
+      button.textContent = busy ? 'Sending…' : label;
+    };
+    const showError = (code: string) => {
+      const awaitingInteraction = handleTurnstileError(widget, code);
+      errorEl.textContent =
+        code === 'turnstile_missing' && awaitingInteraction
+          ? INTERACTION_REQUIRED
+          : ERRORS[code] ?? ERRORS.default;
+      errorEl.hidden = false;
+    };
+
+    // No-JS round trip (or a failed fetch that fell back to a native post): the
+    // function redirects back here with ?error=<code>.
+    const urlError = new URLSearchParams(location.search).get('error');
+    if (urlError) showError(urlError);
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!form.reportValidity()) return; // native required/length/email checks
+      errorEl.hidden = true;
+      setBusy(true);
+
+      let data: { ok?: boolean; error?: string } = {};
+      let httpStatus = 0;
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({
+            name: field('name').value.trim(),
+            email: field('email').value.trim(),
+            organization: field('organization').value.trim(),
+            message: field('message').value.trim(),
+            source: field('source').value,
+            contact_reason: field('contact_reason').value, // honeypot — must reach the server
+            'cf-turnstile-response':
+              form.querySelector<HTMLInputElement>('[name="cf-turnstile-response"]')?.value ?? '',
+            ...attribution(),
+          }),
+        });
+        httpStatus = res.status;
+        data = await res.json().catch(() => ({}));
+      } catch (err) {
+        console.error('[contact] request failed', err);
+        showError('default');
+        setBusy(false);
+        return;
+      }
+
+      if (data.ok) {
+        form.hidden = true;
+        success.textContent = SENT;
+        success.hidden = false;
+        success.focus();
+      } else {
+        // `(no JSON body)` means the function didn't answer as itself — e.g. it
+        // isn't being served, which is what `npm run dev` alone produces.
+        console.error('[contact] rejected', { httpStatus, error: data.error ?? '(no JSON body)' });
+        showError(data.error ?? 'default');
+        setBusy(false);
+      }
+    });
+  });
+</script>
+
+<style>
+  .contact { display: grid; gap: 1.15rem; }
+  .contact[hidden] { display: none; } /* author `display: grid` outranks UA [hidden] */
+  .field { display: grid; gap: 0.4rem; }
+  label { font-weight: 560; font-size: 0.98rem; }
+  .optional { font-weight: 400; color: var(--ink-faint); }
+  input, textarea, select {
+    font: inherit;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    padding: 0.7em 0.85em;
+    width: 100%;
+  }
+  textarea { resize: vertical; min-height: 9rem; line-height: 1.5; }
+  :is(input, textarea, select):focus-visible { outline: 2px solid var(--brand); outline-offset: 1px; }
+  .hint { color: var(--ink-muted); font-size: var(--step-small); }
+  .contact__decoy {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .contact__turnstile:empty { display: none; }
+  .contact__error {
+    color: var(--fault);
+    background: var(--fault-tint);
+    border-radius: var(--radius-sm);
+    padding: 0.7rem 0.9rem;
+    font-size: 0.95rem;
+  }
+  .actions .btn:disabled { opacity: 0.65; cursor: default; }
+  .contact__success {
+    background: var(--ok-tint);
+    color: var(--ink);
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.15rem;
+  }
+  .contact__success:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+</style>

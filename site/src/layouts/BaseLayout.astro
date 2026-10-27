@@ -48,6 +48,37 @@ const fullTitle = title === siteName ? title : `${title} · ${siteName}`;
     <!-- Site-wide support widget (build #2). Self-initializes into its own vendor
          iframe; the "Runs on this site" dogfood behind builds/botpress. -->
 
+    <script>
+      // Contact attribution (CONTEXT §8). On the FIRST page of a visit, remember the
+      // external site that referred it and any utm_* tags, in sessionStorage only —
+      // gone when the tab closes, never a cookie, and sent nowhere unless the visitor
+      // submits the Contact form (ContactForm reads it). Later pages don't overwrite
+      // it, so an internal click to /contact still reports where the visit began.
+      try {
+        if (!sessionStorage.getItem('jg_attr')) {
+          const q = new URLSearchParams(location.search);
+          let ref_host = '';
+          try {
+            const r = new URL(document.referrer);
+            if (r.hostname !== location.hostname) ref_host = r.hostname;
+          } catch {
+            /* no or opaque referrer */
+          }
+          sessionStorage.setItem(
+            'jg_attr',
+            JSON.stringify({
+              ref_host,
+              utm_source: q.get('utm_source') || '',
+              utm_medium: q.get('utm_medium') || '',
+              utm_campaign: q.get('utm_campaign') || '',
+            }),
+          );
+        }
+      } catch {
+        /* storage blocked (private mode, policy): attribution is optional */
+      }
+    </script>
+
 
     <style>
       .skip-link {

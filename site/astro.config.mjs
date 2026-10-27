@@ -78,12 +78,13 @@ const DERIVED_ROUTES = new Set(['/', '/builds/', '/tools/']);
 // must match where the site is actually served — the live custom domain.
 export default defineConfig({
   site: 'https://jigg.ai',
-  // /subscribed is a transactional confirmation landing (Buttondown's
-  // "After confirming" redirect) — noindex'd and kept out of the sitemap.
+  // /subscribed (Buttondown's "After confirming" redirect) and /contact/sent (the
+  // no-JS inquiry confirmation) are transactional landings — noindex'd and kept
+  // out of the sitemap.
   integrations: [
     mdx(),
     sitemap({
-      filter: (page) => !page.includes('/subscribed'),
+      filter: (page) => !page.includes('/subscribed') && !page.includes('/contact/sent'),
       serialize(item) {
         // Normalise to the trailing-slash form the keys above use, so this does
         // not silently stop matching if the trailingSlash config ever changes.
