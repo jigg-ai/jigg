@@ -14,16 +14,17 @@ point. See `builds/website/test.md` for the per-check detail on build #1.
 
 The studio pages are built; these are what stand between the PR and its one merge.
 
-- **Resend setup (owner action).** Create the account, verify `jigg.ai` as the sending
-  domain (Resend shows the DNS records; they go in Cloudflare, DNS-only), and add to
-  Netlify: `RESEND_API_KEY` (all deploy contexts, so the preview's function works),
-  optionally `CONTACT_FROM` (defaults to `Jigg.AI inquiries <inquiries@jigg.ai>`, so it
-  must be on the verified domain) and `CONTACT_TO` (defaults to `hello@jigg.ai`). Free
-  tier: 3,000 emails a month, 100 a day, one domain — inquiries are nowhere near that.
-- **Contact end to end on the Deploy Preview.** A real inquiry arrives in the inbox with
-  the `[deploy-preview]` subject prefix and Reply-To set to the sender; a token-less
-  POST is rejected; the function log shows `contact_sent` with attribution and no
-  message contents. CONTEXT §6 makes this a launch gate, not a nice-to-have.
+- ~~**Resend setup**~~ — **done 2026-10-27**: account created, `jigg.ai` verified through
+  Cloudflare Domain Connect (CNAMEs `send` and `rsend` to `*.forge.rmta.net`, DKIM TXT on
+  `resend._domainkey`; the root Google MX and SPF untouched), a sending-only key in
+  Netlify for Production, Deploy Previews and Branch deploys. Not for Preview Servers or
+  the CLI.
+- ~~**Contact end to end on the Deploy Preview**~~ — **done 2026-10-27**: a real inquiry
+  from a tagged link arrived in the inbox (not spam) as "[deploy-preview] Project inquiry
+  from …", with the source and `Campaign: test / e2e / launch-check` in the body; Reply
+  went to the sender; the log shows `contact_sent` with source, UTM tags, domain only and
+  `"context":"deploy-preview"`. Token-less and foreign-origin probes were rejected and
+  logged before anything was sent.
 - ~~**Founder credential line against LinkedIn**~~ — **done 2026-10-26**: the founder
   confirmed it matches the profile, and the LinkedIn URL is linked from About, the one
   page that names the lead (CONTEXT §4).
