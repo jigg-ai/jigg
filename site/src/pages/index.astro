@@ -1,65 +1,67 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { getPublishedBuilds, pickFeatured } from '../lib/builds';
+import { getPublishedBuilds } from '../lib/builds';
+import { getServices } from '../lib/services';
+import { FOUNDER } from '../lib/site';
 import BuildRow from '../components/BuildRow.astro';
-import EmailCapture from '../components/EmailCapture.astro';
-import RunsOnSiteBadge from '../components/RunsOnSiteBadge.astro';
 
-const builds = await getPublishedBuilds();
-const featured = pickFeatured(builds);
-const recent = builds.filter((b) => b.id !== featured?.id).slice(0, 4);
-const featCat = featured
-  ? featured.data.category[0].toUpperCase() + featured.data.category.slice(1)
-  : '';
+// The studio homepage (CONTEXT §6): leads with what Jigg.AI does, offers two paths,
+// and uses the build journal as evidence. No featured-build hero and no newsletter
+// form up here — buyers should meet engineering evidence first, and Subscribe lives
+// on Builds and in the footer (CONTEXT §7).
+const [builds, services] = await Promise.all([getPublishedBuilds(), getServices()]);
+const recent = builds.slice(0, 4);
 ---
 
 <BaseLayout title="Jigg.AI">
   <section class="hero container">
-    <p class="eyebrow">
-      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M14.5 5.5a3.5 3.5 0 00-4.9 4.2l-6 6 2.7 2.7 6-6a3.5 3.5 0 004.2-4.9l-2 2-1.8-1.8z" />
-      </svg>
-      Build-in-public · one tool at a time
-    </p>
-    <h1 class="display">Anyone can build real things with AI. Here's the proof.</h1>
+    <p class="eyebrow">AI-Accelerated Software Engineering</p>
+    {/* nowrap keeps the compound word whole: at narrow widths the hyphen was the
+        line break, leaving "AI-" stranded at the end of a line. */}
+    <h1 class="display">
+      Experienced engineering judgment. <span class="nowrap">AI-accelerated</span> execution.
+    </h1>
     <p class="lead">
-      Each post pairs an AI tool worth your time with a real thing I built using
-      it — tested, timed, and documented. Mistakes and all. Including this website.
+      From rapid prototypes to modernizing existing systems, Jigg.AI combines
+      AI-enabled development with human architecture, review and accountability.
     </p>
-    <div class="capture-wrap"><EmailCapture /></div>
+    <div class="paths">
+      <a class="btn btn--primary" href="/contact">Discuss a project</a>
+      <a class="btn" href="/builds">Explore the builds</a>
+    </div>
+    <p class="cred mono">
+      {FOUNDER.short} <a href="/about#founder">About the founder →</a>
+    </p>
+  </section>
+
+  <section class="services container" aria-labelledby="services-title">
+    <div class="sec-head">
+      <h2 id="services-title">What Jigg.AI does</h2>
+      <a class="view-all mono" href="/services">All services →</a>
+    </div>
+    <ul class="rows">
+      {
+        services.map(({ id, service }) => (
+          <li class="svc">
+            <a class="svc-title" href={`/services#${id}`}>{service.data.title}</a>
+            <p class="svc-summary">{service.data.summary}</p>
+          </li>
+        ))
+      }
+    </ul>
   </section>
 
   {
-    featured && (
-      <section class="featured container" aria-labelledby="featured-title">
-        <p class="feat-eyebrow">
-          <span class="cat">{featCat}</span>
-          {featured.data.runs_on_site && <RunsOnSiteBadge />}
-        </p>
-        <h2 id="featured-title" class="feat-title">
-          <a href={`/builds/${featured.id}`}>{featured.data.title}</a>
-        </h2>
-        <p class="feat-summary">{featured.data.summary}</p>
-        {featured.data.test_score && (
-          <p class="mono feat-stat">
-            {featured.data.test_score}
-            {featured.data.meta_line ? `  ·  ${featured.data.meta_line}` : ''}
-          </p>
-        )}
-        <p class="feat-cta">
-          <a class="btn" href={`/builds/${featured.id}`}>Read the build →</a>
-        </p>
-      </section>
-    )
-  }
-
-  {
     recent.length > 0 && (
-      <section class="recent container">
+      <section class="journal container" aria-labelledby="journal-title">
         <div class="sec-head">
-          <h2>Recent builds</h2>
-          <a class="view-all mono" href="/builds">View all →</a>
+          <h2 id="journal-title">The build journal</h2>
+          <a class="view-all mono" href="/builds">All builds →</a>
         </div>
+        <p class="section-lead">
+          Every build is documented in public: what was built, how it was tested, what it
+          cost, and what went wrong. It's how Jigg.AI shows its work before you get in touch.
+        </p>
         <ul class="rows">
           {recent.map((b) => <BuildRow build={b} variant="recent" />)}
         </ul>
@@ -69,37 +71,32 @@ const featCat = featured
 </BaseLayout>
 
 <style>
-  .hero { padding-top: clamp(2.5rem, 6vw, 4.5rem); padding-bottom: 2.5rem; }
-  .eyebrow { color: var(--ink-muted); }
+  .hero { padding-top: clamp(2.5rem, 6vw, 4.5rem); padding-bottom: 2.75rem; }
+  .eyebrow {
+    font-family: var(--font-mono);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--brand);
+  }
   .display {
     font-size: var(--step-display);
     font-weight: 460;
-    max-width: 15ch;
+    max-width: 17ch;
     margin-top: 0.9rem;
   }
+  .nowrap { white-space: nowrap; }
   .lead {
     color: var(--ink-muted);
     font-size: clamp(1.1rem, 1rem + 0.5vw, 1.35rem);
     line-height: 1.5;
-    max-width: 34rem;
+    max-width: 36rem;
     margin-top: 1.25rem;
   }
-  .capture-wrap { margin-top: 2rem; max-width: 34rem; }
+  .paths { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2rem; }
+  .cred { margin-top: 1.5rem; }
+  .cred a { color: var(--ink); text-decoration-color: var(--brand); white-space: nowrap; }
 
-  .featured {
-    padding-block: 2.5rem;
-    border-top: 1px solid var(--border);
-  }
-  .feat-eyebrow { display: flex; align-items: center; gap: 0.7rem; }
-  .feat-eyebrow .cat { color: var(--ink-muted); font-size: 0.9rem; }
-  .feat-title { font-size: clamp(1.7rem, 1.4rem + 1.4vw, 2.3rem); margin-top: 0.7rem; }
-  .feat-title a { color: var(--ink); text-decoration: none; }
-  .feat-title a:hover { text-decoration: underline; text-decoration-color: var(--brand); }
-  .feat-summary { color: var(--ink-muted); max-width: 42rem; margin-top: 0.7rem; font-size: 1.08rem; }
-  .feat-stat { margin-top: 0.8rem; }
-  .feat-cta { margin-top: 1.4rem; }
-
-  .recent { padding-top: 2.5rem; }
+  .services, .journal { padding-top: 2.5rem; }
   .sec-head {
     display: flex;
     align-items: baseline;
@@ -109,6 +106,17 @@ const featCat = featured
   }
   .view-all { text-decoration: none; color: var(--ink-muted); }
   .view-all:hover { color: var(--ink); }
+  .journal .section-lead { margin-bottom: 0.9rem; }
   .rows { list-style: none; padding: 0; margin: 0; }
   .rows :global(.row:last-child) { border-bottom: 1px solid var(--border); }
+  .svc { border-top: 1px solid var(--border); padding-block: 1.1rem; }
+  .svc:last-child { border-bottom: 1px solid var(--border); }
+  .svc-title {
+    font-family: var(--font-serif);
+    font-size: 1.3rem;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .svc-title:hover { text-decoration: underline; text-decoration-color: var(--brand); }
+  .svc-summary { color: var(--ink-muted); max-width: 44rem; margin-top: 0.3rem; }
 </style>
