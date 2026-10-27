@@ -10,8 +10,9 @@ scope:
 evidence:
   - build: "website"
   - build: "buttondown-hardening"
-  - text: "The founder's 25+ years of software development"
+  - text: "The engineering lead's professional experience"
+    href: "/about#lead"
 note: "The builds are Jigg.AI's own projects, documented in public. They show the method; they are not client engagements."
 ---
 
-AI agents do much of the implementation. The founder sets the architecture, reviews every change and decides what ships. The build logs show the dead ends and the time sinks as well as the result.
+AI agents do much of the implementation. The engineering lead sets the architecture, reviews every change and decides what ships. The build logs show the dead ends and the time sinks as well as the result.

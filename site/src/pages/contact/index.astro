@@ -1,19 +1,20 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ContactForm from '../../components/ContactForm.astro';
-import { FOUNDER, CONTACT_EMAIL } from '../../lib/site';
+import { LEAD_PROMISE, CONTACT_EMAIL } from '../../lib/site';
 ---
 
 <BaseLayout
   title="Discuss a project"
-  description="Tell Jigg.AI what you're trying to build, fix or modernize. You'll get a reply from the founder directly."
+  description="Tell Jigg.AI what you're trying to build, fix or modernize. You'll get a reply from the engineering lead who would own the project."
 >
   <section class="container contact-page">
     <header class="head">
       <h1>Discuss a project</h1>
       <p class="lead">
         Tell Jigg.AI what you're trying to build, fix or modernize. You'll get a reply
-        from {FOUNDER.name} directly — the same person who will be accountable for the work.
+        from the engineering lead who would own the project — the person accountable for
+        the work, not a sales team.
       </p>
     </header>
 
@@ -22,15 +23,7 @@ import { FOUNDER, CONTACT_EMAIL } from '../../lib/site';
 
       <aside class="side">
         <h2>Who you'll hear from</h2>
-        <p>
-          {FOUNDER.credential}
-          {FOUNDER.linkedin && (
-            <>
-              {' '}
-              <a href={FOUNDER.linkedin} rel="me noopener">LinkedIn</a>.
-            </>
-          )}
-        </p>
+        <p>{LEAD_PROMISE} <a href="/about#lead">Who leads Jigg.AI</a>.</p>
 
         <h2>Your project stays private</h2>
         <p>

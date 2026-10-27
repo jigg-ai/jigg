@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getPublishedBuilds } from '../lib/builds';
 import { getServices } from '../lib/services';
-import { FOUNDER } from '../lib/site';
+import { LEAD_PROMISE } from '../lib/site';
 import BuildRow from '../components/BuildRow.astro';
 
 // The studio homepage (CONTEXT §6): leads with what Jigg.AI does, offers two paths,
@@ -29,8 +29,8 @@ const recent = builds.slice(0, 4);
       <a class="btn btn--primary" href="/contact">Discuss a project</a>
       <a class="btn" href="/builds">Explore the builds</a>
     </div>
-    <p class="cred mono">
-      {FOUNDER.short} <a href="/about#founder">About the founder →</a>
+    <p class="cred">
+      {LEAD_PROMISE} <a href="/about#lead">Who leads Jigg.AI →</a>
     </p>
   </section>
 
@@ -95,7 +95,7 @@ const recent = builds.slice(0, 4);
     margin-top: 1.25rem;
   }
   .paths { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2rem; }
-  .cred { margin-top: 1.5rem; }
+  .cred { margin-top: 1.5rem; max-width: 36rem; color: var(--ink-muted); font-size: 0.98rem; }
   .cred a { color: var(--ink); text-decoration-color: var(--brand); white-space: nowrap; }
 
   .services, .journal { padding-top: 2.5rem; }

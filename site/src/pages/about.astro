@@ -15,14 +15,16 @@ const { Content } = await render(entry);
       <Content />
     </div>
 
-    {/* The founder block reads from lib/site.ts rather than about.md, so the
-        credential line has one source and the LinkedIn link only renders once a
-        real URL is set. */}
-    <section class="founder" id="founder" aria-labelledby="founder-title">
-      <h2 id="founder-title">Who's behind Jigg.AI</h2>
+    {/* The one place the current lead is named (CONTEXT §4). It reads from
+        lib/site.ts, the single source for person-specific facts; every other studio
+        page makes the role promise instead. */}
+    <section class="founder" id="lead" aria-labelledby="lead-title">
+      <h2 id="lead-title">Who leads Jigg.AI</h2>
       <p class="name">{FOUNDER.name} <span class="mono">{FOUNDER.title}</span></p>
       <p>
-        {FOUNDER.credential} Clients work with {FOUNDER.name.split(' ')[0]} directly.
+        {FOUNDER.credential} Every client engagement has an engineering lead who owns it
+        from the first conversation and answers for what's delivered; today, that's
+        {' '}{FOUNDER.name.split(' ')[0]}.
         {FOUNDER.linkedin && (
           <>
             {' '}

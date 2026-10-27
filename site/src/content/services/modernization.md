@@ -9,7 +9,8 @@ scope:
   - "Integrations between existing systems"
   - "Architecture reviews and improvements"
 evidence:
-  - text: "The founder's professional experience: 25+ years of software engineering, including engineering management at Amazon"
+  - text: "The engineering lead's professional experience in software engineering and engineering management"
+    href: "/about#lead"
   - text: "Planned for the build journal: an aging open-source application, modernized in public, with its existing behavior pinned by tests before anything changes"
 note: "There is no public modernization build yet, so this rests on professional experience. No client names or outcomes are claimed."
 ---

@@ -2,7 +2,7 @@
 import { render } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getServices } from '../lib/services';
-import { FOUNDER } from '../lib/site';
+import { LEAD_PROMISE } from '../lib/site';
 
 const services = await getServices();
 const rendered = await Promise.all(services.map(async (s) => ({ ...s, Content: (await render(s.service)).Content })));
@@ -16,8 +16,8 @@ const rendered = await Promise.all(services.map(async (s) => ({ ...s, Content: (
     <header class="head">
       <h1>Services</h1>
       <p class="lead">
-        Three kinds of work, each with the evidence behind it. You work directly with
-        {' '}{FOUNDER.name}, who is accountable for every engagement. The evidence is
+        Three kinds of work, each with the evidence behind it, and one engineering lead
+        who owns your project and answers for what's delivered. The evidence is
         Jigg.AI's own public builds; <a href="#privacy">client work stays private</a> unless
         you choose to share it.
       </p>
@@ -94,14 +94,7 @@ const rendered = await Promise.all(services.map(async (s) => ({ ...s, Content: (
     <section class="who" aria-labelledby="who-title">
       <h2 id="who-title">Who you work with</h2>
       <p>
-        {FOUNDER.credential}
-        {FOUNDER.linkedin && (
-          <>
-            {' '}
-            <a href={FOUNDER.linkedin} rel="me noopener">LinkedIn</a>.
-          </>
-        )}
-        {' '}<a href="/about">How Jigg.AI works →</a>
+        {LEAD_PROMISE} <a href="/about#lead">Who leads Jigg.AI →</a>
       </p>
       <p class="cta"><a class="btn btn--primary" href="/contact">Discuss a project</a></p>
     </section>
