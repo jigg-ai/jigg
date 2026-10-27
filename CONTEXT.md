@@ -87,7 +87,7 @@ Every build log pairs a tool with a real artifact built with it. Page anatomy:
   | Contact | Yes — a real person behind business inquiries |
   | Builds | No — the journal keeps its persona |
 
-- **Credential line — draft; every fact must match LinkedIn before it is published:**
+- **Credential line — checked against LinkedIn by the founder, 2026-10-26:**
   "Jigg.AI is founded and led by Sasha Matison, a software engineer with 25+ years of
   experience, including engineering management at Amazon." Homepage short form:
   "Founder-led engineering. 25+ years of software development experience." One number

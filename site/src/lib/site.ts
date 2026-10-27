@@ -1,8 +1,8 @@
 // Studio facts used across pages (home, Services, About, Contact). One place, so a
 // correction lands everywhere at once.
 //
-// The credential lines are DRAFTS until every fact is checked against LinkedIn
-// (CONTEXT §4) — verifying them is a merge gate for the studio PR. `linkedin` is the
+// The credential lines were checked against LinkedIn by the founder on 2026-10-26
+// (CONTEXT §4); re-check them whenever either changes. `linkedin` is the
 // founder's own profile, supplied by them; if it's ever emptied, pages render no link
 // rather than a dead one.
 export const FOUNDER = {

@@ -24,9 +24,9 @@ The studio pages are built; these are what stand between the PR and its one merg
   the `[deploy-preview]` subject prefix and Reply-To set to the sender; a token-less
   POST is rejected; the function log shows `contact_received` with attribution and no
   message contents. CONTEXT §6 makes this a launch gate, not a nice-to-have.
-- **Founder credential line against LinkedIn** (`site/src/lib/site.ts`, mirrored in
-  CONTEXT §4). Title, the "25+" and "engineering management at Amazon". (The LinkedIn
-  URL itself was supplied 2026-10-26 and is linked from About, Services and Contact.)
+- ~~**Founder credential line against LinkedIn**~~ — **done 2026-10-26**: the founder
+  confirmed it matches the profile, and the LinkedIn URL is linked from About, Services and
+  Contact.
 - **Full-site review on the preview**, then merge with a merge commit. Afterwards the
   production deploy log should show a real build (not "Canceled") and
   `[indexnow] submitted` with a 2xx — the first production run of both the fixed
