@@ -15,7 +15,11 @@ Jigg.AI is an AI-accelerated software engineering studio with a public build jou
 - **The studio is the business.** It builds, modernizes and improves software for
   organizations, under contract.
 - **The build journal is the evidence.** Real things built with AI tools, tested and
-  documented in public, failures included.
+  documented in public, failures included. It is Jigg.AI's own work.
+- **Client work is private by default.** Anything shared from it — a detail, an
+  anonymized write-up, a named case study — is the client's choice, made in writing
+  (PROCESS.md → Client work). The site says so wherever it talks about building in
+  public.
 - **AI does much of the execution** — coding, prototyping, testing, documentation. An
   experienced engineer provides the direction, architecture, review and accountability.
 

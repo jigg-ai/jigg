@@ -25,6 +25,10 @@ Two surfaces, two voices (CONTEXT §4). The rules under "Both" apply everywhere.
   logos or outcomes without written permission, and never name a prospective client.
 - Every service names its evidence. An internal build is a demonstration, not a client
   engagement; don't let the copy blur the two.
+- Wherever a studio page mentions building in public, say whose work that is: the
+  journal is Jigg.AI's own projects, and client work is private by default, shared only
+  with the client's written permission. A prospective client should never come away
+  thinking their project will be published.
 - No affiliate links on studio pages.
 
 ## Both

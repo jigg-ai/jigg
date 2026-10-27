@@ -204,11 +204,19 @@ decide whether you're testing the proxy or the whole flow.
 Studio engagements are not builds, and nothing above about publishing applies to them by
 default. These rules are written before the first engagement, not discovered during it.
 
-- **Confidential by default.** Client code, data, documents and deliverables never enter
-  this public repo, a build log, a screenshot or a social post without the client's
-  written authorization. A case study needs that permission, in writing, before drafting
-  starts. Without it, the journal may describe a general method, and nothing that
-  identifies the client.
+- **Private by default; sharing is the client's choice.** The build journal is Jigg.AI's
+  own work. A client engagement is never a build log unless the client decides it should
+  be, and the level is set per engagement, in writing:
+
+  | Level | What's published |
+  |---|---|
+  | **Private** (the default) | Nothing — not the work, not a description of the method drawn from it, not even that the engagement exists. |
+  | **Shared with permission** | Only what the client approves in writing (an anonymized write-up of the approach, specific details), and the client reviews it before it's published. |
+  | **Case study** | A named write-up on Work, with written permission, reviewed by the client before it's published. |
+
+  Outside what the level allows, client code, data, documents and deliverables never
+  enter this public repo, a build log, a screenshot or a social post. A level can only
+  move up with new written permission, and drafting starts only after it's given.
 - **AI tools are agreed up front.** Each engagement records which AI tools will touch the
   client's code or data, and the client approves the list before work starts. If a
   client's policy restricts sending code to third-party AI services, the work follows
