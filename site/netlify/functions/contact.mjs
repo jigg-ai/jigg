@@ -87,6 +87,13 @@ export default async (req, context) => {
     return reply({ ok: false, error: 'server_not_configured' }, 500, '/contact?error=failed');
   }
   const deployContext = deployContextOf(context);
+  // Cloudflare's test secrets pass dummy tokens predictably, so they must never run
+  // in production. Fail closed rather than quietly skipping the hostname check.
+  if (deployContext === 'production' && isTestSecret(turnstileSecret)) {
+    console.error('contact: a Turnstile TEST secret is configured in production');
+    log('config_error', { form: 'contact', reason: 'test_turnstile_secret_in_production' });
+    return reply({ ok: false, error: 'server_not_configured' }, 500, '/contact?error=failed');
+  }
 
   // 2. Origin / Referer — catches lazy bots; absent headers pass (see subscribe.mjs).
   const origin = req.headers.get('origin') || req.headers.get('referer') || '';
