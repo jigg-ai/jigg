@@ -5,12 +5,28 @@ export type Build = CollectionEntry<'builds'>;
 const publishedTime = (b: Build) => b.data.published?.getTime() ?? 0;
 
 /**
- * Live builds, newest first. Drafts are hidden in production only, so a
- * work-in-progress entry is still visible with `astro dev`.
+ * Drafts are hidden on the LIVE SITE ONLY — not on every production build.
+ *
+ * The distinction is load-bearing: a Netlify Deploy Preview is a production
+ * build (`import.meta.env.PROD` is true), so gating on PROD alone made a build
+ * drafted on a branch invisible on its own preview — while PROCESS step 5
+ * requires handing the human that preview URL for sign-off. The two rules were
+ * in direct conflict, and the workaround (`npm run dev`, which isn't the
+ * production build) is what let build #1's signup fix ship broken.
+ *
+ * So on Netlify, decide from the deploy context: `production` hides drafts,
+ * `deploy-preview`/`branch-deploy` show them. CONTEXT is unset off Netlify, so
+ * local builds keep their existing behaviour — `npm run dev` shows drafts and
+ * `npm run build`/`npm run preview` stay production-like.
  */
+const HIDE_DRAFTS = process.env.CONTEXT
+  ? process.env.CONTEXT === 'production'
+  : import.meta.env.PROD;
+
+/** Live builds, newest first. */
 export async function getPublishedBuilds(): Promise<Build[]> {
   const all = await getCollection('builds', ({ data }) =>
-    import.meta.env.PROD ? data.status !== 'draft' : true,
+    HIDE_DRAFTS ? data.status !== 'draft' : true,
   );
   return all.sort((a, b) => publishedTime(b) - publishedTime(a));
 }

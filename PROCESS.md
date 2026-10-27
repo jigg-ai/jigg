@@ -88,6 +88,12 @@ In `build-notes.md`, write:
   human the Deploy Preview URL for the sign-off above, not the live site: the whole point
   is that they review it before it exists in public. Merging last also keeps `published`
   honest, since the deploy lands the same day the date claims.
+  > A `draft` build **does** render on its own Deploy Preview, and only there — draft
+  > visibility is gated on Netlify's `CONTEXT`, so previews show drafts and the live site
+  > never does (`site/src/lib/builds.ts`). So the sign-off happens on the real production
+  > build, with `status` still `draft`. It used to be gated on `import.meta.env.PROD`,
+  > which a preview also satisfies, and the workaround was reviewing at `npm run dev` —
+  > not the production build, which is how build #1's signup fix shipped broken.
 - **After the deploy: re-sync anything that holds a COPY of the site's content.** Today
   that means the support bot's knowledge base. Publishing corrected copy does not correct
   the bot — it keeps answering from whatever it crawled last.

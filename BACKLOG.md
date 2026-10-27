@@ -99,9 +99,18 @@ remains below is what's still *unobserved*, not untried.
   those in commits; BLANK makes leaking one into history structurally impossible.
   `delete_branch_on_merge` left `false` on purpose: branch refs are the recovery path.
   Kept as the record; delete on the next sweep.
-- **NEW — a `draft` build is invisible on its own Deploy Preview, which breaks PROCESS
-  step 5.** `site/src/lib/builds.ts:13` filters `status === 'draft'` out whenever
-  `import.meta.env.PROD` is true. A Deploy Preview *is* a production build, so a build
+- ~~**NEW — a `draft` build is invisible on its own Deploy Preview, which breaks PROCESS
+  step 5.**~~ — **FIXED 2026-07-30** on `chore/search-indexing`, batched into the search-indexing
+  merge as planned. `site/src/lib/builds.ts` now derives draft visibility from Netlify's
+  `CONTEXT` instead of `import.meta.env.PROD`: `production` hides drafts, `deploy-preview` and
+  `branch-deploy` show them, and `CONTEXT` is unset off Netlify so local behaviour is unchanged
+  (`npm run dev` shows drafts, `npm run build`/`npm run preview` stay production-like). Verified
+  with a temporary draft entry across all four cases before the branch was pushed. **Still to
+  observe on a real preview** — the local run proves the gate, not Netlify's env. Original entry
+  below.
+  <br>
+  `site/src/lib/builds.ts:13` filtered `status === 'draft'` out whenever
+  `import.meta.env.PROD` was true. A Deploy Preview *is* a production build, so a build
   drafted on a branch does not render on the preview — confirmed on build #4, whose
   `npm run build` emits 11 pages and no `/builds/buttondown-hardening/`. But PROCESS step 5
   says to hand the human the Deploy Preview URL for sign-off, "not the live site: the whole
@@ -157,20 +166,93 @@ engines; right now it is discoverable only by passive crawl.
   "Request indexing" is the whole toolkit. **Search Console IS set up** (confirmed
   2026-07-30) — use it by hand on publish day.
 
-### 1. The sitemap has no `lastmod`
-`dist/sitemap-0.xml` emits bare `<loc>` entries — `@astrojs/sitemap` omits `lastmod`
-unless configured. So the ping was removed from the web *and* we never supplied the
-signal that replaced it; Google has no freshness hint at all. Fix with a `serialize` in
-`site/astro.config.mjs` mapping each build URL to its `published` / `last_verified` from
-the collection. Care needed: the dates are `z.coerce.date()`, and non-build routes
-(`/about`, `/tools`, the archive) have no natural date — decide whether they get the
-build-time date or none, rather than emitting something misleading.
+**BOTH BUILT 2026-07-30** on `chore/search-indexing`, batched with the draft-visibility fix
+above into one merge. Awaiting Deploy Preview verification and the human pass.
 
-### 2. IndexNow — worth adding even though Google ignores it
-A static key file in `site/public/` plus one POST on deploy covers Bing, Yandex, Seznam
-and Naver. **The reason it matters here is not Bing's search share — Bing's index feeds
-ChatGPT search and Copilot**, which is exactly the answer-engine citability §8 is after.
-Cheap, and the only *automatable* indexing channel that actually exists.
+### 1. ~~The sitemap has no `lastmod`~~ — DONE, with a deliberate decision recorded
+`serialize` in `site/astro.config.mjs` now supplies it. **The decision that matters is
+which routes DON'T get one**, because a `lastmod` is a claim that the page changed, and
+stamping the build time everywhere makes every deploy claim every page changed — Google
+detects that and discounts the field, which is worse than never adding it:
+- `/builds/<slug>/` → `max(published, last_verified)` from the build's frontmatter.
+- `/`, `/builds/`, `/tools/` → the newest **live** (non-draft) build's date. Defensible
+  because those three are *generated from* the collection, so a new build really does
+  rewrite them.
+- `/about`, `/privacy`, `/affiliate-disclosure`, `/subscribe` → **no `lastmod` at all.**
+  They're hand-edited Markdown with no date anywhere in the repo, and file mtime on
+  Netlify is the checkout time, i.e. exactly the lie above. `lastmod` is optional in the
+  protocol; omitting it is the honest answer.
+- Frontmatter is read off disk with a small scan, not through the collection —
+  `astro.config.mjs` is plain Node and can't import `astro:content`, and a YAML dep would
+  breach the keep-dependencies-light rule.
+- **Open follow-up, deliberately not solved:** the four info pages now have *no* freshness
+  signal. The obvious fix is an optional human-maintained `updated` field on the `pages`
+  collection, but it drifts silently the moment someone edits copy and forgets to bump it —
+  a wrong date is worse than none. Revisit only if those pages start mattering for
+  citation; the near-duplicate-info-routes item below would be the natural time.
+
+### 2. ~~IndexNow~~ — DONE (worth adding even though Google ignores it)
+Static key file at `site/public/97ed47aa164376cf88c588d4169d829c.txt` (public by design —
+that file *is* the ownership proof, so no secret and nothing to configure in Netlify) plus
+a local build plugin at `site/plugins/indexnow/`, wired in `netlify.toml`. Covers Bing,
+Yandex, Seznam, Naver. **The reason it matters here is not Bing's search share — Bing's
+index feeds ChatGPT search and Copilot**, which is exactly the answer-engine citability §8
+is after. Points worth not re-deriving:
+- **It must never fire on a Deploy Preview** (previews rebuild per commit and would
+  announce untested URLs for the production domain). Gated on `CONTEXT === 'production'`;
+  the *plugin form* is the second, structural gate, since the file only executes inside
+  Netlify's build system and no local `npm run build` can reach it.
+- **Not a GitHub Action:** an Action on merge can't see whether the deploy happened, and
+  `netlify.toml`'s `ignore` rule cancels docs-only builds — it would announce URLs for a
+  deploy that never ran. Riding the build gives "no deploy, no submission" for free.
+- Submits the whole sitemap each time (~11 URLs, ≤20 deploys/month, limit is 10,000)
+  rather than a git-diff'd subset, which would be a second source of truth about routes.
+- Failures warn and return. An indexing hint must never fail a 15-credit deploy.
+- **Still to verify after merge:** that the key file is served at its exact path on the
+  live domain, and that the production deploy log actually shows a `[indexnow] submitted`
+  line with a 2xx. The preview proves only the *negative* (that it stayed silent).
+
+## The og:image card — reverted, to be redone with the studio repositioning (opened 2026-07-31)
+
+**Status (2026-10-26):** the card was reverted off `chore/search-indexing` so the rest of
+that branch (lastmod, IndexNow, draft visibility, the Turnstile challenge fix) could ship
+without it. The site is back to no `og:image`, as before. It is not being regenerated
+as-is: Jigg.AI is repositioning as an engineering studio with a public build journal, so
+the card's copy changes anyway. Redo it once that positioning is settled, and use the
+three claims below as the checklist the new copy must pass.
+
+The original card (`site/public/og-default.png`, recoverable from commit `a12b814`) was
+wired up correctly and looked right — house serif, the two-accent palette, "Jigg.AI"
+spelled in full, no star ratings. **The problem was its copy.** It is the most-shared single surface
+this site has, and three of its lines are the exact overclaim class that PROCESS §5 and
+the build-#1 audit were hardened against. Checked against the four `.mdx` frontmatters,
+not from memory:
+
+- **"30-question test on every build"** — false. That is the *chatbot* check set. PROCESS
+  §1 explicitly says to adapt the check to the build type ("30 representative questions
+  for a bot; foundation checks for a site build"). Actual `test_score` values: `26/30`
+  (#2), `12/13` (#4), a prose clarity verdict (#3), and **empty** (#1). One build in four.
+- **"Every prompt, flow, and cost included"** — the single claim this project has already
+  publicly retracted. Build #1's prompts were never captured and the promise was withdrawn
+  from the page by name; build #3's prompts live in HeyGen, which has no export, and are
+  marked TO ADD; build #4's repro pack is deliberately partial. On cost: `pricing_as_of` is
+  set on two builds of four — #2 ships with **no cost claim at all**, on purpose.
+  `repro_pack: false` on all four.
+- **"Timed · Real time to first working version"** — no build records time to a first
+  working version. #4 records its session length (2h21m), which is a different measure;
+  #1's "in one sitting" is logged above as an undocumented claim with no timing ever taken;
+  #3 says "took an afternoon", and its operational figures (render time, takes, credits)
+  were left blank rather than estimated.
+
+Also minor: the chips read **Website · Chatbot · Video · Email**, but `Email` is not in the
+category taxonomy (#4 is `websites`), so the card advertises a filter that does not exist.
+
+**Do not fix this by softening the repo to match the artwork.** The fix is to regenerate
+the card with claims the builds actually support — the honest versions are no weaker:
+"Tested — the check set written before the build", "Documented — dead ends included",
+"Reproducible — what we captured, and what we didn't". **Gate: the new card goes through
+the human verify pass before it merges.** Shipping the old one would have put a retracted
+claim back into circulation on the surface most likely to be screenshotted.
 
 ## Unconfirmed facts
 
@@ -266,11 +348,19 @@ Cheap, and the only *automatable* indexing channel that actually exists.
     it is the first subscriber the *signup form* ever converted. **Corrected 2026-07-30:**
     this said "the account's first and only confirmed subscriber," which the data can't
     support — the export is scoped to signups from outside sources, not the whole account.
-  - **The preview test convention needs re-checking now that auditing is back on.** PROCESS
-    ("Testing the newsletter proxy on a preview") standardises disposable
-    `jigg.ai.biz+test-YYYYMMDD@gmail.com` addresses. That convention was written while the
-    firewall was off; plus-addressed gmail is a textbook spam signal, so a test signup may now be
-    blocked and stop being representative. Re-verify, don't assume it survived. (Correction to an
+  - ~~**The preview test convention needs re-checking now that auditing is back on.**~~
+    **RE-VERIFIED 2026-07-30 — the convention survived.** PROCESS ("Testing the newsletter
+    proxy on a preview") standardises disposable `jigg.ai.biz+test-YYYYMMDD@gmail.com`
+    addresses, and the worry was that plus-addressed gmail is a textbook spam signal, so a
+    test signup might now be firewalled and stop being representative. It isn't:
+    `jigg.ai.biz+testsub@gmail.com`, submitted **through a proxy** (so a non-residential IP,
+    the harsher case) landed as **Unactivated**, not Blocked — meaning Buttondown accepted it
+    and sent the confirmation with auditing and Attack mode both on. Keep using the
+    convention. Caveat: this ran against production rather than a Deploy Preview, but the
+    firewall judges the forwarded `ip_address` either way, so the result transfers.
+  - **Delete test subscribers after use** (PROCESS says so, and it's easy to skip). Any left
+    in `Unactivated` inflate the account's counts and read as real signups later — which is
+    exactly the confusion that prompted this check. (Correction to an
     earlier note: the address that is permanently unsubscribable is `sasha.gmi.hodl@gmail.com`,
     via an opt-out suppression — *"previously unsubscribed… you cannot resubscribe them"* — not
     the bare `jigg.ai.biz@gmail.com`, and not the firewall. Different mechanism, different fix.)

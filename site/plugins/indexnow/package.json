@@ -1,0 +1,8 @@
+{
+  "name": "netlify-plugin-indexnow",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "index.mjs",
+  "description": "Submits this site's sitemap URLs to IndexNow — production deploys only."
+}
