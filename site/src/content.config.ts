@@ -131,7 +131,7 @@ const services = defineCollection({
     evidence: z.array(
       z.union([
         z.object({ build: z.string() }),             // a build id, e.g. "website"
-        z.object({ text: z.string() }),              // evidence that isn't a build
+        z.object({ text: z.string(), href: z.string().optional() }), // evidence that isn't a build
       ]),
     ),
     note: z.string().optional(),

@@ -30,7 +30,7 @@ export async function getServices(): Promise<ServiceView[]> {
       id: service.id,
       service,
       evidence: service.data.evidence.map((e) => {
-        if ('text' in e) return { text: e.text };
+        if ('text' in e) return { text: e.text, href: e.href };
         const build = byId.get(e.build);
         if (!build) {
           throw new Error(`services/${service.id}: evidence references unknown or unpublished build "${e.build}"`);
