@@ -29,6 +29,17 @@ published: ""         # YYYY-MM-DD
 last_verified: ""     # YYYY-MM-DD
 pricing_as_of: ""     # YYYY-MM-DD — dates the primary tool's cost (the only perishable cost)
 
+# Time and cost (CONTEXT §5). Record as you go, from the start; never reconstruct.
+# basis: measured | estimated | unavailable. Human time = directing and reviewing;
+# agent time = how long the AI ran. Keep them apart — the gap is the claim.
+human_time:
+  minutes:            # integer; leave out when basis is unavailable
+  basis: unavailable
+agent_time:
+  minutes:
+  basis: unavailable
+paid_plans: []        # listed, not summed: [{ tool, plan, price, period: month|year|one-off }]
+
 # Cost / hosting / framework detail does NOT go in the top stamp — author those as
 # fact tiles in the .mdx body so the stamp stays one compact line.
 

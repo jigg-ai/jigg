@@ -14,6 +14,16 @@ import { glob } from 'astro/loaders';
  * verdict card — is authored in the MDX *body* with the reusable components in
  * src/components/post/ (see src/components/post/README.md).
  */
+const timeSpent = z
+  .object({
+    // nullish: the template's empty `minutes:` is YAML null, not absent.
+    minutes: z.number().int().nonnegative().nullish(),
+    basis: z.enum(['measured', 'estimated', 'unavailable']),
+  })
+  .refine((t) => t.basis === 'unavailable' || t.minutes != null, {
+    message: 'minutes is required unless basis is "unavailable"',
+  });
+
 const builds = defineCollection({
   // The entry id is the filename (website.mdx -> "website"), which is also the
   // /builds/<slug> route param — so `slug` from meta.yaml isn't repeated here.
@@ -51,6 +61,25 @@ const builds = defineCollection({
     published: z.coerce.date().optional(),
     last_verified: z.coerce.date().optional(),
     pricing_as_of: z.coerce.date().optional(),    // dates the primary tool's cost — the only perishable cost fact
+
+    // ---- time and cost (CONTEXT §5) — recorded from build #5 on, never backfilled ----
+    // Human time (directing, reviewing) and agent time (how long the AI ran) are
+    // different measures, and the AI-acceleration claim lives in the gap between
+    // them, so they're kept apart. Each carries its basis; "unavailable" is an
+    // honest value, a reconstructed number is not.
+    human_time: timeSpent.optional(),
+    agent_time: timeSpent.optional(),
+    // Listed, not summed: a monthly plan isn't a per-build cost.
+    paid_plans: z
+      .array(
+        z.object({
+          tool: z.string(),                          // e.g. "HeyGen"
+          plan: z.string(),                          // e.g. "Creator"
+          price: z.string(),                         // e.g. "US$32.06 incl. tax"
+          period: z.enum(['month', 'year', 'one-off']),
+        }),
+      )
+      .optional(),
 
     // ---- display + tool-projection helpers (required by the mockups) ----
     featured: z.boolean().default(false),          // pins the home hero
