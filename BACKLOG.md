@@ -10,6 +10,34 @@ point. See `builds/website/test.md` for the per-check detail on build #1.
 
 ---
 
+## Studio launch — gates before `feat/studio` merges (opened 2026-10-26)
+
+The studio pages are built; these are what stand between the PR and its one merge.
+
+- **Resend setup (owner action).** Create the account, verify `jigg.ai` as the sending
+  domain (Resend shows the DNS records; they go in Cloudflare, DNS-only), and add to
+  Netlify: `RESEND_API_KEY` (all deploy contexts, so the preview's function works),
+  optionally `CONTACT_FROM` (defaults to `Jigg.AI inquiries <inquiries@jigg.ai>`, so it
+  must be on the verified domain) and `CONTACT_TO` (defaults to `hello@jigg.ai`). Free
+  tier: 3,000 emails a month, 100 a day, one domain — inquiries are nowhere near that.
+- **Contact end to end on the Deploy Preview.** A real inquiry arrives in the inbox with
+  the `[deploy-preview]` subject prefix and Reply-To set to the sender; a token-less
+  POST is rejected; the function log shows `contact_received` with attribution and no
+  message contents. CONTEXT §6 makes this a launch gate, not a nice-to-have.
+- **Founder credential line against LinkedIn** (`site/src/lib/site.ts`, mirrored in
+  CONTEXT §4). Title, the "25+" and "engineering management at Amazon". And supply the
+  LinkedIn URL — `FOUNDER.linkedin` is empty, so no link renders yet.
+- **Full-site review on the preview**, then merge with a merge commit. Afterwards the
+  production deploy log should show a real build (not "Canceled") and
+  `[indexnow] submitted` with a 2xx — the first production run of both the fixed
+  `ignore` rule and the IndexNow plugin.
+
+Follow-ups, not gates:
+- `contact.mjs` duplicates the origin allowlist, disposable-domain list and Turnstile
+  verification from `subscribe.mjs`, deliberately, to avoid touching the proven signup
+  path in this PR. Extract a shared module once both are live, and re-test both.
+- The og:image card (section below) gets redone with the studio copy.
+
 ## Verification debt (build #1)
 
 - **Lighthouse performance pass** — `test.md` check #7. **BASELINE CAPTURED 2026-07-29:**
