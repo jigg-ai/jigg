@@ -230,7 +230,9 @@ export default async (req) => {
     return reply({ ok: false, error: 'send_failed' }, 502, '/contact?error=failed');
   }
 
-  log('contact_received', { source: source || null, ...attribution, domain, context });
+  // Resend ACCEPTED the message; that is not proof it was delivered. Delivery and
+  // bounces are separate Resend events, not wired up yet (BACKLOG).
+  log('contact_sent', { source: source || null, ...attribution, domain, context });
   return reply({ ok: true }, 200, '/contact/sent');
 };
 
