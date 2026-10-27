@@ -24,11 +24,14 @@ import sitemap from '@astrojs/sitemap';
 //                     the builds collection (hero, archive, tool projection), so a
 //                     new build genuinely rewrites them — this is a real date, not
 //                     a proxy for one.
-//   everything else   NO lastmod. /about, /privacy, /affiliate-disclosure and
-//                     /subscribe are hand-edited Markdown with no date anywhere in
-//                     the repo, and file mtime is the build's checkout time, i.e.
-//                     exactly the lie described above. `lastmod` is optional in the
-//                     protocol; omitting it is the honest answer.
+//   PAGE_REVISED      hand-edited pages carry a hand-kept revision date below, set in
+//                     the same commit as the content change it dates. The derived
+//                     routes take the later of their own revision and the newest
+//                     build: the October studio rewrite changed `/` far more than any
+//                     build since July did, so the build date alone understated it.
+//   everything else   NO lastmod. File mtime is the build's checkout time, i.e.
+//                     exactly the lie described above; `lastmod` is optional in the
+//                     protocol, and omitting it is the honest answer.
 //
 // Frontmatter is read off disk rather than through the content collection because
 // astro.config.mjs is plain Node and cannot import `astro:content`. Only the four
@@ -74,6 +77,20 @@ const NEWEST_LIVE_BUILD = liveTimes.length ? new Date(Math.max(...liveTimes)) : 
 /** Routes whose content is derived from the builds collection. */
 const DERIVED_ROUTES = new Set(['/', '/builds/', '/tools/']);
 
+/**
+ * When a hand-edited page's content last changed. Update the date in the same commit
+ * as the edit; a page that isn't listed gets no lastmod.
+ */
+const PAGE_REVISED = new Map(
+  [
+    ['/', '2026-10-26'],          // studio homepage
+    ['/services/', '2026-10-26'],
+    ['/about/', '2026-10-26'],
+    ['/contact/', '2026-10-26'],
+    ['/privacy/', '2026-10-26'],  // matches the page's own "Last updated" line
+  ].map(([path, date]) => [path, new Date(date)]),
+);
+
 // Static output (default). `site` feeds canonical URLs and the sitemap, so it
 // must match where the site is actually served — the live custom domain.
 export default defineConfig({
@@ -91,10 +108,12 @@ export default defineConfig({
         const path = new URL(item.url).pathname.replace(/\/?$/, '/');
         const build = BUILD_DATES.get(path);
         if (build) return { ...item, lastmod: build.lastmod.toISOString() };
-        if (DERIVED_ROUTES.has(path) && NEWEST_LIVE_BUILD) {
-          return { ...item, lastmod: NEWEST_LIVE_BUILD.toISOString() };
-        }
-        return item; // no defensible date -> no lastmod
+        const dates = [
+          PAGE_REVISED.get(path),
+          DERIVED_ROUTES.has(path) ? NEWEST_LIVE_BUILD : undefined,
+        ].filter(Boolean);
+        if (dates.length === 0) return item; // no defensible date -> no lastmod
+        return { ...item, lastmod: new Date(Math.max(...dates.map((d) => d.getTime()))).toISOString() };
       },
     }),
   ],
