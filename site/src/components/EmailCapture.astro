@@ -12,23 +12,9 @@
 // is now REQUIRED to subscribe: a no-JS submission can't produce a token, and
 // accepting token-less posts would be the bypass. The urlencoded/303 path is kept
 // for the case where JS renders the widget but the fetch itself fails.
-const ACTION = '/.netlify/functions/subscribe';
+import { SITEKEY } from '../lib/turnstile';
 
-// Public by design — this is rendered into the HTML. It must be the sitekey that
-// PAIRS with the context's TURNSTILE_SECRET_KEY: real keys reject Cloudflare's
-// dummy token and test keys reject real ones, so previews use the test pair.
-// Fail the build on Netlify if it's missing rather than silently shipping a
-// broken widget; locally, fall back to the test key so `npm run build` still runs.
-const TEST_SITEKEY = '1x00000000000000000000AA';
-const configuredSitekey =
-  import.meta.env.PUBLIC_TURNSTILE_SITEKEY || process.env.PUBLIC_TURNSTILE_SITEKEY || '';
-if (!configuredSitekey && process.env.NETLIFY) {
-  throw new Error(
-    'PUBLIC_TURNSTILE_SITEKEY is not set. Set it in Netlify with the Builds scope ' +
-      '(production: the real sitekey; preview/branch/local: 1x00000000000000000000AA).'
-  );
-}
-const SITEKEY = configuredSitekey || TEST_SITEKEY;
+const ACTION = '/.netlify/functions/subscribe';
 
 interface Props {
   cta?: string;
@@ -113,16 +99,11 @@ const {
   const INTERACTION_REQUIRED =
     'Please complete the anti-spam check above, then try again.';
 
-  // Load Turnstile once per page. Astro dedupes this hoisted script even when the
-  // component renders more than once; the guard covers anything else on the page.
-  if (!document.querySelector('script[data-turnstile]')) {
-    const s = document.createElement('script');
-    s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
-    s.async = true;
-    s.defer = true;
-    s.dataset.turnstile = '';
-    document.head.appendChild(s);
-  }
+  import { loadTurnstile, handleTurnstileError } from '../lib/turnstile-client';
+
+  // Once per page. Astro dedupes this hoisted script even when the component
+  // renders more than once; the helper's guard covers anything else on the page.
+  loadTurnstile();
 
   document.querySelectorAll<HTMLFormElement>('form.capture').forEach((form) => {
     const shell = form.closest('.capture-shell')!;
@@ -138,43 +119,17 @@ const {
       button.disabled = busy;
       button.textContent = busy ? 'Subscribing…' : label;
     };
-    // Turnstile tokens are single-use: once a submission consumes one, a retry needs
-    // a fresh token or it fails as `timeout-or-duplicate`, so most error paths reset
-    // the widget.
-    //
-    // `turnstile_missing` is the exception, and getting it wrong is user-visible.
-    // No token was issued, so there is nothing to invalidate — and a visible widget
-    // means Cloudflare escalated to a challenge that the visitor still has to
-    // complete. Resetting it there destroys the challenge they were about to click and
-    // sends them round the same loop. Observed in production from a VPN: the challenge
-    // appeared, submitting without it showed "wait a moment", and the reset made the
-    // challenge vanish. (It re-rendered and auto-passed on retry, so the signup went
-    // through — Turnstile was never bypassed, the token was just issued invisibly the
-    // second time. But that only holds while Cloudflare decides to auto-pass; a less
-    // trusted visitor loops instead.)
-    //
-    // "A challenge is on screen" is read from the container's height, not its children.
-    // In interaction-only mode Turnstile inserts its wrapper as soon as the script loads,
-    // so the container has a child even while the invisible check is still running and
-    // nothing is visible; it only gains height when a challenge appears (0px → ~72px,
-    // measured with the forced-challenge test sitekey).
+    // Reset-or-keep and the missing-token cases are explained in turnstile-client.ts.
+    // (Observed in production from a VPN: resetting on a missing token destroyed the
+    // visible challenge; it re-rendered and auto-passed on retry, so the signup went
+    // through, but that only holds while Cloudflare decides to auto-pass.)
     const showError = (code: string) => {
-      const awaitingInteraction = !!widget && widget.offsetHeight > 0;
-      const missingToken = code === 'turnstile_missing';
+      const awaitingInteraction = handleTurnstileError(widget, code);
       errorEl.textContent =
-        missingToken && awaitingInteraction
+        code === 'turnstile_missing' && awaitingInteraction
           ? INTERACTION_REQUIRED
           : ERRORS[code] ?? ERRORS.default;
       errorEl.hidden = false;
-
-      if (missingToken) {
-        // Leave the widget alone; it's the visitor's to complete. Put it in front of
-        // them instead — on a long build log it can sit below the fold.
-        if (awaitingInteraction) widget!.scrollIntoView({ block: 'center', behavior: 'smooth' });
-        return;
-      }
-      const ts = (window as any).turnstile;
-      if (ts && widget) ts.reset(widget);
     };
 
     form.addEventListener('submit', async (e) => {
