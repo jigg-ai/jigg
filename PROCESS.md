@@ -226,10 +226,13 @@ default. These rules are written before the first engagement, not discovered dur
   workspace, never in `jigg-ai/jigg`. Access is the minimum the work needs, and retained
   copies are deleted when the engagement ends unless the agreement says otherwise.
 - **A human reviews every change before it is delivered.** Deploying to a client's
-  environment needs the founder's explicit approval; the agent never deploys on its own
+  environment needs the engineering lead's explicit approval; the agent never deploys on its own
   say-so.
 - **Test results are labelled by who verified them.** Deliverables keep AI-generated test
   results separate from independently verified outcomes, and say which is which.
+- **The contract names the people.** It names the engineering lead, their relevant
+  qualifications and responsibilities, and agreed terms for substitution. The site makes
+  the role promise; the contract makes it specific.
 - **Intellectual property** is set by the engagement agreement. The default is that the
   client owns what it paid for.
 - **No referral compensation.** Tool and vendor recommendations to clients earn nothing,

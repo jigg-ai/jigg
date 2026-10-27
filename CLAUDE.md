@@ -92,7 +92,7 @@ asked to work on a build, find where it is in this pipeline before proceeding:
 Applies to anything destined for `post.md` / publication:
 - Two voices. Build logs: first person as "Jigg.AI-the-builder", a brand persona.
   Studio pages (home, Services, About, Contact): "Jigg.AI" as the subject, never a "we"
-  that implies a team; the founder is named only where accountability matters
+  that implies a team; the current engineering lead is named only on About
   (CONTEXT §4). No selling inside build logs.
 - Honest over polished: show mistakes, retries, dead ends explicitly.
 - Lead with a self-contained summary (the citation hook): what it is, worth it or

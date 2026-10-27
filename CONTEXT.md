@@ -76,26 +76,29 @@ Every build log pairs a tool with a real artifact built with it. Page anatomy:
 - **The journal's narrator is Jigg.AI-the-builder**, first person ("I"), a brand persona.
   Unchanged from July.
 - **Studio pages** (home, Services, About, Contact) use "Jigg.AI" as the subject. Never a
-  "we" that implies a team that doesn't exist. Clients work directly with the founder, and
-  the pages say so.
-- **The founder is named lightly**, where accountability matters: Sasha Matison,
-  Founder & Principal Engineer.
+  "we" that implies a team that doesn't exist.
+- **The brand is independent of the person; accountability is not hidden.** Studio pages
+  make a permanent promise about the role — every engagement is guided by experienced
+  engineering judgment, and the client works directly with the engineering lead
+  responsible for their project — and name the person who fills that role today in one
+  place only, About. Copy stresses ownership and continuity, never interchangeability:
+  replaceability is an internal goal, not a sales point.
 
-  | Where | Founder shown? |
+  | Layer | Identity |
   |---|---|
-  | Homepage hero | No — lead with Jigg.AI |
-  | Homepage credibility line | Yes — one line, linked to About |
-  | Services | Yes — who is accountable for an engagement |
-  | About | Yes — the human–AI operating model |
-  | Contact | Yes — a real person behind business inquiries |
-  | Builds | No — the journal keeps its persona |
+  | Public site (Home, Services, Contact) | Jigg.AI, with the engineering-lead promise; no name |
+  | About | The current lead, named once: Sasha Matison, Founder & Principal Engineer, with the verified credential line and LinkedIn |
+  | Discovery conversation | An introduction to the lead who would own the project |
+  | Contract | The named lead, qualifications, responsibilities and agreed substitution terms (PROCESS → Client work) |
 
-- **Credential line — checked against LinkedIn by the founder, 2026-10-26:**
-  "Jigg.AI is founded and led by Sasha Matison, a software engineer with 25+ years of
-  experience, including engineering management at Amazon." Homepage short form:
-  "Founder-led engineering. 25+ years of software development experience." One number
-  format everywhere ("25+"). LinkedIn holds the full history: no résumé, no biography,
-  no photo required.
+- **Credentials belong to the person, never the brand.** "25+ years… engineering
+  management at Amazon" describes Sasha, so it appears only where Sasha is named, and is
+  never worded as a property of Jigg.AI. Checked against LinkedIn by the founder,
+  2026-10-26: "Jigg.AI is founded and led by Sasha Matison, a software engineer with 25+
+  years of experience, including engineering management at Amazon." One number format
+  ("25+"). LinkedIn holds the full history: no résumé, no biography, no photo required.
+  Person-specific facts live in one file (`site/src/lib/site.ts`), so the site changes in
+  one place if the lead ever does.
 - **Journal disclosure:** "Builds and write-ups are produced using AI tools, under human
   direction. Results, limitations and verification status are documented for each
   project."
@@ -103,8 +106,9 @@ Every build log pairs a tool with a real artifact built with it. Page anatomy:
   should meet engineering evidence before promotional video, so the studio homepage
   doesn't lead with one (whether build #3's video stays featured anywhere is open, §15).
 - The July version said "not a named individual" and "no human face or voice," partly
-  to remove key-person risk for a sale. A services business is founder-led by nature;
-  that rationale is retired (§13).
+  to remove key-person risk for a sale. A services business is founder-led today, and
+  naming the current lead on About is the honest consequence; keeping the brand and the
+  promise role-based is how that risk is managed instead (§13).
 
 ## 5. Journal content model & taxonomy
 - Primary organizing dimension: functional category (chatbots, video, websites,
@@ -148,7 +152,7 @@ Every build log pairs a tool with a real artifact built with it. Page anatomy:
 
 ## 6. The site
 - **Home** — the studio homepage. Two clear paths: "Discuss a project" and "Explore the
-  builds." One founder credibility line, linked to About. Selected builds as evidence.
+  builds." One line with the engineering-lead promise, linked to About. Selected builds as evidence.
 - **Services** — the three pillars with their evidence (§16), how client code and data are
   handled (PROCESS.md → Client work), and who the client works with.
 - **Builds** — the journal archive: timeline, category filter chips, dates, tool versions
@@ -157,7 +161,7 @@ Every build log pairs a tool with a real artifact built with it. Page anatomy:
 - **Tools index** — secondary: linked from Builds, still indexed. No star ratings; leads
   with what was actually built with each tool, a plain verdict, an accessibility read, and
   "Runs on this site" where true.
-- **About** — the human-directed, AI-executed model, and the founder.
+- **About** — the human-directed, AI-executed model, and who leads Jigg.AI today.
 - **Contact** — the primary commercial conversion, so it is a launch requirement, not a
   nice-to-have: reliable delivery, the same bot defenses as the signup form (Turnstile,
   honeypot, origin check), clear error handling, and source attribution. **The studio
@@ -204,7 +208,7 @@ filters/hubs under Builds, not header items. Work joins the nav once it has cont
   fundamentally changed/discontinued builds → archived as history.
 - Freshness states: verified · recheck-due · archived. Never imply an old build still
   works just because the page exists.
-- Claims about the founder and the services follow the same rule as build claims:
+- Claims about the engineering lead and the services follow the same rule as build claims:
   verified before they are published, and rechecked when they change.
 - Reproducibility pack does triple duty: lead magnet, compounding transferable asset,
   and seed of a future paid/recurring layer. Keep enough evidence public to
@@ -257,6 +261,13 @@ filters/hubs under Builds, not header items. Work joins the nav once it has cont
   experience directly, but it is founder-dependent and harder to scale or sell. Reaching
   that kind of scale would now take something beyond founder-delivered services: a
   broader engineering operation, recurring products, or proprietary software.
+- **Jigg.AI owns the method, the client relationships, the engineering process and the
+  accumulated knowledge; the engineering lead supplies judgment and accountability, but
+  doesn't define the brand.** That's the direction to design toward. Note what it takes:
+  transferability is operational, not a branding question. Removing a name from the site
+  changes nothing while one person interprets requirements, directs and reviews the AI,
+  makes architecture calls, manages clients and approves delivery. Documented process,
+  reproducible testing and shared project knowledge are what make it real.
 - Keep everything documented and transferable anyway — this repo is that documentation.
 
 ## 14. Brand name note
@@ -266,6 +277,10 @@ app; several "Jiggy/Jiggle" AI tools), so: always present as "Jigg.AI," never ba
 so the brand out-signals the noise.
 
 ## 15. Still open
+- Revisit naming the lead on the site once there are independently verifiable client
+  outcomes and delivery no longer depends on one person.
+- Jigg.AI owning client relationships assumes engagements are contracted by Jigg.AI as a
+  business entity, not by an individual. Settle the entity before the first engagement.
 - **The thesis to prove:** that a founder-led, AI-native operation can deliver results
   comparable to a conventional engineering team, with less overhead and no loss of quality.
   Measured first by build #5's human and agent time and real costs, then by client
@@ -283,11 +298,11 @@ internal build demonstrates a method; it is not a completed client engagement.
 | Service | Scope | Evidence today |
 |---|---|---|
 | Rapid Prototyping & Product Delivery | Prototypes, MVPs, proofs of concept, custom applications, websites | Builds #1–#4 (internal); founder experience |
-| Legacy Modernization & Systems Engineering | Upgrades, refactoring, integrations, architecture improvements | Founder experience only (pending verification); build #5 is planned to add public evidence |
+| Legacy Modernization & Systems Engineering | Upgrades, refactoring, integrations, architecture improvements | The engineering lead's professional experience (on About); build #5 is planned to add public evidence |
 | AI Integration & Automation | AI assistants, workflow automation, operational improvements | Builds #2 and #4 (internal) |
 
 - The builds show how Jigg.AI works. They don't set the limits of what it can deliver.
 - Until real modernization examples exist, that pillar's copy says only what the
-  founder's verified experience supports: no client logos, no outcome claims.
+  engineering lead's verified experience supports: no client logos, no outcome claims.
 - Website design sits under product delivery, not as a pillar of its own.
 

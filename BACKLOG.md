@@ -25,8 +25,8 @@ The studio pages are built; these are what stand between the PR and its one merg
   POST is rejected; the function log shows `contact_received` with attribution and no
   message contents. CONTEXT §6 makes this a launch gate, not a nice-to-have.
 - ~~**Founder credential line against LinkedIn**~~ — **done 2026-10-26**: the founder
-  confirmed it matches the profile, and the LinkedIn URL is linked from About, Services and
-  Contact.
+  confirmed it matches the profile, and the LinkedIn URL is linked from About, the one
+  page that names the lead (CONTEXT §4).
 - **Full-site review on the preview**, then merge with a merge commit. Afterwards the
   production deploy log should show a real build (not "Canceled") and
   `[indexnow] submitted` with a 2xx — the first production run of both the fixed
