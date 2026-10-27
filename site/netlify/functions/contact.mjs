@@ -36,6 +36,12 @@ const isAllowedHost = (host) =>
 // What hostname they report is undocumented, so the token-hostname check below
 // applies to real keys only.
 const isTestSecret = (s) => /^[123]x0+AA$/.test(s);
+// The deploy context comes from Netlify's handler context (context.deploy.context:
+// production, deploy-preview, branch-deploy, dev). NOT process.env.CONTEXT: that is
+// a build-time variable, and Netlify doesn't provide it to functions at runtime.
+// The env var is only a fallback for local runs and the test harness.
+const deployContextOf = (context) => context?.deploy?.context || process.env.CONTEXT || 'local';
+
 
 // Throwaway providers — the same speed bump as subscribe.mjs. Role addresses
 // (info@, contact@) are NOT rejected here, unlike the newsletter: a business
@@ -67,7 +73,7 @@ const oneLine = (v, max) => String(v ?? '').replace(/[\r\n]+/g, ' ').trim().slic
 // Attribution tags from the page: short tokens only.
 const tag = (v) => (/^[\w.\-]{1,80}$/.test(String(v ?? '')) ? String(v) : '');
 
-export default async (req) => {
+export default async (req, context) => {
   // 1. Method
   if (req.method !== 'POST') return json({ ok: false, error: 'method_not_allowed' }, 405);
 
@@ -80,6 +86,7 @@ export default async (req) => {
     console.error('contact: RESEND_API_KEY or TURNSTILE_SECRET_KEY is not set');
     return reply({ ok: false, error: 'server_not_configured' }, 500, '/contact?error=failed');
   }
+  const deployContext = deployContextOf(context);
 
   // 2. Origin / Referer — catches lazy bots; absent headers pass (see subscribe.mjs).
   const origin = req.headers.get('origin') || req.headers.get('referer') || '';
@@ -181,8 +188,7 @@ export default async (req) => {
 
   // 6. Deliver. Preview and branch deploys mark the subject, so a test inquiry can
   // never be mistaken for a real one in the inbox.
-  const context = process.env.CONTEXT || 'local';
-  const prefix = context === 'production' ? '' : `[${context}] `;
+  const prefix = deployContext === 'production' ? '' : `[${deployContext}] `;
   const subject = `${prefix}Project inquiry from ${name}${organization ? ` (${organization})` : ''}`;
   const lines = [
     'New project inquiry from jigg.ai/contact',
@@ -232,7 +238,7 @@ export default async (req) => {
 
   // Resend ACCEPTED the message; that is not proof it was delivered. Delivery and
   // bounces are separate Resend events, not wired up yet (BACKLOG).
-  log('contact_sent', { source: source || null, ...attribution, domain, context });
+  log('contact_sent', { source: source || null, ...attribution, domain, context: deployContext });
   return reply({ ok: true }, 200, '/contact/sent');
 };
 
