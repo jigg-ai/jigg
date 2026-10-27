@@ -212,11 +212,18 @@ is after. Points worth not re-deriving:
   live domain, and that the production deploy log actually shows a `[indexnow] submitted`
   line with a 2xx. The preview proves only the *negative* (that it stayed silent).
 
-## ⚠️ The og:image artwork makes three claims the repo contradicts (opened 2026-07-31)
+## The og:image card — reverted, to be redone with the studio repositioning (opened 2026-07-31)
 
-The social card added on `chore/search-indexing` (`site/public/og-default.png`) is wired
-up correctly and looks right — house serif, the two-accent palette, "Jigg.AI" spelled in
-full, no star ratings. **The problem is its copy.** It is the most-shared single surface
+**Status (2026-10-26):** the card was reverted off `chore/search-indexing` so the rest of
+that branch (lastmod, IndexNow, draft visibility, the Turnstile challenge fix) could ship
+without it. The site is back to no `og:image`, as before. It is not being regenerated
+as-is: Jigg.AI is repositioning as an engineering studio with a public build journal, so
+the card's copy changes anyway. Redo it once that positioning is settled, and use the
+three claims below as the checklist the new copy must pass.
+
+The original card (`site/public/og-default.png`, recoverable from commit `a12b814`) was
+wired up correctly and looked right — house serif, the two-accent palette, "Jigg.AI"
+spelled in full, no star ratings. **The problem was its copy.** It is the most-shared single surface
 this site has, and three of its lines are the exact overclaim class that PROCESS §5 and
 the build-#1 audit were hardened against. Checked against the four `.mdx` frontmatters,
 not from memory:
@@ -231,10 +238,11 @@ not from memory:
   marked TO ADD; build #4's repro pack is deliberately partial. On cost: `pricing_as_of` is
   set on two builds of four — #2 ships with **no cost claim at all**, on purpose.
   `repro_pack: false` on all four.
-- **"Timed · Real time to first working version"** — no build has a recorded time. #1's
-  "in one sitting" is logged above as an undocumented claim with no timing ever taken, and
-  #3's operational figures (render time, takes, credits) were left blank rather than
-  estimated.
+- **"Timed · Real time to first working version"** — no build records time to a first
+  working version. #4 records its session length (2h21m), which is a different measure;
+  #1's "in one sitting" is logged above as an undocumented claim with no timing ever taken;
+  #3 says "took an afternoon", and its operational figures (render time, takes, credits)
+  were left blank rather than estimated.
 
 Also minor: the chips read **Website · Chatbot · Video · Email**, but `Email` is not in the
 category taxonomy (#4 is `websites`), so the card advertises a filter that does not exist.
@@ -242,9 +250,9 @@ category taxonomy (#4 is `websites`), so the card advertises a filter that does 
 **Do not fix this by softening the repo to match the artwork.** The fix is to regenerate
 the card with claims the builds actually support — the honest versions are no weaker:
 "Tested — the check set written before the build", "Documented — dead ends included",
-"Reproducible — what we captured, and what we didn't". **Gate: this must be settled at the
-human verify pass, before the branch merges.** Shipping it as-is puts a retracted claim
-back into circulation on the surface most likely to be screenshotted.
+"Reproducible — what we captured, and what we didn't". **Gate: the new card goes through
+the human verify pass before it merges.** Shipping the old one would have put a retracted
+claim back into circulation on the surface most likely to be screenshotted.
 
 ## Unconfirmed facts
 
