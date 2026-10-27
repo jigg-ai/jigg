@@ -10,9 +10,37 @@ point. See `builds/website/test.md` for the per-check detail on build #1.
 
 ---
 
-## Studio launch — gates before `feat/studio` merges (opened 2026-10-26)
+## Engagement models — gates before `feat/engagements` merges (opened 2026-10-27)
 
-The studio pages are built; these are what stand between the PR and its one merge.
+The three ways to engage (CONTEXT §16) are built on `feat/engagements`. The merge waits for
+objective conditions, not a waiting period:
+
+- **Production signup tested** on jigg.ai with a tagged address (then deleted): the first
+  real-key run of the token-hostname check.
+- **Botpress re-crawl completed and verified**: the bot answers from the studio site, not
+  the July publication. Spot-check one question whose answer changed.
+- **No unresolved launch regressions** affecting core functionality (pages, signup,
+  Contact, the journal).
+- **The new "What kind of help?" field tested end to end on the preview**, with
+  `not_answered` distinguishable from `not_sure` in the log and in the email.
+- **Deploy Preview reviewed and approved.**
+
+## Studio launch — shipped 2026-10-27 (PR #5, merge `f4cc992`)
+
+Post-merge checks, all from the production deploy and the live site:
+- **The fixed `ignore` rule built.** The log shows "Failed to fetch cache" — the same
+  no-cache condition that cancelled PR #4 — and this time a full build: 15 pages, "Site is
+  live". PR #4's changes went live with it.
+- **IndexNow's first live run:** `[indexnow] submitted — 202 Accepted for 13 URLs on jigg.ai`.
+- **Live checks:** all pages 200; the founder's name only on About; production Contact and
+  signup reject a token-less POST and a foreign origin. Contact answered
+  `turnstile_missing`, not `server_not_configured`, so production has the Resend key and a
+  real Turnstile secret (a test secret would have tripped the production guard).
+- **Watch: Lighthouse Performance 83** on this deploy (Accessibility 97, Best Practices 92),
+  against the July baseline of 97/97/92/100. Build-machine Lighthouse runs are noisy, so one
+  reading proves little, but a 14-point drop is worth one look before the next site merge.
+
+The gates that preceded the merge, kept for the record:
 
 - ~~**Resend setup**~~ — **done 2026-10-27**: account created, `jigg.ai` verified through
   Cloudflare Domain Connect (CNAMEs `send` and `rsend` to `*.forge.rmta.net`, DKIM TXT on
@@ -28,12 +56,8 @@ The studio pages are built; these are what stand between the PR and its one merg
 - ~~**Founder credential line against LinkedIn**~~ — **done 2026-10-26**: the founder
   confirmed it matches the profile, and the LinkedIn URL is linked from About, the one
   page that names the lead (CONTEXT §4).
-- **Full-site review on the preview**, then merge with a merge commit. Afterwards the
-  production deploy log should show a real build (not "Canceled") and
-  `[indexnow] submitted` with a 2xx — the first production run of both the fixed
-  `ignore` rule and the IndexNow plugin.
-  Also one real signup on production: it is the first real-key run of the token-hostname
-  check added to both functions.
+- ~~**Full-site review on the preview**, then merge~~ — **done 2026-10-27** (see above).
+  The one real production signup is carried forward as an engagements gate.
 
 Follow-ups, not gates:
 - `contact_sent` means Resend *accepted* the message, not that it was delivered. Wire
