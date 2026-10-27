@@ -8,6 +8,12 @@ Copy `builds/_template/` to `builds/<slug>/`. Give the build its own `BRIEF.md`
 set the primary `tool`, `built_with` (production AIs), and `stack` per their roles
 (see CONTEXT.md §5).
 
+**First, check it is a build.** Not every change earns a build log. A build is a piece of
+engineering worth reading about on its own. Site revisions — content, layout, navigation,
+the studio pages — are recorded as dated entries in `builds/website/build-notes.md` and
+ship on a `feat/<slug>` branch (see **Shipping**). Client engagements are not builds
+either; they follow **Client work** below.
+
 ## 1. Define (before building)
 In `build-notes.md`, write:
 - What I'm building, and why
@@ -50,6 +56,11 @@ In `build-notes.md`, write:
   agent. This is the reliable time sink — get it right once.
 - Log to `build-notes.md` as you go: what you tried, what broke, exact errors,
   decisions, dead ends. Messy is correct — this raw material is the differentiator.
+- **Record time and cost as you go** (from build #5 on; CONTEXT §5): `human_time` and
+  `agent_time` in minutes, each with its basis (measured / estimated / unavailable), and
+  the paid plans used (tool, plan, price, billing period). Start the clock at the start.
+  Measured beats estimated, and unavailable beats invented — a number reconstructed
+  afterwards is the same fabrication as a reconstructed prompt.
 - Capture screenshots / short recordings of the artifact.
 - Commits are your timestamped milestones. One logical change per commit, clear
   messages (they feed the build log). See CLAUDE.md for commit rules.
@@ -134,6 +145,7 @@ credits**, so all iteration belongs there.
 |---|---|---|
 | Docs only — nothing under `site/` or `netlify.toml` | commit straight to `main` | **0** (build `ignore`) |
 | A build | `build/<slug>` → PR → preview → merge | 15 |
+| Site revision (e.g. the studio pages) | `feat/<slug>` → PR → preview → merge | 15, once |
 | Site fix / enhancement | `fix/<slug>` → PR → preview → merge | 15, batchable |
 | Urgent production fix | `fix/<slug>` → PR → merge | 15, never batched |
 
@@ -186,6 +198,34 @@ bug previews are best at. Two rules: use a disposable tagged address
 owner's own address — `BACKLOG.md` records it getting firewall-blocked, so it's a
 misleading subject. Double opt-in means a test sub stays unactivated until confirmed;
 decide whether you're testing the proxy or the whole flow.
+
+## Client work
+
+Studio engagements are not builds, and nothing above about publishing applies to them by
+default. These rules are written before the first engagement, not discovered during it.
+
+- **Confidential by default.** Client code, data, documents and deliverables never enter
+  this public repo, a build log, a screenshot or a social post without the client's
+  written authorization. A case study needs that permission, in writing, before drafting
+  starts. Without it, the journal may describe a general method, and nothing that
+  identifies the client.
+- **AI tools are agreed up front.** Each engagement records which AI tools will touch the
+  client's code or data, and the client approves the list before work starts. If a
+  client's policy restricts sending code to third-party AI services, the work follows
+  that policy, even when it's slower. Client material is never opted into a tool's
+  training, sharing or public features.
+- **Data handling.** Client material lives in the client's repositories or a private
+  workspace, never in `jigg-ai/jigg`. Access is the minimum the work needs, and retained
+  copies are deleted when the engagement ends unless the agreement says otherwise.
+- **A human reviews every change before it is delivered.** Deploying to a client's
+  environment needs the founder's explicit approval; the agent never deploys on its own
+  say-so.
+- **Test results are labelled by who verified them.** Deliverables keep AI-generated test
+  results separate from independently verified outcomes, and say which is which.
+- **Intellectual property** is set by the engagement agreement. The default is that the
+  client owns what it paid for.
+- **No referral compensation.** Tool and vendor recommendations to clients earn nothing,
+  disclosed or not (CONTEXT §13).
 
 ## Retro log
 
