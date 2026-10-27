@@ -83,12 +83,12 @@ const DERIVED_ROUTES = new Set(['/', '/builds/', '/tools/']);
  */
 const PAGE_REVISED = new Map(
   [
-    ['/', '2026-10-26'],          // studio homepage
+    ['/', '2026-10-27'],          // studio homepage
     ['/builds/', '2026-10-26'],   // journal links (Subscribe, Tools) added to the archive
-    ['/services/', '2026-10-26'],
+    ['/services/', '2026-10-27'],
     ['/about/', '2026-10-26'],
-    ['/contact/', '2026-10-26'],
-    ['/privacy/', '2026-10-26'],  // matches the page's own "Last updated" line
+    ['/contact/', '2026-10-27'],
+    ['/privacy/', '2026-10-27'],  // matches the page's own "Last updated" line
   ].map(([path, date]) => [path, new Date(date)]),
 );
 
