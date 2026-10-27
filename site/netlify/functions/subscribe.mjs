@@ -40,8 +40,16 @@ const MAX_EMAIL_LEN = 254; // RFC 5321 practical ceiling
 // Hosts allowed to submit. Preview/branch deploys run on *.netlify.app and must
 // keep working, or the whole preview-verification workflow breaks.
 const ALLOWED_HOSTS = new Set(['jigg.ai', 'www.jigg.ai', 'localhost', '127.0.0.1']);
+// This site's own Netlify hosts only: the site itself and its deploy previews and
+// branch deploys (deploy-preview-5--<site>, feat-studio--<site>). Any other
+// *.netlify.app is somebody else's site, so it no longer passes.
+const NETLIFY_SITE = 'candid-gingersnap-6c4b87.netlify.app';
 const isAllowedHost = (host) =>
-  ALLOWED_HOSTS.has(host) || host.endsWith('.netlify.app');
+  ALLOWED_HOSTS.has(host) || host === NETLIFY_SITE || host.endsWith(`--${NETLIFY_SITE}`);
+// Cloudflare's published test secrets (1x/2x/3x…AA), used on previews and locally.
+// What hostname they report is undocumented, so the token-hostname check below
+// applies to real keys only.
+const isTestSecret = (s) => /^[123]x0+AA$/.test(s);
 
 // Shared/role mailboxes. Nobody subscribes to a newsletter from one, and observed
 // bot traffic used exactly these. Deliberately NOT including `hello@` — it's a
@@ -195,6 +203,11 @@ export default async (req) => {
         403,
         '/subscribe?error=turnstile'
       );
+    }
+    // A valid token must also have been solved on one of our own hosts.
+    if (!isTestSecret(turnstileSecret) && !isAllowedHost(String(verify.hostname || ''))) {
+      log('turnstile_fail', { reason: 'hostname_mismatch', hostname: verify.hostname || null, domain });
+      return reply({ ok: false, error: 'turnstile_failed' }, 403, '/subscribe?error=turnstile');
     }
   } catch (err) {
     // Fail closed. Losing an occasional signup to a Cloudflare blip beats accepting

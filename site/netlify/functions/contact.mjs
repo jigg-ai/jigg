@@ -26,7 +26,16 @@ const LIMITS = { name: 120, email: 254, organization: 160, messageMin: 20, messa
 const MAX_LINKS = 3; // link-stuffed messages are the commonest form-spam shape
 
 const ALLOWED_HOSTS = new Set(['jigg.ai', 'www.jigg.ai', 'localhost', '127.0.0.1']);
-const isAllowedHost = (host) => ALLOWED_HOSTS.has(host) || host.endsWith('.netlify.app');
+// This site's own Netlify hosts only: the site itself and its deploy previews and
+// branch deploys (deploy-preview-5--<site>, feat-studio--<site>). Any other
+// *.netlify.app is somebody else's site, so it no longer passes.
+const NETLIFY_SITE = 'candid-gingersnap-6c4b87.netlify.app';
+const isAllowedHost = (host) =>
+  ALLOWED_HOSTS.has(host) || host === NETLIFY_SITE || host.endsWith(`--${NETLIFY_SITE}`);
+// Cloudflare's published test secrets (1x/2x/3x…AA), used on previews and locally.
+// What hostname they report is undocumented, so the token-hostname check below
+// applies to real keys only.
+const isTestSecret = (s) => /^[123]x0+AA$/.test(s);
 
 // Throwaway providers — the same speed bump as subscribe.mjs. Role addresses
 // (info@, contact@) are NOT rejected here, unlike the newsletter: a business
@@ -157,6 +166,11 @@ export default async (req) => {
         403,
         '/contact?error=turnstile'
       );
+    }
+    // A valid token must also have been solved on one of our own hosts.
+    if (!isTestSecret(turnstileSecret) && !isAllowedHost(String(verify.hostname || ''))) {
+      log('turnstile_fail', { form: 'contact', reason: 'hostname_mismatch', hostname: verify.hostname || null, domain });
+      return reply({ ok: false, error: 'turnstile_failed' }, 403, '/contact?error=turnstile');
     }
   } catch (err) {
     // Fail closed, as subscribe.mjs does.
