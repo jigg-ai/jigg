@@ -20,6 +20,10 @@ const categories = activeCategories(builds);
         Every build, newest first. Versions and verified dates shown so you know
         what's current.
       </p>
+      <p class="journal-links mono">
+        <a href="/subscribe">Get new builds by email →</a>
+        <a href="/tools">Every tool tested →</a>
+      </p>
     </header>
 
     <div class="controls">
@@ -92,6 +96,9 @@ const categories = activeCategories(builds);
 <style>
   .page-head { padding-top: clamp(2rem, 5vw, 3.5rem); }
   .section-lead { margin-top: 0.7rem; }
+  .journal-links { display: flex; flex-wrap: wrap; gap: 0.4rem 1.5rem; margin-top: 0.9rem; }
+  .journal-links a { color: var(--ink-muted); text-decoration: none; }
+  .journal-links a:hover { color: var(--ink); }
   .controls {
     margin-top: 1.75rem;
     display: flex;
