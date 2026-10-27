@@ -22,7 +22,7 @@ The studio pages are built; these are what stand between the PR and its one merg
   tier: 3,000 emails a month, 100 a day, one domain — inquiries are nowhere near that.
 - **Contact end to end on the Deploy Preview.** A real inquiry arrives in the inbox with
   the `[deploy-preview]` subject prefix and Reply-To set to the sender; a token-less
-  POST is rejected; the function log shows `contact_received` with attribution and no
+  POST is rejected; the function log shows `contact_sent` with attribution and no
   message contents. CONTEXT §6 makes this a launch gate, not a nice-to-have.
 - ~~**Founder credential line against LinkedIn**~~ — **done 2026-10-26**: the founder
   confirmed it matches the profile, and the LinkedIn URL is linked from About, the one
@@ -31,8 +31,15 @@ The studio pages are built; these are what stand between the PR and its one merg
   production deploy log should show a real build (not "Canceled") and
   `[indexnow] submitted` with a 2xx — the first production run of both the fixed
   `ignore` rule and the IndexNow plugin.
+  Also one real signup on production: it is the first real-key run of the token-hostname
+  check added to both functions.
 
 Follow-ups, not gates:
+- `contact_sent` means Resend *accepted* the message, not that it was delivered. Wire
+  Resend's delivery and bounce events (`email.delivered`, `email.bounced`) into the
+  function log, so a failed delivery is visible without waiting for a client to say so.
+- The /builds legend shows verified and recheck-due but not archived. Add the archived
+  key when the first build is archived; until then it would describe nothing on the page.
 - `contact.mjs` duplicates the origin allowlist, disposable-domain list and Turnstile
   verification from `subscribe.mjs`, deliberately, to avoid touching the proven signup
   path in this PR. Extract a shared module once both are live, and re-test both.
