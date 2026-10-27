@@ -84,6 +84,7 @@ const DERIVED_ROUTES = new Set(['/', '/builds/', '/tools/']);
 const PAGE_REVISED = new Map(
   [
     ['/', '2026-10-26'],          // studio homepage
+    ['/builds/', '2026-10-26'],   // journal links (Subscribe, Tools) added to the archive
     ['/services/', '2026-10-26'],
     ['/about/', '2026-10-26'],
     ['/contact/', '2026-10-26'],
