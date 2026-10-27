@@ -8,7 +8,7 @@
 // case where JS rendered the widget but the fetch itself failed. A visitor without
 // JS is pointed at the email address instead.
 import { SITEKEY } from '../lib/turnstile';
-import { CONTACT_EMAIL } from '../lib/site';
+import { CONTACT_EMAIL, ENGAGEMENTS } from '../lib/site';
 
 const ACTION = '/.netlify/functions/contact';
 
@@ -42,6 +42,18 @@ const SOURCES = [
       <label for="cf-message">What are you trying to build, fix or modernize?</label>
       <textarea id="cf-message" name="message" rows="7" minlength="20" maxlength="5000" required></textarea>
       <p class="hint">A few sentences is plenty: what exists today, what needs to change, and any deadline.</p>
+    </div>
+    {/* Unselected by default, with "Not sure yet" as a real choice: a preselected
+        answer would count everyone who skips the field as unsure, and the point of the
+        field is to measure which engagement people actually want (CONTEXT §16). */}
+    <div class="field">
+      <label for="cf-engagement">What kind of help? <span class="optional">(optional)</span></label>
+      <select id="cf-engagement" name="engagement">
+        <option value="">Choose one</option>
+        {ENGAGEMENTS.map((e) => <option value={e.id}>{e.name}</option>)}
+        <option value="not-sure">Not sure yet</option>
+      </select>
+      <p class="hint"><a href="/services#engage">What these mean</a></p>
     </div>
     <div class="field">
       <label for="cf-source">How did you find Jigg.AI? <span class="optional">(optional)</span></label>
@@ -150,6 +162,7 @@ const SOURCES = [
             organization: field('organization').value.trim(),
             message: field('message').value.trim(),
             source: field('source').value,
+            engagement: field('engagement').value,
             contact_reason: field('contact_reason').value, // honeypot — must reach the server
             'cf-turnstile-response':
               form.querySelector<HTMLInputElement>('[name="cf-turnstile-response"]')?.value ?? '',
