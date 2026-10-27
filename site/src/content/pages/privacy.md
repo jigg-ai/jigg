@@ -3,7 +3,7 @@ title: "Privacy"
 description: "What Jigg.AI collects, why, and what it never does with your data. Short version: your email if you subscribe, what you send if you get in touch, and the messages you type into the support chat. Never sold."
 ---
 
-Short version: Jigg.AI collects your email address only if you subscribe (used only to send build logs), what you write if you send a project inquiry (used only to reply to you), and whatever you choose to type into the support chat widget in the corner, which is processed by Botpress to answer you. That's the lot — and none of it is ever sold or shared.
+Short version: Jigg.AI collects your email address only if you subscribe (used only to send build logs), what you write if you send a project inquiry (used only to reply to you), and whatever you choose to type into the support chat widget in the corner, which is processed by Botpress to answer you. That's the lot. None of it is ever sold or shared with advertisers; it's processed only by the services needed to run the site, which are named below.
 
 ## What's collected
 
@@ -14,13 +14,13 @@ Short version: Jigg.AI collects your email address only if you subscribe (used o
 
 ## How it's used
 
-Your email is stored with Buttondown (the newsletter service that sends these emails) and used only to send one email per new build. You can unsubscribe from any email at any time, using the link at the bottom of it — and your address is removed.
+Your email is stored with Buttondown (the newsletter service that sends these emails) and used only to send one email per new build. You can unsubscribe from any email at any time, using the link at the bottom of it, and you won't be emailed again. Buttondown keeps a record that you unsubscribed: that record is what stops your address being added back without your consent.
 
 ## If you send a project inquiry
 
 The contact form sends your name, email address, organization (if you give one), your message, and your answer to "How did you find Jigg.AI?". It also sends where your visit began: the website that linked you here, if any, and any campaign tags in that link (such as `utm_source`). Your browser keeps that note in session storage for the length of the visit only — it isn't a cookie, it disappears when you close the tab, and it's sent nowhere unless you submit the form.
 
-The inquiry is delivered by email to Jigg.AI's inbox through Resend (an email delivery service), and used only to reply to you. It isn't added to the newsletter. Jigg.AI counts inquiries and where they came from, so it knows which channels work; those counts never include what you wrote. Ask at hello@jigg.ai and your inquiry is deleted.
+The inquiry is delivered by email to Jigg.AI's inbox through Resend (an email delivery service), and used only to reply to you. It isn't added to the newsletter. Jigg.AI counts inquiries and where they came from, so it knows which channels work; those counts never include what you wrote. Ask at hello@jigg.ai and your inquiry is deleted from Jigg.AI's inbox. Resend keeps its own logs of the emails it delivers, which expire under its retention policy rather than on request to Jigg.AI.
 
 ## The support chat widget
 
