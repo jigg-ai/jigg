@@ -1,24 +1,27 @@
 ---
 title: "About"
-description: "Jigg.AI is a build-in-public project: real things built with AI tools, documented honestly. A human directs the tools; the AI does the heavy lifting and the narration — always disclosed."
+description: "Jigg.AI is an AI-accelerated software engineering studio with a public build journal. AI does much of the hands-on work; an experienced engineer directs it, reviews it, and is accountable for the result."
 ---
 
-Most people underestimate how capable and accessible AI tools already are. Jigg.AI exists to show — not tell — what's actually achievable, by building real things with them and documenting the whole messy process. The goal is simple: make it obvious that anyone can learn these tools, and that it's easier than it looks.
+Jigg.AI is an AI-accelerated software engineering studio with a public build journal. AI does much of the hands-on work — coding, prototyping, testing, documentation. An experienced engineer directs it, reviews it, and is accountable for the result.
 
-Every post pairs an AI tool worth your time with a real thing built using it: a chatbot, a website, a piece of marketing. Each one is tested against a check decided *before* building, timed, and written up with the mistakes and dead ends left in — because that's what makes "anyone can do this" credible.
+## How the work is done
 
-## Who's "I"?
+- **The human:** defines the problem, sets priorities, makes the engineering decisions, reviews every result, and approves every deployment.
+- **The AI:** writes and changes code, builds prototypes, runs tests, drafts documentation, and iterates.
 
-The first-person voice here is Jigg.AI-the-builder — a consistent persona, not a named individual. A human directs the tools and makes the calls; the AI does the heavy lifting and the narration. There's no human face or voice on purpose: narration is AI-generated and always disclosed. Being AI-made isn't a disclaimer here — it's the whole point.
+Human-directed isn't the same as hands-off. Even when AI writes every line, choosing the goal, judging the result and deciding to ship are human work — and that's the part Jigg.AI doesn't automate. On client work it's also where accountability sits: one person, named below, answers for what's delivered.
+
+## The build journal
+
+The [build logs](/builds) are Jigg.AI's own projects, documented in public: a website, a support chatbot, an explainer video, a hardened signup endpoint. Each one is tested against a check decided *before* building, and written up with the mistakes and dead ends left in. They're the evidence for the studio — you can see the method before you ever get in touch.
+
+The build logs are written in Jigg.AI's voice: the "I" in them is the builder persona, not a person. Builds and write-ups are produced using AI tools, under human direction. Results, limitations and verification status are documented for each project.
 
 ## Why transparency
 
-First-hand, tested, documented proof is exactly the kind of thing that can't be faked after the fact — "it invented pricing on attempt one, here's the fix." Openness is both the differentiator and the reason to trust any of it. Where a post links to a tool, that link may be an affiliate link; it's always disclosed and always placed after the proof, never before.
+First-hand, tested, documented proof is exactly the kind of thing that can't be faked after the fact — "it invented pricing on attempt one, here's the fix." Openness is both the differentiator and the reason to trust any of it. Where a build log links to a tool, that link may be an affiliate link; it's always disclosed and always placed after the proof. Client work is different: tools recommended to clients earn Jigg.AI nothing.
 
 ## Built with the tools it reviews
 
-This site is itself a build. It's made with Astro and Claude Code, logged as it was built, and published as the first build log. And because the whole thing is just files in a repository — every build a plain entry, no database, no lock-in — the structure is reproducible: you could lift this same setup for your own site. That's the point. Nothing here is hidden behind a black box.
-
-## A note on difficulty
-
-Building this site was the most technical thing on Jigg.AI — it involved a code editor and a few developer tools, and this write-up doesn't pretend otherwise. Most of what follows won't. The builds after this one — chatbots, video, automations — are things you can follow along with and reproduce without touching code. Where a build genuinely needs some technical comfort, the post will say so plainly, up front. No overselling.
+This site is itself a build. It's made with Astro and Claude Code, logged as it was built, and published as the first build log. The whole thing is plain files in a repository — every build a single entry, no database, no lock-in — so the structure is reproducible, and nothing here is hidden behind a black box.
