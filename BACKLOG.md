@@ -15,15 +15,10 @@ point. See `builds/website/test.md` for the per-check detail on build #1.
 The three ways to engage (CONTEXT §16) are built on `feat/engagements`. The merge waits for
 objective conditions, not a waiting period:
 
-- **Production signup tested** on jigg.ai with a tagged address (then deleted): the first
-  real-key run of the token-hostname check.
-- **Botpress re-crawl completed and verified**: the bot answers from the studio site, not
-  the July publication. Spot-check one question whose answer changed.
-- **No unresolved launch regressions** affecting core functionality (pages, signup,
-  Contact, the journal).
-- **The new "What kind of help?" field tested end to end on the preview**, with
-  `not_answered` distinguishable from `not_sure` in the log and in the email.
-- **Deploy Preview reviewed and approved.**
+- ~~All five gates~~ — **met 2026-10-27**, as reported by the founder: a production signup
+  tested and the test address deleted; the Botpress knowledge base re-crawled and spot-checked
+  against the studio site; no launch regressions; the "What kind of help?" field tested end
+  to end on PR #6's preview with a skipped and a "Not sure yet" inquiry; the preview approved.
 
 ## Studio launch — shipped 2026-10-27 (PR #5, merge `f4cc992`)
 
