@@ -10,6 +10,8 @@ Jigg.AI is an AI-accelerated software engineering studio with a public build jou
 - **The human:** defines the problem, sets priorities, makes the engineering decisions, reviews every result, and approves every deployment.
 - **The AI:** writes and changes code, builds prototypes, runs tests, drafts documentation, and iterates.
 
+On an existing system, for example, the engineer maps the architecture, dependencies and risks; AI helps analyze, refactor, migrate and write tests; the engineer then checks the results, catches wrong assumptions, and makes the decisions that matter.
+
 Human-directed isn't the same as hands-off. Even when AI writes every line, choosing the goal, judging the result and deciding to ship are human work — and that's the part Jigg.AI doesn't automate. On client work it's also where accountability sits: one person, named below, answers for what's delivered.
 
 ## The build journal
