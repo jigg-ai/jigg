@@ -16,3 +16,9 @@
 | MS-T10 | Preview safety | noindex, no real athlete fields, no payment, no crawler, no production URL/merge |
 
 **Results:** NOT RUN. No verification or product availability claim.
+
+## Execution evidence — 2026-10-30
+
+- **Build check:** Netlify returned SUCCESS for commit `0475e1e62bf766b6b0ace408fd82915d563058a4`, context `netlify/candid-gingersnap-6c4b87/deploy-preview`, description “Deploy Preview ready!”. [GitHub status receipt](https://github.com/jigg-ai/jigg/commit/0475e1e62bf766b6b0ace408fd82915d563058a4). This supports the Astro/Netlify deploy pipeline check for the prototype, not the full local command or a browser interaction test.
+- **Preview:** https://deploy-preview-9--candid-gingersnap-6c4b87.netlify.app/matsignal/ (derived from the Netlify-reported preview root and the app route). An external preview request through the available page viewer could not access the route, so **visual, keyboard, mobile and interaction checks remain NOT VERIFIED**.
+- **All other tests:** NOT RUN. Do not publish or call this production-ready.
