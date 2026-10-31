@@ -50,3 +50,23 @@
 - Physical-device test.
 - THESIS.md (required by PROCESS.md for product experiments; needs the founder's own public rationale).
 - Any real adapter or data collection (Gate B, founder approval).
+
+## 2026-10-30 (cont.) — answers to Q1–Q7, capability matrix, link parser, account proposal
+
+**Session:** 20:16–20:19 PDT, plus the Q1–Q7 research earlier in the evening (not separately timed). Same builder and credential waiver as above.
+
+- **Research questions.** The founder sent research questions to the coordinator. The builder answered Q1–Q7 itself and added them to [FEASIBILITY.md](FEASIBILITY.md) (`6134825`). Two parts need a human with a normal browser and went to the founder:
+  - Q5: does a logged-out visitor see a profile's upcoming events?
+  - Q7: is a profile ID the same on every subdomain?
+
+  The rest went to the research team.
+- **Coordinator notice** (issue #8, 03:15 UTC): continue PR #9 within authorized scope. No new data adapter, license or outreach is approved. Comp Hub's and TrackMat's published scraping is their own disclosure, not precedent.
+- **`d7e91a8`:** per-source capability matrix (`sources.ts`) with `assertAutomatedAccessPermitted()`, the code form of Gate B. It throws for every source today, including unknown ones.
+- **`d7d7b5f`:** Smoothcomp link parser (`smoothcomp.ts`). It refuses lookalike hosts, `javascript:`/`data:` URLs, credentials and ports, and strips tracking parameters. It only parses; nothing is fetched.
+- **Account proposal:** [ACCOUNTS.md](ACCOUNTS.md), a free-account design proposal (HANDOFF §5).
+  - Recommends Netlify Functions + Blobs + the existing Resend domain, so no new vendor.
+  - Blobs and Functions credit metering is marked UNKNOWN, for the founder to confirm on Netlify's billing page.
+  - Netlify Identity is excluded: deprecated by Netlify in February 2025.
+- **Smoothcomp request:** drafted for the founder to send (Test A), outside the public repo. Not sent.
+- **Tests:** `npm --prefix site test` gives 39 pass. `npm --prefix site run build` passes (16 pages).
+- **Costs:** none. No production deploy, account, Netlify feature, secret or outreach.
