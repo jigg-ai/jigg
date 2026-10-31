@@ -1,0 +1,35 @@
+# MatSignal (PRD-003). Same fields as builds/_template/meta.yaml. This build is a
+# product experiment in preview, not a journal entry yet: nothing here is
+# published, and there is no site/src/content/builds/ entry for it.
+title: "MatSignal: BJJ athlete search and competition tracking (preview)"
+slug: ""              # no journal entry yet; the build-log number is undecided
+category: "websites"
+tool: "Claude Code"
+tool_version: ""      # not captured for the 2026-10-30 session
+built_with: ["Claude Opus 5.5"]
+stack: ["Astro 7.1", "GitHub", "Netlify"]
+runs_on_site: false   # a noindex preview route, not a released feature
+status: draft
+summary: ""
+test_score: ""        # see test.md; no aggregate score claimed
+affiliate_url: ""
+repro_pack: false
+published: ""
+last_verified: ""
+pricing_as_of: ""
+
+# Time and cost (CONTEXT §5). Recorded from the 2026-10-30 Claude Code session on.
+# The earlier scaffolding (commits dd8885d..a6b6093) was not timed.
+human_time:
+  minutes:
+  basis: unavailable  # the founder's directing and review time wasn't tracked
+agent_time:
+  minutes: 40         # 18:59–19:31, 20:16–20:19 and 20:43–20:48 PDT on 2026-10-30 (build-notes); Q1–Q7 research not timed
+  basis: measured
+paid_plans: []        # no paid service used; Deploy Previews are 0 Netlify credits
+
+featured: false
+meta_line: ""
+tool_summary: ""
+tool_verdict: ""
+accessibility: ""
