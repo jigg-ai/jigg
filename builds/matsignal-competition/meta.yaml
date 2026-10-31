@@ -24,7 +24,7 @@ human_time:
   minutes:
   basis: unavailable  # the founder's directing and review time wasn't tracked
 agent_time:
-  minutes: 35         # 18:59–19:31 and 20:16–20:19 PDT on 2026-10-30 (build-notes); Q1–Q7 research not timed
+  minutes: 40         # 18:59–19:31, 20:16–20:19 and 20:43–20:48 PDT on 2026-10-30 (build-notes); Q1–Q7 research not timed
   basis: measured
 paid_plans: []        # no paid service used; Deploy Previews are 0 Netlify credits
 

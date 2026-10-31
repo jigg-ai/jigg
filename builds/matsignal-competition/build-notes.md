@@ -70,3 +70,16 @@
 - **Smoothcomp request:** drafted for the founder to send (Test A), outside the public repo. Not sent.
 - **Tests:** `npm --prefix site test` gives 39 pass. `npm --prefix site run build` passes (16 pages).
 - **Costs:** none. No production deploy, account, Netlify feature, secret or outreach.
+
+## 2026-10-30 (cont.) — data-safety rules and backend options
+
+**Session:** 20:43–20:48 PDT. Same builder and credential waiver as above.
+
+- **`0312312`:** adult divisions only, failing closed. `classifyDivision` treats a division as adult only when its label says so. Youth or unclear labels are hidden, and the page says how many entries were hidden.
+  - First test run: 2 failures, both mine. A time-zone test's synthetic registrations had no division label, so the new rule correctly hid them; they were labelled adult. And "U18" wasn't recognized as youth; fixed.
+  - A third failure: the age-range pattern backtracked into weights ("Light 64-70kg" read as "64-7"). Anchored so numbers can't be split.
+- **`178e301`:** `SourceCheck`, `coverageGaps` and `gapLabel`. A tracked identity whose source couldn't be checked is reported as "entries there are unknown", never as empty.
+- **[DATA-SAFETY.md](DATA-SAFETY.md):** the three rules (ambiguous identity, unchecked source, age not established), the tests that pin them, and what stays open.
+- **[ACCOUNTS.md](ACCOUNTS.md):** adds Option D, Cloudflare Workers + D1 (founder's suggestion), with free-plan limits from Cloudflare's docs. Recommended once MatSignal needs a real index, cache and scheduled refresh. It would also take MatSignal deploys off jigg.ai's Netlify production-deploy credits.
+- **Tests:** 43 pass. Build: 16 pages.
+- **Costs:** none.
