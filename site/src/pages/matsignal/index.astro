@@ -1,0 +1,440 @@
+---
+/*
+ * MatSignal PRD-003 founder-review prototype only.
+ * Fictional fixtures, local-only demo watchlist, no network calls or real accounts.
+ * Do not promote as a live competition tracker or merge without founder review.
+ */
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="description" content="MatSignal preview: explore a free, simple BJJ athlete search and team-tracking experience. Fictional demo records only." />
+    <meta name="theme-color" content="#101b1e" />
+    <title>MatSignal — Find your people. Follow the mat. (Demo)</title>
+  </head>
+  <body>
+    <a class="skip" href="#workspace">Skip to search</a>
+    <div class="shell">
+      <header class="topbar">
+        <div class="brand" aria-label="MatSignal home">
+          <span class="mark" aria-hidden="true"><i></i><i></i><b></b></span>
+          <span>mat<span class="brand-accent">signal</span><sup>beta</sup></span>
+        </div>
+        <div class="top-actions">
+          <span class="status"><span class="dot"></span> Concept preview</span>
+          <a href="https://jigg.ai/" class="studio" rel="noopener noreferrer">by Jigg.AI ↗</a>
+        </div>
+      </header>
+
+      <main>
+        <section class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow"><span class="eyebrow-line"></span> BJJ COMPETITION TRACKING, SIMPLIFIED</p>
+            <h1>Find your people.<br /><em>Follow the mat.</em></h1>
+            <p class="hero-lead">Search athletes. Build your own squad. See who's competing and when—all in one place.</p>
+            <div class="hero-points" aria-label="Core principles">
+              <span>Free athlete search</span>
+              <span>No gym roster required</span>
+              <span>One team view</span>
+            </div>
+          </div>
+          <div class="hero-art" aria-hidden="true">
+            <div class="art-orbit orbit-one"></div>
+            <div class="art-orbit orbit-two"></div>
+            <div class="art-orbit orbit-three"></div>
+            <div class="art-center"><span>MS</span></div>
+            <span class="art-pin pin-one"></span>
+            <span class="art-pin pin-two"></span>
+            <span class="art-pin pin-three"></span>
+            <span class="art-caption">YOUR TEAM · ONE SIGNAL</span>
+          </div>
+        </section>
+
+        <div class="notice" role="status">
+          <strong>Interactive product demo</strong>
+          <span>Every athlete, event, and match below is fictional. No external competition sources or user accounts are connected. Selections are saved only in this browser.</span>
+        </div>
+
+        <section class="workspace" id="workspace" aria-label="Athlete search and tracking demo">
+          <div class="workspace-header">
+            <div>
+              <p class="section-label">01 / DISCOVER</p>
+              <h2>Start with an athlete.</h2>
+            </div>
+            <p>Search is always free. Pick the people you actually want to follow.</p>
+          </div>
+          <div class="workspace-grid">
+            <section class="panel search-panel" aria-label="Search demo athletes">
+              <label for="athlete-search" class="input-label">Search competitors</label>
+              <div class="search-wrap">
+                <svg class="search-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg>
+                <input id="athlete-search" type="search" autocomplete="off" placeholder="Try “Demo Athlete 01” or “Example Alliance”" />
+              </div>
+              <div class="search-meta">
+                <label for="affiliation-filter">Affiliation</label>
+                <select id="affiliation-filter" aria-label="Filter by affiliation">
+                  <option value="all">All affiliations</option>
+                  <option value="Example Alliance">Example Alliance</option>
+                  <option value="Sample Jiu-Jitsu">Sample Jiu-Jitsu</option>
+                </select>
+                <span class="demo-tag">SAMPLE RECORDS</span>
+              </div>
+              <div id="search-results" class="results" aria-live="polite"></div>
+              <p class="panel-footnote">Real MatSignal will resolve source-specific athlete identities and show official links. This demo does not search the internet.</p>
+            </section>
+
+            <aside class="panel squad-panel" aria-label="My selected athletes">
+              <div class="squad-head">
+                <div>
+                  <p class="section-label">02 / YOUR SQUAD</p>
+                  <h3>My tracking group <span id="squad-count" class="count">0</span></h3>
+                </div>
+                <button id="clear-squad" class="text-btn" type="button" disabled>Clear all</button>
+              </div>
+              <div id="squad-list" class="squad-list" aria-live="polite"></div>
+              <div class="squad-cta">
+                <div class="mini-icon" aria-hidden="true">✦</div>
+                <div><strong>Saving your group will be free.</strong><p>Production accounts are not built yet. In this preview, your sample selection stays only on this device.</p></div>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="schedule" aria-labelledby="schedule-title">
+          <div class="workspace-header schedule-head">
+            <div>
+              <p class="section-label">03 / COMPETITION DAY</p>
+              <h2 id="schedule-title">One place for every match.</h2>
+            </div>
+            <p>Your selected athletes appear in chronological order when a source publishes a usable match time.</p>
+          </div>
+          <div class="schedule-board">
+            <div class="schedule-toolbar">
+              <div class="toolbar-title"><span class="live-emblem" aria-hidden="true"></span> YOUR SQUAD'S MATCH QUEUE</div>
+              <span class="example-flag">ILLUSTRATIVE SCHEDULE — NOT LIVE</span>
+            </div>
+            <div class="schedule-columns" aria-hidden="true"><span>ATHLETE & EVENT</span><span>MAT</span><span>START / STATUS</span></div>
+            <div id="match-queue" class="queue" aria-live="polite"></div>
+          </div>
+        </section>
+
+        <section class="principle">
+          <div><p class="section-label">THE IDEA</p><h2>No more switching between five tournament tabs.</h2></div>
+          <p>MatSignal is being built as a free utility for competitors, coaches, and teammates. The next technical milestone is trustworthy discovery from publicly published competition records—without pretending a demo schedule is a live feed.</p>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <span class="footer-brand">mat<span>signal</span></span>
+        <span>Concept preview · Fictional records · No account or payment</span>
+        <a href="https://jigg.ai/" rel="noopener noreferrer">A Jigg.AI experiment ↗</a>
+      </footer>
+    </div>
+    <script>
+      // All records are fictional fixtures. Do NOT replace with personal athlete
+      // records before source permissions, safeguarding and account decisions.
+      const demoAthletes = [
+        {
+          id: 'demo-01', name: 'Demo Athlete 01', affiliation: 'Example Alliance',
+          academy: 'Northside Academy', source: 'Illustrative Source A',
+          matches: [
+            { event: 'Sample Autumn Open', date: 'Nov 14', platform: 'Example Organizer A', mat: 'Mat 3', time: '11:40', type: 'Estimated', opponent: 'Demo Athlete 07' },
+            { event: 'Sample Winter Open', date: 'Dec 05', platform: 'Example Organizer B', mat: 'TBD', time: '', type: 'Not published', opponent: 'TBD' },
+          ],
+        },
+        {
+          id: 'demo-02', name: 'Demo Athlete 02', affiliation: 'Example Alliance',
+          academy: 'Lakeside Jiu-Jitsu', source: 'Illustrative Source B',
+          matches: [
+            { event: 'Sample Autumn Open', date: 'Nov 14', platform: 'Example Organizer B', mat: 'Mat 5', time: '10:55', type: 'Estimated', opponent: 'Demo Athlete 08' },
+          ],
+        },
+        {
+          id: 'demo-03', name: 'Demo Athlete 03', affiliation: 'Sample Jiu-Jitsu',
+          academy: 'Sample City Academy', source: 'Illustrative Source A',
+          matches: [
+            { event: 'Sample Autumn Open', date: 'Nov 14', platform: 'Example Organizer A', mat: 'Mat 1', time: '13:20', type: 'Scheduled', opponent: 'Demo Athlete 09' },
+          ],
+        },
+        {
+          id: 'demo-04', name: 'Demo Athlete 04', affiliation: 'Sample Jiu-Jitsu',
+          academy: 'Uptown Grappling', source: 'Illustrative Source B',
+          matches: [
+            { event: 'Sample Winter Open', date: 'Dec 05', platform: 'Example Organizer B', mat: 'TBD', time: '', type: 'Not published', opponent: 'TBD' },
+          ],
+        },
+      ];
+
+      const searchField = document.getElementById('athlete-search');
+      const affiliationFilter = document.getElementById('affiliation-filter');
+      const resultList = document.getElementById('search-results');
+      const squadList = document.getElementById('squad-list');
+      const squadCount = document.getElementById('squad-count');
+      const clearButton = document.getElementById('clear-squad');
+      const matchQueue = document.getElementById('match-queue');
+      const storageKey = 'matsignal-demo-selected-athletes-v1';
+
+      let initialIds = [];
+      try {
+        const parsed = JSON.parse(localStorage.getItem(storageKey) || '[]');
+        if (Array.isArray(parsed)) initialIds = parsed.filter((v) => typeof v === 'string');
+      } catch {
+        // Blocked or invalid storage should not prevent using the preview.
+      }
+      const selected = new Set(initialIds.filter((id) => demoAthletes.some((a) => a.id === id)));
+
+      function node(tag, className, value) {
+        const e = document.createElement(tag);
+        if (className) e.className = className;
+        if (value !== undefined) e.textContent = value;
+        return e;
+      }
+      function persistSelection() {
+        try { localStorage.setItem(storageKey, JSON.stringify([...selected])); } catch { /* optional local-only demo state */ }
+      }
+      function toggleAthlete(id) {
+        if (selected.has(id)) selected.delete(id);
+        else selected.add(id);
+        persistSelection();
+        render();
+      }
+      function renderResults() {
+        resultList.replaceChildren();
+        const query = String(searchField.value || '').trim().toLowerCase();
+        const affiliation = affiliationFilter.value;
+        const matches = demoAthletes.filter((a) => {
+          const found = [a.name, a.affiliation, a.academy].join(' ').toLowerCase().includes(query);
+          return found && (affiliation === 'all' || a.affiliation === affiliation);
+        });
+        if (!matches.length) {
+          const empty = node('div', 'empty-state');
+          empty.append(node('strong', '', 'No sample matches'), node('p', '', 'This preview only contains four fictional athletes. A real search index has not been connected.'));
+          resultList.append(empty);
+          return;
+        }
+        for (const athlete of matches) {
+          const item = node('div', 'result-row');
+          const avatar = node('span', 'avatar', athlete.id.slice(-2));
+          avatar.setAttribute('aria-hidden', 'true');
+          const info = node('div', 'athlete-info');
+          info.append(node('strong', '', athlete.name), node('span', 'affiliation', athlete.affiliation + ' · ' + athlete.academy), node('small', '', athlete.source + ' · synthetic identity'));
+          const on = selected.has(athlete.id);
+          const btn = node('button', 'track-btn' + (on ? ' tracked' : ''), on ? '✓ Tracking' : '+ Track');
+          btn.type = 'button';
+          btn.setAttribute('aria-label', (on ? 'Remove ' : 'Track ') + athlete.name);
+          btn.setAttribute('aria-pressed', String(on));
+          btn.addEventListener('click', () => toggleAthlete(athlete.id));
+          item.append(avatar, info, btn);
+          resultList.append(item);
+        }
+      }
+      function renderSquad() {
+        squadList.replaceChildren();
+        squadCount.textContent = String(selected.size);
+        clearButton.disabled = selected.size === 0;
+        if (!selected.size) {
+          const empty = node('div', 'empty-squad');
+          empty.append(node('span', 'empty-graphic', '+'), node('strong', '', 'Your squad starts here.'), node('p', '', 'Tap “+ Track” next to an athlete. They will appear here, and their sample matches will appear below.'));
+          squadList.append(empty);
+          return;
+        }
+        for (const athlete of demoAthletes.filter((a) => selected.has(a.id))) {
+          const row = node('div', 'squad-athlete');
+          const info = node('div', 'squad-athlete-info');
+          info.append(node('strong', '', athlete.name), node('span', '', athlete.affiliation));
+          const remove = node('button', 'remove-btn', '×');
+          remove.type = 'button';
+          remove.setAttribute('aria-label', 'Remove ' + athlete.name);
+          remove.addEventListener('click', () => toggleAthlete(athlete.id));
+          row.append(info, remove);
+          squadList.append(row);
+        }
+      }
+      function renderQueue() {
+        matchQueue.replaceChildren();
+        const entries = demoAthletes
+          .filter((a) => selected.has(a.id))
+          .flatMap((a) => a.matches.map((m) => ({ athlete: a, match: m })))
+          .sort((a, b) => {
+            const dateA = a.match.date === 'Nov 14' ? 0 : 1;
+            const dateB = b.match.date === 'Nov 14' ? 0 : 1;
+            if (dateA !== dateB) return dateA - dateB;
+            if (!a.match.time) return 1;
+            if (!b.match.time) return -1;
+            return a.match.time.localeCompare(b.match.time);
+          });
+        if (!entries.length) {
+          const empty = node('div', 'empty-queue');
+          empty.append(node('strong', '', 'No tracked matches yet.'), node('p', '', 'Select a sample athlete above to see their upcoming match queue.'));
+          matchQueue.append(empty);
+          return;
+        }
+        for (const item of entries) {
+          const row = node('div', 'queue-row');
+          const fighter = node('div', 'queue-fighter');
+          fighter.append(node('strong', '', item.athlete.name), node('span', '', item.match.event + ' · ' + item.match.date), node('small', '', item.match.platform + ' · vs ' + item.match.opponent));
+          const mat = node('span', 'mat-pill', item.match.mat);
+          const time = node('div', 'queue-time');
+          time.append(node('strong', '', item.match.time ? item.match.time : 'Unknown'), node('span', '', item.match.type + ' · Demo'));
+          row.append(fighter, mat, time);
+          matchQueue.append(row);
+        }
+      }
+      function render() { renderResults(); renderSquad(); renderQueue(); }
+      searchField.addEventListener('input', renderResults);
+      affiliationFilter.addEventListener('change', renderResults);
+      clearButton.addEventListener('click', () => { selected.clear(); persistSelection(); render(); });
+      render();
+    </script>
+  </body>
+</html>
+
+<style>
+  :global(*){box-sizing:border-box}
+  :global(html){scroll-behavior:smooth}
+  :global(body){margin:0;background:#101a1d;color:#f4f8f4;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;line-height:1.5}
+  :global(button),:global(input),:global(select){font:inherit}
+  :global(button){cursor:pointer}
+  :global(button:disabled){cursor:not-allowed;opacity:.45}
+  :global(a){color:inherit}
+  :global(:focus-visible){outline:3px solid #d4f27a;outline-offset:3px}
+  .skip{position:absolute;top:-5rem;left:1rem;z-index:20;background:#d4f27a;color:#131c19;padding:.6rem 1rem}
+  .skip:focus{top:1rem}
+  .shell{max-width:1340px;margin:auto;padding:0 clamp(20px,4.5vw,72px)}
+  .topbar{min-height:91px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #2b3b3d;gap:1rem}
+  .brand,.footer-brand{font-weight:790;letter-spacing:-.07em;font-size:1.85rem;display:flex;align-items:center;gap:13px}
+  .brand-accent,.footer-brand span{color:#d3f17b}
+  .brand sup{font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:#96a8a0;align-self:flex-start;margin:9px 0 0 -6px}
+  .mark{position:relative;width:28px;height:28px;border:2px solid #d3f17b;border-radius:100%;display:inline-flex;align-items:center;justify-content:center}
+  .mark i{display:block;border:1px solid #d3f17b;border-radius:50%;position:absolute;inset:5px}
+  .mark i:nth-child(2){inset:10px;background:#d3f17b}
+  .mark b{width:15px;height:2px;background:#d3f17b;position:absolute;right:-7px;top:12px;transform:rotate(-35deg)}
+  .top-actions{display:flex;align-items:center;gap:26px;font-size:.76rem;color:#a1b3ab}
+  .status{display:flex;align-items:center;gap:8px}
+  .dot,.live-emblem{width:8px;height:8px;border-radius:50%;background:#d3f17b;display:inline-block;box-shadow:0 0 0 4px rgba(211,241,123,.12)}
+  .studio{text-decoration:none;border-bottom:1px solid #435450;padding-bottom:2px}
+  .studio:hover{color:#d3f17b}
+  .hero{padding:94px 0 82px;display:grid;grid-template-columns:1.3fr .7fr;align-items:center;gap:20px;min-height:420px}
+  .eyebrow,.section-label{color:#a5b8ad;font-size:.71rem;letter-spacing:.19em;font-weight:770}
+  .eyebrow{display:flex;align-items:center;gap:12px}
+  .eyebrow-line{display:block;width:23px;height:2px;background:#d3f17b}
+  h1,h2,h3,p{margin:0}
+  h1{font-size:clamp(3.1rem,6vw,6.2rem);line-height:1.06;letter-spacing:-.07em;margin:20px 0 25px;font-weight:750}
+  h1 em{font-style:normal;color:#d3f17b}
+  .hero-lead{max-width:540px;color:#acbdb6;font-size:clamp(1.05rem,1.6vw,1.24rem)}
+  .hero-points{display:flex;gap:12px;flex-wrap:wrap;margin-top:29px}
+  .hero-points span{font-size:.73rem;color:#c5d3c9;border:1px solid #344547;border-radius:30px;padding:7px 12px}
+  .hero-art{position:relative;width:280px;height:280px;margin:auto}
+  .art-orbit{border:1px solid #39504e;border-radius:50%;position:absolute;inset:0}
+  .orbit-two{inset:45px;border-color:#5b765b}
+  .orbit-three{inset:95px;border-color:#d3f17b}
+  .art-center{position:absolute;inset:112px;border-radius:50%;background:#d3f17b;display:grid;place-items:center;color:#101a1d;font-size:.95rem;font-weight:800}
+  .art-pin{position:absolute;width:12px;height:12px;border:2px solid #d3f17b;background:#111d20;border-radius:50%}
+  .pin-one{top:34px;left:36px}.pin-two{top:105px;right:-5px}.pin-three{bottom:40px;left:22px}
+  .art-caption{position:absolute;bottom:-15px;left:25px;right:25px;text-align:center;letter-spacing:.17em;font-size:.59rem;color:#8fa49b}
+  .notice{display:flex;gap:20px;align-items:baseline;border:1px solid #47614b;background:#1d3028;border-radius:10px;padding:16px 19px;margin-bottom:78px}
+  .notice strong{color:#d3f17b;font-size:.83rem;white-space:nowrap}
+  .notice span{font-size:.81rem;color:#c0d2c6}
+  .workspace-header{display:flex;justify-content:space-between;align-items:end;gap:30px;margin-bottom:27px}
+  .workspace-header h2,.principle h2{font-size:clamp(1.7rem,2.7vw,2.45rem);line-height:1.16;letter-spacing:-.04em;margin-top:10px}
+  .workspace-header>p{max-width:360px;color:#a9bab2;font-size:.87rem}
+  .workspace-grid{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(270px,1fr);gap:18px}
+  .panel{background:#19262a;border:1px solid #334348;border-radius:15px;padding:25px;min-width:0}
+  .input-label{font-size:.78rem;font-weight:720;color:#d3dfd6;display:block;margin-bottom:10px}
+  .search-wrap{position:relative}
+  .search-icon{width:21px;height:21px;position:absolute;left:16px;top:15px;color:#9dadab}
+  input[type=search]{width:100%;background:#0f1b1f;color:#eff7f0;border:1px solid #546766;padding:15px 12px 15px 48px;border-radius:8px;min-height:51px;outline-offset:3px}
+  input::placeholder{color:#839791}
+  .search-meta{display:flex;align-items:center;gap:10px;padding:16px 0 12px}
+  .search-meta label{font-size:.72rem;color:#a9bbb3}
+  select{background:#28363a;border:1px solid #526360;border-radius:6px;color:#f0f8f0;padding:7px 9px;max-width:190px;font-size:.75rem}
+  .demo-tag{margin-left:auto;font-size:.62rem;letter-spacing:.08em;color:#9bac9e}
+  .result-row{display:flex;align-items:center;gap:14px;border-top:1px solid #304145;padding:16px 0}
+  .avatar{display:grid;place-items:center;background:#304642;color:#d3f17b;border:1px solid #4a675c;border-radius:10px;width:43px;height:43px;flex:none;font-size:.8rem;font-weight:700}
+  .athlete-info{display:flex;flex-direction:column;min-width:0;gap:2px}
+  .athlete-info strong,.squad-athlete strong{font-size:.91rem}
+  .athlete-info .affiliation,.squad-athlete span{font-size:.75rem;color:#bccbc2}
+  .athlete-info small{font-size:.65rem;color:#80958f}
+  .track-btn{margin-left:auto;flex:none;border:1px solid #78945f;background:#d3f17b;color:#101b1e;border-radius:7px;padding:9px 11px;font-size:.74rem;font-weight:780}
+  .track-btn.tracked{background:transparent;color:#d3f17b}
+  .panel-footnote{border-top:1px solid #304145;padding-top:18px;margin-top:4px;font-size:.73rem;color:#8ca09a;line-height:1.65}
+  .squad-head{display:flex;align-items:start;justify-content:space-between;gap:8px;border-bottom:1px solid #304145;padding-bottom:22px}
+  .squad-head h3{font-size:1.17rem;letter-spacing:-.02em;margin-top:11px}
+  .count{font-size:.73rem;background:#354a47;color:#d3f17b;padding:3px 8px;border-radius:40px;vertical-align:3px;margin-left:4px}
+  .text-btn{background:none;border:0;color:#d3f17b;font-size:.72rem;padding:7px 0}
+  .empty-squad{min-height:207px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:21px 10px}
+  .empty-graphic{border:1px dashed #486058;width:45px;height:45px;display:grid;place-items:center;border-radius:50%;color:#d3f17b;font-size:1.4rem;margin-bottom:17px}
+  .empty-squad strong{font-size:.9rem}
+  .empty-squad p{font-size:.74rem;color:#95a79e;max-width:225px;margin-top:7px}
+  .squad-athlete{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid #2e4144}
+  .squad-athlete-info{display:flex;flex-direction:column;gap:1px}
+  .remove-btn{border:1px solid #4f6662;color:#c5d2c7;border-radius:6px;background:transparent;width:30px;height:30px;font-size:1.2rem;line-height:1}
+  .squad-cta{display:flex;gap:12px;background:#253731;padding:16px;border:1px solid #426044;border-radius:10px;margin-top:20px}
+  .mini-icon{color:#d3f17b;font-size:1.2rem}
+  .squad-cta strong{color:#e1f2cd;font-size:.75rem}
+  .squad-cta p{font-size:.72rem;color:#aabbaf;margin-top:5px}
+  .empty-state{padding:50px 15px;text-align:center;border-top:1px solid #304145;color:#dbe8de}
+  .empty-state p{font-size:.77rem;color:#9bac9e;margin-top:7px}
+  .schedule{margin-top:94px}
+  .schedule-board{border:1px solid #37494c;border-radius:14px;background:#172428;overflow:hidden}
+  .schedule-toolbar{background:#243238;border-bottom:1px solid #3b4e4e;padding:19px 24px;display:flex;align-items:center;justify-content:space-between;gap:15px}
+  .toolbar-title{display:flex;align-items:center;gap:13px;color:#e7f2e6;font-size:.72rem;font-weight:770;letter-spacing:.11em}
+  .example-flag{font-size:.62rem;color:#b4c2b5;letter-spacing:.08em}
+  .schedule-columns,.queue-row{display:grid;grid-template-columns:minmax(0,1fr) 100px 150px;gap:16px;align-items:center}
+  .schedule-columns{padding:14px 24px;color:#91a79d;font-size:.64rem;letter-spacing:.12em}
+  .queue-row{border-top:1px solid #354448;padding:17px 24px}
+  .queue-fighter,.queue-time{display:flex;flex-direction:column;gap:4px}
+  .queue-fighter strong{font-size:.94rem}
+  .queue-fighter span{font-size:.77rem;color:#cfdbd0}
+  .queue-fighter small,.queue-time span{font-size:.7rem;color:#91a69e}
+  .mat-pill{border:1px solid #506c64;color:#d3f17b;border-radius:6px;padding:6px 7px;text-align:center;font-size:.76rem}
+  .queue-time strong{font-size:1.05rem}
+  .empty-queue{padding:55px 24px;color:#d8e2dc;text-align:center;border-top:1px solid #354448}
+  .empty-queue strong{font-size:1.05rem}
+  .empty-queue p{font-size:.79rem;color:#9eafa7;margin-top:9px}
+  .principle{display:grid;grid-template-columns:1fr 1fr;gap:7vw;padding:110px 0 120px;align-items:center}
+  .principle p:last-child{color:#a9bab0;font-size:.98rem;line-height:1.75}
+  .footer{border-top:1px solid #2e4243;display:flex;align-items:center;justify-content:space-between;gap:15px;padding:34px 0 42px;color:#9fb3a8;font-size:.72rem}
+  .footer-brand{font-size:1.16rem;color:#f0f7ef}
+  .footer a{text-decoration:none;border-bottom:1px solid #4a5e52}
+  @media (max-width:850px){
+    .hero{grid-template-columns:1fr;padding:70px 0 45px;min-height:0}
+    .hero-art{display:none}
+    .workspace-grid{grid-template-columns:1fr}
+    .squad-panel{order:2}
+    .workspace-header{align-items:start}
+    .principle{padding:80px 0;gap:28px}
+  }
+  @media (max-width:560px){
+    .topbar{min-height:73px}
+    .brand{font-size:1.48rem}
+    .brand sup{display:none}
+    .top-actions .status{display:none}
+    .hero{padding:60px 0 38px}
+    h1{font-size:clamp(2.55rem,11.2vw,3.4rem)}
+    .hero-points{gap:7px}
+    .hero-points span{padding:5px 9px;font-size:.65rem}
+    .notice{flex-direction:column;gap:6px;margin-bottom:65px}
+    .workspace-header{flex-direction:column;align-items:start;gap:12px}
+    .panel{padding:18px}
+    .search-meta{flex-wrap:wrap}
+    .demo-tag{display:none}
+    .result-row{gap:10px}
+    .avatar{width:34px;height:34px}
+    .athlete-info strong{font-size:.8rem}
+    .athlete-info .affiliation{font-size:.68rem}
+    .track-btn{padding:8px 9px;font-size:.7rem}
+    .schedule{margin-top:70px}
+    .schedule-toolbar{padding:15px;align-items:start;flex-direction:column}
+    .schedule-columns{display:none}
+    .queue-row{grid-template-columns:1fr auto;gap:12px;padding:17px 15px}
+    .queue-fighter{grid-column:1}
+    .mat-pill{grid-column:2;grid-row:1}
+    .queue-time{grid-column:1 / -1;border-top:1px solid #304146;padding-top:10px}
+    .principle{grid-template-columns:1fr}
+    .footer{flex-wrap:wrap}
+  }
+</style>
