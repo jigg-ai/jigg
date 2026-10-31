@@ -21,7 +21,7 @@
       <header class="topbar">
         <div class="brand">
           <span class="mark" aria-hidden="true"><i></i><i></i><b></b></span>
-          <span>mat<span class="brand-accent">signal</span><sup>beta</sup></span>
+          <span>mat<span class="brand-accent">signal</span><sup>demo</sup></span>
         </div>
         <div class="top-actions">
           <span class="status"><span class="dot"></span> Concept preview</span>
@@ -339,7 +339,9 @@
   .mark b{width:15px;height:2px;background:#d3f17b;position:absolute;right:-7px;top:12px;transform:rotate(-35deg)}
   .top-actions{display:flex;align-items:center;gap:26px;font-size:.76rem;color:#a1b3ab}
   .status{display:flex;align-items:center;gap:8px}
-  .dot,.live-emblem{width:8px;height:8px;border-radius:50%;background:#d3f17b;display:inline-block;box-shadow:0 0 0 4px rgba(211,241,123,.12)}
+  /* Hollow, unlit rings: a filled glowing dot reads as "online / live", which
+     nothing on this page is. */
+  .dot,.live-emblem{width:8px;height:8px;border-radius:50%;border:2px solid #d3f17b;display:inline-block}
   .studio{text-decoration:none;border-bottom:1px solid #435450;padding-bottom:2px}
   .studio:hover{color:#d3f17b}
   .hero{padding:94px 0 82px;display:grid;grid-template-columns:1.3fr .7fr;align-items:center;gap:20px;min-height:420px}
@@ -437,7 +439,9 @@
     .topbar{min-height:73px}
     .brand{font-size:1.48rem}
     .brand sup{display:none}
-    .top-actions .status{display:none}
+    /* Phones keep the "Concept preview" badge; the footer still carries the
+       Jigg.AI attribution, so the header link gives way instead. */
+    .top-actions .studio{display:none}
     .hero{padding:60px 0 38px}
     h1{font-size:clamp(2.55rem,11.2vw,3.4rem)}
     .hero-points{gap:7px}
