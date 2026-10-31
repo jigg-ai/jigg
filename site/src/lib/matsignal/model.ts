@@ -172,6 +172,40 @@ export function upsertDiscovered(athletes: Athlete[], found: SourceIdentity[]): 
   return next;
 }
 
+/**
+ * Adults only, fail closed (HANDOFF §4: no youth profiles, no minors' schedules).
+ * A division counts as adult only when its label says so outright ("Adult",
+ * "Master 2", "18+"). Youth wording, or an age range or "N+" that starts under
+ * 18, makes it youth, and youth wins when a label mixes both. Everything else
+ * is unknown and treated like youth: hidden. Numbers alone never make a
+ * division adult, because weight classes ("58-64") look like age ranges.
+ */
+export type AgeGroup = 'adult' | 'youth' | 'unknown';
+
+const YOUTH_WORDS = /\b(?:kids?|youth|juvenile|teens?|juniors?|pee ?wee|mighty ?mites?|tots?|boys|girls|u-?1[0-8]|under[ -]?1[0-8])\b/i;
+const ADULT_WORDS = /\b(?:adults?|masters?(?: ?\d)?|18 ?\+|18 (?:and|&) (?:over|up))(?!\w)/i;
+
+export function classifyDivision(label?: string): AgeGroup {
+  if (!label?.trim()) return 'unknown';
+  if (YOUTH_WORDS.test(label)) return 'youth';
+  // "4-5", "14 to 15", "16–17": an age range ending under 18. Weights with a unit are skipped.
+  for (const [, , hi] of label.matchAll(/(?<![\d.])(\d{1,2})\s*(?:-|–|to)\s*(\d{1,2})(?![\d.])(?!\s*(?:kg|lbs?)\b)/gi)) {
+    if (Number(hi) < 18) return 'youth';
+  }
+  for (const [, n] of label.matchAll(/\b(\d{1,2})\s*\+/g)) {
+    if (Number(n) < 18) return 'youth';
+  }
+  return ADULT_WORDS.test(label) ? 'adult' : 'unknown';
+}
+
+/** The tracked identities' registrations the age rule keeps out of the queue. */
+export function hiddenByAge(data: DemoData, tracked: IdentityRef[]): number {
+  const keys = new Set(tracked.map(identityKey));
+  return data.registrations.filter(
+    (r) => keys.has(identityKey(r.identity)) && r.status !== 'withdrawn' && classifyDivision(r.division) !== 'adult',
+  ).length;
+}
+
 /** A time is known only if the source published one and didn't mark it unknown. */
 export const hasKnownTime = (match?: Match): match is Match & { startsAt: string } =>
   !!match?.startsAt && match.timeKind !== 'unknown';
@@ -204,8 +238,10 @@ export function compareQueueEntries(a: QueueEntry, b: QueueEntry): number {
 
 /**
  * The tracked identities' registrations, with any published match, in queue
- * order. Withdrawals are left out, and so is any identity that isn't tracked:
- * which, by trackedIdentities, includes every unconfirmed candidate.
+ * order. Left out: withdrawals; any identity that isn't tracked, which by
+ * trackedIdentities includes every unconfirmed candidate; and any division not
+ * confirmed adult (classifyDivision). hiddenByAge counts the last group so the
+ * page can say entries were hidden rather than imply there were none.
  */
 export function buildQueue(data: DemoData, tracked: IdentityRef[]): QueueEntry[] {
   const keys = new Set(tracked.map(identityKey));
@@ -215,6 +251,7 @@ export function buildQueue(data: DemoData, tracked: IdentityRef[]): QueueEntry[]
   for (const registration of data.registrations) {
     const key = identityKey(registration.identity);
     if (!keys.has(key) || registration.status === 'withdrawn') continue;
+    if (classifyDivision(registration.division) !== 'adult') continue;
     const athlete = owners.get(key);
     const event = events.get(registration.eventId);
     if (!athlete || !event) continue;

@@ -144,6 +144,7 @@
       import {
         buildQueue,
         formatEventDate,
+        hiddenByAge,
         restoreSelection,
         searchAthletes,
         timeKindLabel,
@@ -264,13 +265,20 @@
           squadList.append(row);
         }
       }
+      // An entry the age rule hides is announced as hidden, never left to look like
+      // "no entry": an empty schedule doesn't prove there is none (HANDOFF §1).
+      const hiddenNote = (hidden: number) =>
+        node('p', 'queue-note', `${hidden} ${hidden === 1 ? 'entry is' : 'entries are'} hidden: MatSignal shows only divisions confirmed as adult.`);
       function renderQueue() {
         matchQueue.replaceChildren();
-        const entries = buildQueue(demoData, trackedIdentities(demoData.athletes, selected));
+        const tracked = trackedIdentities(demoData.athletes, selected);
+        const entries = buildQueue(demoData, tracked);
+        const hidden = hiddenByAge(demoData, tracked);
         if (!entries.length) {
           const empty = node('div', 'empty-queue');
           empty.append(node('strong', '', 'No tracked matches yet.'), node('p', '', 'Select a sample athlete above to see their upcoming match queue.'));
           matchQueue.append(empty);
+          if (hidden) matchQueue.append(hiddenNote(hidden));
           return;
         }
         for (const { athlete, event, match } of entries) {
@@ -287,6 +295,7 @@
           row.append(fighter, mat, time);
           matchQueue.append(row);
         }
+        if (hidden) matchQueue.append(hiddenNote(hidden));
       }
       function render() { renderResults(); renderSquad(); renderQueue(); }
       // Results update on every keystroke, but the count is announced only once
@@ -426,6 +435,7 @@
   .empty-queue{padding:55px 24px;color:#d8e2dc;text-align:center;border-top:1px solid #354448}
   .empty-queue strong{font-size:1.05rem}
   .empty-queue p{font-size:.79rem;color:#9eafa7;margin-top:9px}
+  .queue-note{border-top:1px solid #354448;padding:14px 24px;font-size:.8rem;color:#b4c4ba}
   .principle{display:grid;grid-template-columns:1fr 1fr;gap:7vw;padding:110px 0 120px;align-items:center}
   .principle p:last-child{color:#a9bab0;font-size:.98rem;line-height:1.75}
   .footer{border-top:1px solid #2e4243;display:flex;align-items:center;justify-content:space-between;gap:15px;padding:34px 0 42px;color:#9fb3a8;font-size:.72rem}
@@ -469,6 +479,7 @@
     .queue-fighter{grid-column:1}
     .mat-pill{grid-column:2;grid-row:1}
     .queue-time{grid-column:1 / -1;border-top:1px solid #304146;padding-top:10px}
+    .queue-note{padding:14px 15px}
     .principle{grid-template-columns:1fr}
     .footer{flex-wrap:wrap}
   }

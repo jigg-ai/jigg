@@ -12,6 +12,9 @@
 //   with a registration. It shows in search but stays out of the queue until
 //   someone confirms it.
 // - Each event has exactly one platform. Dates and UTC offsets are illustrative.
+// - Every division label is adult except Demo Athlete 02's Spring Open entry,
+//   whose label doesn't say ("Open Division"). The age rule hides it, and the
+//   page says an entry was hidden instead of implying there is none.
 import type { DemoData, IdentityRef } from './model.ts';
 
 const OBSERVED = '2026-10-30T12:00:00Z';
@@ -59,14 +62,16 @@ export const demoData: DemoData = {
   events: [
     { id: 'a:sample-autumn-open', name: 'Sample Autumn Open', source: A, date: '2026-11-14' },
     { id: 'b:sample-winter-open', name: 'Sample Winter Open', source: B, date: '2026-12-05' },
+    { id: 'a:sample-spring-open', name: 'Sample Spring Open', source: A, date: '2027-03-06' },
   ],
   registrations: [
-    { identity: id(A, 'a-1001'), eventId: 'a:sample-autumn-open', status: 'registered', observedAt: OBSERVED },
-    { identity: id(B, 'b-2001'), eventId: 'b:sample-winter-open', status: 'registered', observedAt: OBSERVED },
-    { identity: id(A, 'a-1002'), eventId: 'a:sample-autumn-open', status: 'registered', observedAt: OBSERVED },
-    { identity: id(A, 'a-1003'), eventId: 'a:sample-autumn-open', status: 'registered', observedAt: OBSERVED },
-    { identity: id(B, 'b-2003'), eventId: 'b:sample-winter-open', status: 'registered', observedAt: OBSERVED },
-    { identity: id(B, 'b-2004'), eventId: 'b:sample-winter-open', status: 'registered', observedAt: OBSERVED },
+    { identity: id(A, 'a-1001'), eventId: 'a:sample-autumn-open', division: 'Adult / Male / Blue / Light', status: 'registered', observedAt: OBSERVED },
+    { identity: id(B, 'b-2001'), eventId: 'b:sample-winter-open', division: 'Adult / Male / Blue / Light', status: 'registered', observedAt: OBSERVED },
+    { identity: id(A, 'a-1002'), eventId: 'a:sample-autumn-open', division: 'Master 1 / Male / Purple / Middle', status: 'registered', observedAt: OBSERVED },
+    { identity: id(A, 'a-1003'), eventId: 'a:sample-autumn-open', division: 'Adult / Female / Brown / Feather', status: 'registered', observedAt: OBSERVED },
+    { identity: id(B, 'b-2003'), eventId: 'b:sample-winter-open', division: 'Adult / Female / Brown / Feather', status: 'registered', observedAt: OBSERVED },
+    { identity: id(B, 'b-2004'), eventId: 'b:sample-winter-open', division: 'Master 2 / Female / Black / Light', status: 'registered', observedAt: OBSERVED },
+    { identity: id(A, 'a-1002'), eventId: 'a:sample-spring-open', division: 'Open Division / Purple / Middle', status: 'registered', observedAt: OBSERVED },
   ],
   // Winter Open registrations have no match yet: the platform hasn't published one.
   matches: [

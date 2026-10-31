@@ -6,8 +6,10 @@ import assert from 'node:assert/strict';
 import {
   ALL_AFFILIATIONS,
   buildQueue,
+  classifyDivision,
   compareQueueEntries,
   formatEventDate,
+  hiddenByAge,
   identityKey,
   restoreSelection,
   searchAthletes,
@@ -118,8 +120,8 @@ test('same-day events in different time zones sort by actual instant', () => {
       { id: 'west', name: 'West Open', source: 'Y', date: '2026-11-14' },
     ],
     registrations: [
-      { identity: east, eventId: 'east', status: 'registered', observedAt: '' },
-      { identity: west, eventId: 'west', status: 'registered', observedAt: '' },
+      { identity: east, eventId: 'east', division: 'Adult', status: 'registered', observedAt: '' },
+      { identity: west, eventId: 'west', division: 'Adult', status: 'registered', observedAt: '' },
     ],
     matches: [
       // 10:00 Pacific is 13:00 Eastern: later, despite the smaller clock time.
@@ -202,4 +204,32 @@ test('H-07: fixtures are fictional and internally consistent', () => {
       assert.equal(m.startsAt.slice(0, 10), events.get(m.eventId)!.date);
     }
   }
+});
+
+test('age rule: only labels that say adult are adult; youth wins; everything else is unknown', () => {
+  for (const label of ['Adult / Male / Blue / Light', 'Master 2 / Female / Black', 'Masters', 'MASTER 7', '18+ Absolute', 'Adult (18-29) / Purple', '18 and over'])
+    assert.equal(classifyDivision(label), 'adult', label);
+  for (const label of ['Juvenile 1 / Male / Blue', 'Kids 4-5 / Grey', 'Teen 14-15', 'Youth Girls', 'U18 Open', 'Under 18', 'Under 16', 'Junior', 'Boys Grey/White',
+    'Ages 16–17', 'Adult & Teen combined', '13+ No-Gi', '10 to 11 / Yellow'])
+    assert.equal(classifyDivision(label), 'youth', label);
+  for (const label of [undefined, '', '   ', 'Open Division / Purple / Middle', 'White Belt Light', 'Senior 1', 'No-Gi Expert', 'Feather 58-64', 'Light 64-70kg', 'Mastery Open'])
+    assert.equal(classifyDivision(label), 'unknown', String(label));
+});
+
+test('entries whose division is not confirmed adult stay out of the queue, and are counted', () => {
+  const tracked = trackedIdentities(demoData.athletes, ['demo-02']);
+  // Demo Athlete 02's Spring Open division says "Open Division": not confirmed adult.
+  assert.deepEqual(rows(buildQueue(demoData, tracked)), ['Demo Athlete 02@a:sample-autumn-open 10:55']);
+  assert.equal(hiddenByAge(demoData, tracked), 1);
+  assert.equal(hiddenByAge(demoData, trackedIdentities(demoData.athletes, ['demo-01'])), 0);
+  // A youth division is hidden the same way.
+  const youth: DemoData = {
+    ...demoData,
+    registrations: demoData.registrations.map((r) =>
+      r.identity.sourceAthleteId === 'a-1003' ? { ...r, division: 'Juvenile 2 / Female / Blue' } : r,
+    ),
+  };
+  const t3 = trackedIdentities(youth.athletes, ['demo-03']);
+  assert.deepEqual(buildQueue(youth, t3), []);
+  assert.equal(hiddenByAge(youth, t3), 1);
 });
