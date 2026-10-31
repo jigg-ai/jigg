@@ -1,4 +1,10 @@
-> **CURRENT FOUNDER HOLD — 2026-10-30:** The working name **MatSignal** is now unassigned while the founder considers it for a different BJJ utility. **Do not execute, brand, name routes/functions/analytics, create a preview, or deploy this gym trial-conversion POC using MatSignal until a revised founder-approved contract is issued.** The builder is separately blocked by public-repository credential isolation. These files are retained under their original historical paths for provenance. See [issue #7's current hold](https://github.com/jigg-ai/jigg/issues/7#issuecomment-6537015015). Earlier “ready to build” language below is superseded.
+> ## CURRENT NAME AND SCOPE — 2026-10-30
+>
+> **PRD-002 is now the unnamed “Gym Trial Conversion Experiment.”** The founder has selected **MatSignal** as the working name for a **different** BJJ athlete-search/tracking utility (PRD-003). Active PRD-003 work is in [`builds/matsignal-competition/`](../matsignal-competition/BRIEF.md), [issue #8](https://github.com/jigg-ai/jigg/issues/8), and [draft PR #9](https://github.com/jigg-ai/jigg/pull/9).
+>
+> This older `builds/matsignal/` directory, page copy, links and proposed hostname are **historical PRD-002 artifacts only**, never current rights to MatSignal branding or routing. **PRD-002 build is still ON HOLD** pending a new name, amended handoff and enforceably scoped builder credentials; [issue #7](https://github.com/jigg-ai/jigg/issues/7). The older brief below is preserved for traceability, not a live assignment.
+
+---
 
 # MatSignal — public builder brief
 
