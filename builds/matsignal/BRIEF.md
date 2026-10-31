@@ -7,6 +7,10 @@ Design and implement a distinctive, mobile-first **landing-page experiment**, no
 
 The page's job is to explain the hypothesis and invite qualified owners to a conversation about their actual workflow. Primary CTA: **Talk about your gym's trial-to-member process**.
 
+## Public rationale
+
+Read [THESIS.md](THESIS.md), the **draft public Build Thesis**, as the rationale for undertaking this experiment. It explains the buyer journey and why the question may be commercially useful **without claiming unverified market evidence**. The builder may refine presentation and draft a Jigg.AI build-journal explanation from this *public* material, but must obtain founder approval before publishing the thesis or article. Keep customer-facing landing-page copy concise and relevant to gym owners; do not turn it into an internal research narrative. No private sourcing reports or agent conversations are needed.
+
 ## Creative ownership
 The builder owns original logo/icon design, brand visuals, typography, color system, responsive UI, illustrations and implementation choices, subject to founder preview review. Produce 2–3 headline options. Keep the copy clear and credible; "A Jigg.AI experiment" attribution and a link to jigg.ai should be present. No invented case studies, screenshots of fictional functionality, fabricated success numbers or endorsements. Name and mark remain subject to founder/clearance review.
 
