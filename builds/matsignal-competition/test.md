@@ -27,7 +27,7 @@
 
 Pre-registered table above unchanged. Browser checks ran in the Claude desktop app's built-in browser against https://deploy-preview-9--candid-gingersnap-6c4b87.netlify.app/matsignal/; unit tests are `npm --prefix site test` (Node 26.12.0). Screenshots are in [qa/](qa/).
 
-**Found failing on `a6b6093` (the coordinator's head), before any fix:**
+**Found failing on `a6b6093` (the initial prototype commit), before any fix:**
 - Dynamic rows unstyled: search results, Track buttons, squad and match queue rendered as browser defaults (Astro scoped CSS). FAIL. [before](qa/a6b6093-before-desktop-search-unstyled.jpg), [queue](qa/a6b6093-before-desktop-queue-unstyled.jpg)
 - Keyboard: activating "+ Track" moved focus to `<body>`. FAIL (MS-T07).
 - `/matsignal/` listed in `sitemap-0.xml`, which IndexNow submits on production deploys. FAIL (MS-T10).
