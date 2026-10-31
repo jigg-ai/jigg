@@ -1,6 +1,6 @@
 # MatSignal — Technical Feasibility Report: athlete → upcoming competitions
 
-**Date:** 2026-10-30 · **Builder:** Claude Code (Claude Opus 5.5) · **Scope:** Smoothcomp and IBJJF only, per the founder's priority update. The coordinator's ~10-circuit survey (issue #8, 2026-10-31 02:09 UTC) is separate and not duplicated here.
+**Date:** 2026-10-30 · **Builder:** Claude Code (Claude Opus 5.5) · **Scope:** Smoothcomp and IBJJF only, per the founder's priority update. This report evaluates only Smoothcomp and IBJJF, not the wider tournament ecosystem.
 
 **Recommendation: ALTERNATIVE.** Neither platform offers a supportable *automated* path from an athlete to their upcoming competitions today. Smoothcomp is the best first source: it has the right shape (a profile per athlete that lists upcoming registrations, and match-day mats and ETAs), and it runs events for NAGA, NEWBREED and Grappling Industries. But it refuses automated clients on exactly those pages, and its terms license content "only in the manner in which such information is presented". IBJJF is BLOCKED without written permission: its terms ban bots and database-building outright, and it has no athlete-level lookup. The credible next step is a **written-permission request to Smoothcomp**, with a **link-out MVP** meanwhile that stores platform profile references and fetches nothing.
 
@@ -78,7 +78,7 @@ All checked by the builder, by hand, in an ordinary browser, on pages that load 
    - VERIFIED: the [About page](https://smoothcomp.com/en/about)'s only business route is "BUSINESS INQUIRIES", aimed at organizers ("Planning to start using Smoothcomp for your tournament?"). It lists a sales/support/project role and the company, Smoothcomp AB, Sweden.
    - VERIFIED: [athlete support](https://support.smoothcomp.com/article/321-contact-support) is redirected to organizers.
    - So a Test A request would go through that business-inquiries route.
-3. **Third parties using Smoothcomp data with permission: none found** on Smoothcomp's own site or help centre. A wider search is needed (research team).
+3. **Third parties using Smoothcomp data with permission: none found** on Smoothcomp's own site or help centre. Any wider investigation requires a separate, bounded scope.
 4. **Organizer route: weak.** The [SaaS agreement](https://smoothcomp.com/en/agreements?t=saas), VERIFIED:
    - §2a names "data" among the Provider IP that "shall remain the sole and exclusive property of Provider".
    - §2c bars the organizer from letting any third party "frame, mirror, republish … download, transmit or distribute all or any portion of the Services".
