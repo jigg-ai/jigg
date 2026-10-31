@@ -22,6 +22,14 @@ In `build-notes.md`, write:
   check to the build type (30 representative questions for a bot; foundation checks for
   a site build).
 
+### Public Build Thesis — selected product experiments
+
+For product validation builds (not routine maintenance or confidential client engagements), the public record should explain **why this experiment is worth trying**, not only how the code was produced. Create a founder-reviewed `THESIS.md` using [the template](builds/_template/THESIS.md). Cover the observation, the buyer outcome, existing alternatives, the uncertain wedge, the minimum experiment and clear disconfirming cases. Distinguish a researched **hypothesis** from a verified customer finding; no invented demand, economic impact or paid customers.
+
+Three layers remain separate: (1) confidential internal discovery and original agent analysis remain outside this public repository; (2) the *publishable product rationale* lives in the public thesis; and (3) design, engineering, testing, deployment and measured results live in the public build journal and commits. The product's landing page addresses prospects; the Jigg.AI build article can explain the rationale and subsequent learning. The build thesis alone is not a production launch or publication approval.
+
+The public thesis must be **written from independently approved, nonconfidential reasoning**, never copied/redacted from internal conversations or sourced by fetching private research. Keep proprietary discovery methods, agent deliberations, rankings, confidential market data, private repo links and customer identities out of the public brief, thesis, PRs and logs. The founder reviews both the thesis and finished preview before publication. If specific facts cannot be substantiated, label them as questions to validate.
+
 ## 2. Build
 - Do the work: Claude Code for site/repo builds; the tool itself otherwise.
 - **Capture the prompts and key decisions AS YOU GO.** Build #1 promised "the actual
