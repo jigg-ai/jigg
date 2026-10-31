@@ -2,6 +2,8 @@
 
 **Status:** not started. **Working brand:** MatSignal. **Proposed hostname:** matsignal.jigg.ai (not yet deployed). **Sponsor:** Jigg.AI.
 
+**Implementation kickoff:** [HANDOFF.md v1.0](HANDOFF.md) is the authoritative builder execution contract. [GitHub issue #7](https://github.com/jigg-ai/jigg/issues/7) tracks assignment, acknowledgement and the subsequent PR. Builder may begin **preview-only** implementation once public-repository-scoped access is verified; no production release, DNS changes or customer acquisition are approved.
+
 ## Assignment
 Design and implement a distinctive, mobile-first **landing-page experiment**, not a working SaaS product. Audience: independent BJJ and martial-arts gym owners. Concept: help owners explore gaps from an inquiry, to a booked trial, to attendance/no-show, to follow-up and finally a paying member. This is a proposed *additional layer alongside existing gym CRM software*, not a replacement. Existing platforms have conversion and follow-up features; do not claim the concept is already better, working, integrated or proven.
 
