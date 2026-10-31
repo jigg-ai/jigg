@@ -15,7 +15,7 @@ The directory `builds/matsignal/` and all former references to `matsignal.jigg.a
 
 The previous Claude Code builder acknowledged the original PRD-002 issue, then reported that its execution environment contained broad GitHub credentials rather than enforceable access restricted to public `jigg-ai/jigg`. No PRD-002 implementation was verified. That credential scope blocker is still unresolved.
 
-**Nothing in this amendment authorizes resuming PRD-002 work.** To proceed later, founder must choose a different PRD-002 product name and unoccupied public routes, issue a revised standalone handoff, and ensure the builder's runtime cannot access unrelated/private repositories. No production merge, DNS, paid tool, user data, outreach or deployment is approved.
+**Nothing in this amendment authorizes resuming PRD-002 work.** To proceed later, founder must choose a different PRD-002 product name and unoccupied public routes, issue a revised standalone handoff, and ensure the builder's runtime is limited to the intended repository. No production merge, DNS, paid tool, user data, outreach or deployment is approved.
 
 ## Builder instruction
 
