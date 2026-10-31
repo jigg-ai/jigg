@@ -429,7 +429,9 @@
   .principle{display:grid;grid-template-columns:1fr 1fr;gap:7vw;padding:110px 0 120px;align-items:center}
   .principle p:last-child{color:#a9bab0;font-size:.98rem;line-height:1.75}
   .footer{border-top:1px solid #2e4243;display:flex;align-items:center;justify-content:space-between;gap:15px;padding:34px 0 42px;color:#9fb3a8;font-size:.72rem}
-  .footer-brand{font-size:1.16rem;color:#f0f7ef}
+  /* gap:0 — "mat" and "signal" are separate flex items here, and the brand's
+     13px gap split the wordmark in two. */
+  .footer-brand{font-size:1.16rem;color:#f0f7ef;gap:0}
   .footer a{text-decoration:none;border-bottom:1px solid #4a5e52}
   @media (max-width:850px){
     .hero{grid-template-columns:1fr;padding:70px 0 45px;min-height:0}
