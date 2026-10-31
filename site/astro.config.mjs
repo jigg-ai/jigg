@@ -98,11 +98,14 @@ export default defineConfig({
   site: 'https://jigg.ai',
   // /subscribed (Buttondown's "After confirming" redirect) and /contact/sent (the
   // no-JS inquiry confirmation) are transactional landings — noindex'd and kept
-  // out of the sitemap.
+  // out of the sitemap. /matsignal/ is the noindex'd MatSignal demo (PRD-003): the
+  // sitemap is what the IndexNow plugin submits on production deploys, so listing
+  // it would announce an unreleased page to Bing and Yandex.
   integrations: [
     mdx(),
     sitemap({
-      filter: (page) => !page.includes('/subscribed') && !page.includes('/contact/sent'),
+      filter: (page) =>
+        !page.includes('/subscribed') && !page.includes('/contact/sent') && !page.includes('/matsignal/'),
       serialize(item) {
         // Normalise to the trailing-slash form the keys above use, so this does
         // not silently stop matching if the trailingSlash config ever changes.
