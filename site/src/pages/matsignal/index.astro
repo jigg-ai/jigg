@@ -19,7 +19,7 @@
     <a class="skip" href="#workspace">Skip to search</a>
     <div class="shell">
       <header class="topbar">
-        <div class="brand" aria-label="MatSignal home">
+        <div class="brand">
           <span class="mark" aria-hidden="true"><i></i><i></i><b></b></span>
           <span>mat<span class="brand-accent">signal</span><sup>beta</sup></span>
         </div>
@@ -35,7 +35,7 @@
             <p class="eyebrow"><span class="eyebrow-line"></span> BJJ COMPETITION TRACKING, SIMPLIFIED</p>
             <h1>Find your people.<br /><em>Follow the mat.</em></h1>
             <p class="hero-lead">Search athletes. Build your own squad. See who's competing and when—all in one place.</p>
-            <div class="hero-points" aria-label="Core principles">
+            <div class="hero-points">
               <span>Free athlete search</span>
               <span>No gym roster required</span>
               <span>One team view</span>
@@ -53,7 +53,7 @@
           </div>
         </section>
 
-        <div class="notice" role="status">
+        <div class="notice">
           <strong>Interactive product demo</strong>
           <span>Every athlete, event, and match below is fictional. No external competition sources or user accounts are connected. Selections are saved only in this browser.</span>
         </div>
@@ -75,14 +75,14 @@
               </div>
               <div class="search-meta">
                 <label for="affiliation-filter">Affiliation</label>
-                <select id="affiliation-filter" aria-label="Filter by affiliation">
+                <select id="affiliation-filter">
                   <option value="all">All affiliations</option>
                   <option value="Example Alliance">Example Alliance</option>
                   <option value="Sample Jiu-Jitsu">Sample Jiu-Jitsu</option>
                 </select>
                 <span class="demo-tag">SAMPLE RECORDS</span>
               </div>
-              <div id="search-results" class="results" aria-live="polite"></div>
+              <div id="search-results" class="results"></div>
               <p class="panel-footnote">Real MatSignal will resolve source-specific athlete identities and show official links. This demo does not search the internet.</p>
             </section>
 
@@ -94,7 +94,7 @@
                 </div>
                 <button id="clear-squad" class="text-btn" type="button" disabled>Clear all</button>
               </div>
-              <div id="squad-list" class="squad-list" aria-live="polite"></div>
+              <div id="squad-list" class="squad-list"></div>
               <div class="squad-cta">
                 <div class="mini-icon" aria-hidden="true">✦</div>
                 <div><strong>Saving your group will be free.</strong><p>Production accounts are not built yet. In this preview, your sample selection stays only on this device.</p></div>
@@ -117,8 +117,11 @@
               <span class="example-flag">ILLUSTRATIVE SCHEDULE — NOT LIVE</span>
             </div>
             <div class="schedule-columns" aria-hidden="true"><span>ATHLETE & EVENT</span><span>MAT</span><span>START / STATUS</span></div>
-            <div id="match-queue" class="queue" aria-live="polite"></div>
+            <div id="match-queue" class="queue"></div>
           </div>
+          {/* The one live region. Changes are announced here, once, in words; the
+              lists above are re-rendered silently. */}
+          <p id="demo-status" class="sr-only" role="status"></p>
         </section>
 
         <section class="principle">
@@ -154,7 +157,14 @@
       const squadCount = document.getElementById('squad-count')!;
       const clearButton = document.getElementById('clear-squad') as HTMLButtonElement;
       const matchQueue = document.getElementById('match-queue')!;
+      const statusLine = document.getElementById('demo-status')!;
       const storageKey = 'matsignal-demo-selected-athletes-v1';
+
+      // Screen-reader feedback goes through the single status line, in words, once
+      // per change. The lists themselves are re-rendered without announcing.
+      const announce = (message: string) => { statusLine.textContent = message; };
+      const groupSize = () => `${selected.size} ${selected.size === 1 ? 'athlete' : 'athletes'} in your group.`;
+      let searchAnnounceTimer: ReturnType<typeof setTimeout> | undefined;
 
       // Blocked or invalid storage must not prevent using the preview.
       const readStored = () => {
@@ -175,11 +185,25 @@
       function persistSelection() {
         try { localStorage.setItem(storageKey, JSON.stringify([...selected])); } catch { /* optional local-only demo state */ }
       }
-      function toggleAthlete(id: string) {
-        if (selected.has(id)) selected.delete(id);
-        else selected.add(id);
+      // Re-rendering replaces the button that was just pressed, which used to drop
+      // keyboard focus to <body>. So every toggle says where focus goes next: back
+      // to the same athlete's Track button in the results, or, from the squad list,
+      // to the neighbouring Remove button (the search box once the squad is empty).
+      function toggleAthlete(id: string, from: 'results' | 'squad') {
+        const squadIndex = demoData.athletes.filter((a) => selected.has(a.id)).findIndex((a) => a.id === id);
+        const name = demoData.athletes.find((a) => a.id === id)?.displayName ?? '';
+        const adding = !selected.has(id);
+        if (adding) selected.add(id);
+        else selected.delete(id);
         persistSelection();
         render();
+        if (from === 'results') {
+          resultList.querySelector<HTMLButtonElement>(`button[data-athlete-id="${id}"]`)?.focus();
+        } else {
+          const removes = squadList.querySelectorAll<HTMLButtonElement>('button.remove-btn');
+          (removes[Math.min(squadIndex, removes.length - 1)] ?? searchField).focus();
+        }
+        announce(`${adding ? 'Tracking' : 'Stopped tracking'} ${name}. ${groupSize()}`);
       }
       function renderResults() {
         resultList.replaceChildren();
@@ -201,12 +225,15 @@
             node('span', 'affiliation', `${athlete.affiliationHint} · ${athlete.academyHint}`),
             node('small', '', `${sources} · synthetic identity`),
           );
+          // The name says what pressing does next, and contains the visible text
+          // ("Track", "tracking") for voice control. No aria-pressed: a pressed
+          // state on top of a changing name read as "Remove …, pressed".
           const on = selected.has(athlete.id);
           const btn = node('button', 'track-btn' + (on ? ' tracked' : ''), on ? '✓ Tracking' : '+ Track') as HTMLButtonElement;
           btn.type = 'button';
-          btn.setAttribute('aria-label', (on ? 'Remove ' : 'Track ') + athlete.displayName);
-          btn.setAttribute('aria-pressed', String(on));
-          btn.addEventListener('click', () => toggleAthlete(athlete.id));
+          btn.dataset.athleteId = athlete.id;
+          btn.setAttribute('aria-label', (on ? 'Stop tracking ' : 'Track ') + athlete.displayName);
+          btn.addEventListener('click', () => toggleAthlete(athlete.id, 'results'));
           item.append(avatar, info, btn);
           resultList.append(item);
         }
@@ -228,7 +255,7 @@
           const remove = node('button', 'remove-btn', '×') as HTMLButtonElement;
           remove.type = 'button';
           remove.setAttribute('aria-label', 'Remove ' + athlete.displayName);
-          remove.addEventListener('click', () => toggleAthlete(athlete.id));
+          remove.addEventListener('click', () => toggleAthlete(athlete.id, 'squad'));
           row.append(info, remove);
           squadList.append(row);
         }
@@ -258,9 +285,26 @@
         }
       }
       function render() { renderResults(); renderSquad(); renderQueue(); }
-      searchField.addEventListener('input', renderResults);
-      affiliationFilter.addEventListener('change', renderResults);
-      clearButton.addEventListener('click', () => { selected.clear(); persistSelection(); render(); });
+      // Results update on every keystroke, but the count is announced only once
+      // typing pauses, instead of the whole list being read out per character.
+      function onSearchChange() {
+        renderResults();
+        clearTimeout(searchAnnounceTimer);
+        searchAnnounceTimer = setTimeout(() => {
+          const n = searchAthletes(demoData.athletes, searchField.value, affiliationFilter.value).length;
+          announce(n ? `${n} sample ${n === 1 ? 'athlete' : 'athletes'} found.` : 'No sample athletes found.');
+        }, 600);
+      }
+      searchField.addEventListener('input', onSearchChange);
+      affiliationFilter.addEventListener('change', onSearchChange);
+      // Clear all disables itself, so focus moves to the search box.
+      clearButton.addEventListener('click', () => {
+        selected.clear();
+        persistSelection();
+        render();
+        searchField.focus();
+        announce('Cleared your group.');
+      });
       render();
     </script>
   </body>
@@ -283,6 +327,7 @@
   :focus-visible{outline:3px solid #d4f27a;outline-offset:3px}
   .skip{position:absolute;top:-5rem;left:1rem;z-index:20;background:#d4f27a;color:#131c19;padding:.6rem 1rem}
   .skip:focus{top:1rem}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
   .shell{max-width:1340px;margin:auto;padding:0 clamp(20px,4.5vw,72px)}
   .topbar{min-height:91px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #2b3b3d;gap:1rem}
   .brand,.footer-brand{font-weight:790;letter-spacing:-.07em;font-size:1.85rem;display:flex;align-items:center;gap:13px}
