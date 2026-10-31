@@ -43,6 +43,7 @@ Implementation waits until data access is validated, per the founder's priority 
 | **A (recommended for the first slice)** | Netlify Functions + **Netlify Blobs** (key-value) + **Resend** for sign-in emails | No new vendor. Resend is already set up for `jigg.ai` with a sending-only key. **Blobs and function usage are metered under Netlify's credit plans; the exact allowance is UNKNOWN** (secondary sources only). Check the billing page before approving. | Key-value only: email uniqueness is enforced with an `email → userId` key, and there are no queries. Fine at small scale. A storage interface keeps a later move to Postgres to one file. |
 | **B** | Supabase Auth + Postgres (free tier) | New vendor account | Mature magic-link auth; row-level security for ownership. Free-tier inactivity pausing and limits to be verified. |
 | **C** | Auth0 (Netlify's recommended Identity replacement) + Blobs | New vendor account | Heaviest; more than this needs. |
+| **D (founder's suggestion; recommended if MatSignal gets a real backend)** | **Cloudflare Workers + D1** (SQL), with Cron Triggers for scheduled refresh, and Resend (already set up for jigg.ai) for sign-in links | Uses the existing Cloudflare account (jigg.ai's DNS is already there). Free plan, per [Cloudflare's docs](https://developers.cloudflare.com/d1/platform/limits/) (checked 2026-10-30): **D1** 5M rows read and 100k written per day, 5 GB total, 500 MB per database, and since 2026-09-01 queries **fail** once a daily limit is hit; **Workers** 100k requests/day at 10 ms CPU each; **5 Cron Triggers** per account. Paid-plan price and Queues limits not checked. | Real SQL (unique email, foreign keys, the identity index, cache and source checks in one place). Scheduled refresh without Netlify functions. **MatSignal deploys stop costing jigg.ai's 15-credit Netlify production deploys.** Turnstile is already a Cloudflare product. Costs: a second deploy pipeline and secrets in two places; the free plan's hard daily limits mean a busy event day could fail rather than slow down. |
 | **Not** | Netlify Identity | | Deprecated by Netlify in February 2025 ([changelog](https://netlify.com/changelog/deprecation-netlify-identity)). A forum post claims a reversal; unverified. |
 
 Separately from storage cost: every MatSignal production deploy is a jigg.ai production deploy at 15 credits, from the same 300-credit monthly allowance (PROCESS → Shipping).
@@ -68,7 +69,7 @@ Separately from storage cost: every MatSignal production deploy is a jigg.ai pro
 - **Notice:** the live privacy page covers subscribe, contact and Botpress only. MatSignal needs its own section before any account exists.
 
 ## Decisions needed
-1. Option A, B or C.
+1. Option A, B, C or D. Recommendation: **A** if MatSignal stays a small static preview with saved groups only; **D** once it needs the index, cache and scheduled refresh too. Most of the foundation in `src/lib/matsignal/` is plain TypeScript with no Netlify dependency, so it moves to Workers as is.
 2. Whether the abuse limits needed (e.g. groups per user, members per group) count as "artificial quotas". Proposal: generous technical limits with no paid tier above them.
 3. Platform references only, or user-entered member labels too.
 4. Retention period and privacy-notice wording.
