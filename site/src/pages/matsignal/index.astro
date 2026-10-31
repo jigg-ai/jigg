@@ -134,59 +134,39 @@
       </footer>
     </div>
     <script>
-      // All records are fictional fixtures. Do NOT replace with personal athlete
-      // records before source permissions, safeguarding and account decisions.
-      const demoAthletes = [
-        {
-          id: 'demo-01', name: 'Demo Athlete 01', affiliation: 'Example Alliance',
-          academy: 'Northside Academy', source: 'Illustrative Source A',
-          matches: [
-            { event: 'Sample Autumn Open', date: 'Nov 14', platform: 'Example Organizer A', mat: 'Mat 3', time: '11:40', type: 'Estimated', opponent: 'Demo Athlete 07' },
-            { event: 'Sample Winter Open', date: 'Dec 05', platform: 'Example Organizer B', mat: 'TBD', time: '', type: 'Not published', opponent: 'TBD' },
-          ],
-        },
-        {
-          id: 'demo-02', name: 'Demo Athlete 02', affiliation: 'Example Alliance',
-          academy: 'Lakeside Jiu-Jitsu', source: 'Illustrative Source B',
-          matches: [
-            { event: 'Sample Autumn Open', date: 'Nov 14', platform: 'Example Organizer B', mat: 'Mat 5', time: '10:55', type: 'Estimated', opponent: 'Demo Athlete 08' },
-          ],
-        },
-        {
-          id: 'demo-03', name: 'Demo Athlete 03', affiliation: 'Sample Jiu-Jitsu',
-          academy: 'Sample City Academy', source: 'Illustrative Source A',
-          matches: [
-            { event: 'Sample Autumn Open', date: 'Nov 14', platform: 'Example Organizer A', mat: 'Mat 1', time: '13:20', type: 'Scheduled', opponent: 'Demo Athlete 09' },
-          ],
-        },
-        {
-          id: 'demo-04', name: 'Demo Athlete 04', affiliation: 'Sample Jiu-Jitsu',
-          academy: 'Uptown Grappling', source: 'Illustrative Source B',
-          matches: [
-            { event: 'Sample Winter Open', date: 'Dec 05', platform: 'Example Organizer B', mat: 'TBD', time: '', type: 'Not published', opponent: 'TBD' },
-          ],
-        },
-      ];
+      // Wires the demo model to the page. Every record is a fictional fixture and
+      // nothing here makes a network request. Search, selection restore and queue
+      // order live in src/lib/matsignal/model.ts, where `npm test` covers them.
+      import { demoData } from '../../lib/matsignal/fixtures.ts';
+      import {
+        buildQueue,
+        formatEventDate,
+        restoreSelection,
+        searchAthletes,
+        timeKindLabel,
+        timeLabel,
+      } from '../../lib/matsignal/model.ts';
 
-      const searchField = document.getElementById('athlete-search');
-      const affiliationFilter = document.getElementById('affiliation-filter');
-      const resultList = document.getElementById('search-results');
-      const squadList = document.getElementById('squad-list');
-      const squadCount = document.getElementById('squad-count');
-      const clearButton = document.getElementById('clear-squad');
-      const matchQueue = document.getElementById('match-queue');
+      const searchField = document.getElementById('athlete-search') as HTMLInputElement;
+      const affiliationFilter = document.getElementById('affiliation-filter') as HTMLSelectElement;
+      const resultList = document.getElementById('search-results')!;
+      const squadList = document.getElementById('squad-list')!;
+      const squadCount = document.getElementById('squad-count')!;
+      const clearButton = document.getElementById('clear-squad') as HTMLButtonElement;
+      const matchQueue = document.getElementById('match-queue')!;
       const storageKey = 'matsignal-demo-selected-athletes-v1';
 
-      let initialIds = [];
-      try {
-        const parsed = JSON.parse(localStorage.getItem(storageKey) || '[]');
-        if (Array.isArray(parsed)) initialIds = parsed.filter((v) => typeof v === 'string');
-      } catch {
-        // Blocked or invalid storage should not prevent using the preview.
-      }
-      const selected = new Set(initialIds.filter((id) => demoAthletes.some((a) => a.id === id)));
+      // Blocked or invalid storage must not prevent using the preview.
+      const readStored = () => {
+        try {
+          return localStorage.getItem(storageKey);
+        } catch {
+          return null;
+        }
+      };
+      const selected = new Set(restoreSelection(readStored(), demoData.athletes));
 
-      function node(tag, className, value) {
+      function node(tag: string, className?: string, value?: string) {
         const e = document.createElement(tag);
         if (className) e.className = className;
         if (value !== undefined) e.textContent = value;
@@ -195,7 +175,7 @@
       function persistSelection() {
         try { localStorage.setItem(storageKey, JSON.stringify([...selected])); } catch { /* optional local-only demo state */ }
       }
-      function toggleAthlete(id) {
+      function toggleAthlete(id: string) {
         if (selected.has(id)) selected.delete(id);
         else selected.add(id);
         persistSelection();
@@ -203,12 +183,7 @@
       }
       function renderResults() {
         resultList.replaceChildren();
-        const query = String(searchField.value || '').trim().toLowerCase();
-        const affiliation = affiliationFilter.value;
-        const matches = demoAthletes.filter((a) => {
-          const found = [a.name, a.affiliation, a.academy].join(' ').toLowerCase().includes(query);
-          return found && (affiliation === 'all' || a.affiliation === affiliation);
-        });
+        const matches = searchAthletes(demoData.athletes, searchField.value, affiliationFilter.value);
         if (!matches.length) {
           const empty = node('div', 'empty-state');
           empty.append(node('strong', '', 'No sample matches'), node('p', '', 'This preview only contains four fictional athletes. A real search index has not been connected.'));
@@ -220,11 +195,16 @@
           const avatar = node('span', 'avatar', athlete.id.slice(-2));
           avatar.setAttribute('aria-hidden', 'true');
           const info = node('div', 'athlete-info');
-          info.append(node('strong', '', athlete.name), node('span', 'affiliation', athlete.affiliation + ' · ' + athlete.academy), node('small', '', athlete.source + ' · synthetic identity'));
+          const sources = athlete.identities.map((i) => i.source).join(' · ');
+          info.append(
+            node('strong', '', athlete.displayName),
+            node('span', 'affiliation', `${athlete.affiliationHint} · ${athlete.academyHint}`),
+            node('small', '', `${sources} · synthetic identity`),
+          );
           const on = selected.has(athlete.id);
-          const btn = node('button', 'track-btn' + (on ? ' tracked' : ''), on ? '✓ Tracking' : '+ Track');
+          const btn = node('button', 'track-btn' + (on ? ' tracked' : ''), on ? '✓ Tracking' : '+ Track') as HTMLButtonElement;
           btn.type = 'button';
-          btn.setAttribute('aria-label', (on ? 'Remove ' : 'Track ') + athlete.name);
+          btn.setAttribute('aria-label', (on ? 'Remove ' : 'Track ') + athlete.displayName);
           btn.setAttribute('aria-pressed', String(on));
           btn.addEventListener('click', () => toggleAthlete(athlete.id));
           item.append(avatar, info, btn);
@@ -241,13 +221,13 @@
           squadList.append(empty);
           return;
         }
-        for (const athlete of demoAthletes.filter((a) => selected.has(a.id))) {
+        for (const athlete of demoData.athletes.filter((a) => selected.has(a.id))) {
           const row = node('div', 'squad-athlete');
           const info = node('div', 'squad-athlete-info');
-          info.append(node('strong', '', athlete.name), node('span', '', athlete.affiliation));
-          const remove = node('button', 'remove-btn', '×');
+          info.append(node('strong', '', athlete.displayName), node('span', '', athlete.affiliationHint ?? ''));
+          const remove = node('button', 'remove-btn', '×') as HTMLButtonElement;
           remove.type = 'button';
-          remove.setAttribute('aria-label', 'Remove ' + athlete.name);
+          remove.setAttribute('aria-label', 'Remove ' + athlete.displayName);
           remove.addEventListener('click', () => toggleAthlete(athlete.id));
           row.append(info, remove);
           squadList.append(row);
@@ -255,30 +235,24 @@
       }
       function renderQueue() {
         matchQueue.replaceChildren();
-        const entries = demoAthletes
-          .filter((a) => selected.has(a.id))
-          .flatMap((a) => a.matches.map((m) => ({ athlete: a, match: m })))
-          .sort((a, b) => {
-            const dateA = a.match.date === 'Nov 14' ? 0 : 1;
-            const dateB = b.match.date === 'Nov 14' ? 0 : 1;
-            if (dateA !== dateB) return dateA - dateB;
-            if (!a.match.time) return 1;
-            if (!b.match.time) return -1;
-            return a.match.time.localeCompare(b.match.time);
-          });
+        const entries = buildQueue(demoData, selected);
         if (!entries.length) {
           const empty = node('div', 'empty-queue');
           empty.append(node('strong', '', 'No tracked matches yet.'), node('p', '', 'Select a sample athlete above to see their upcoming match queue.'));
           matchQueue.append(empty);
           return;
         }
-        for (const item of entries) {
+        for (const { athlete, event, match } of entries) {
           const row = node('div', 'queue-row');
           const fighter = node('div', 'queue-fighter');
-          fighter.append(node('strong', '', item.athlete.name), node('span', '', item.match.event + ' · ' + item.match.date), node('small', '', item.match.platform + ' · vs ' + item.match.opponent));
-          const mat = node('span', 'mat-pill', item.match.mat);
+          fighter.append(
+            node('strong', '', athlete.displayName),
+            node('span', '', `${event.name} · ${formatEventDate(event.date)}`),
+            node('small', '', `${event.source} · vs ${match?.opponentLabel ?? 'TBD'}`),
+          );
+          const mat = node('span', 'mat-pill', match?.mat ?? 'TBD');
           const time = node('div', 'queue-time');
-          time.append(node('strong', '', item.match.time ? item.match.time : 'Unknown'), node('span', '', item.match.type + ' · Demo'));
+          time.append(node('strong', '', timeLabel(match)), node('span', '', `${timeKindLabel(match)} · Demo`));
           row.append(fighter, mat, time);
           matchQueue.append(row);
         }
