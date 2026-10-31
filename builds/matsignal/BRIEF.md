@@ -1,3 +1,5 @@
+> **CURRENT FOUNDER HOLD — 2026-10-30:** The working name **MatSignal** is now unassigned while the founder considers it for a different BJJ utility. **Do not execute, brand, name routes/functions/analytics, create a preview, or deploy this gym trial-conversion POC using MatSignal until a revised founder-approved contract is issued.** The builder is separately blocked by public-repository credential isolation. These files are retained under their original historical paths for provenance. See [issue #7's current hold](https://github.com/jigg-ai/jigg/issues/7#issuecomment-6537015015). Earlier “ready to build” language below is superseded.
+
 # MatSignal — public builder brief
 
 **Status:** not started. **Working brand:** MatSignal. **Proposed hostname:** matsignal.jigg.ai (not yet deployed). **Sponsor:** Jigg.AI.
