@@ -8,6 +8,8 @@ import {
   buildQueue,
   classifyDivision,
   compareQueueEntries,
+  coverageGaps,
+  gapLabel,
   formatEventDate,
   hiddenByAge,
   identityKey,
@@ -19,6 +21,7 @@ import {
   upsertDiscovered,
   type DemoData,
   type QueueEntry,
+  type SourceCheck,
   type SourceIdentity,
 } from './model.ts';
 import { demoData } from './fixtures.ts';
@@ -232,4 +235,38 @@ test('entries whose division is not confirmed adult stay out of the queue, and a
   const t3 = trackedIdentities(youth.athletes, ['demo-03']);
   assert.deepEqual(buildQueue(youth, t3), []);
   assert.equal(hiddenByAge(youth, t3), 1);
+});
+
+test('a source that could not be checked is reported as unknown, never as "no entries"', () => {
+  const tracked = trackedIdentities(demoData.athletes, ['demo-01']); // one identity on each platform
+  const a = { source: 'Example Platform A', sourceAthleteId: 'a-1001' };
+  const b = { source: 'Example Platform B', sourceAthleteId: 'b-2001' };
+  const checks: SourceCheck[] = [
+    { identity: a, status: 'ok', checkedAt: '2026-10-30T12:00:00Z' },
+    { identity: b, status: 'ok', checkedAt: '2026-10-29T12:00:00Z' },
+    // The latest check wins: Platform B has since become unreachable.
+    { identity: b, status: 'unavailable', checkedAt: '2026-10-30T12:00:00Z' },
+  ];
+  const gaps = coverageGaps(demoData.athletes, tracked, checks);
+  assert.deepEqual(gaps.map((g) => `${g.source}:${g.status}`), ['Example Platform B:unavailable']);
+  assert.equal(gapLabel(gaps[0]), "Example Platform B couldn't be checked for Demo Athlete 01 (last tried 2026-10-30), so entries there are unknown.");
+  // Everything ok: no gaps.
+  assert.deepEqual(coverageGaps(demoData.athletes, tracked, checks.slice(0, 2)), []);
+});
+
+test('private, missing and never-checked identities each say why their entries are unknown', () => {
+  const tracked = trackedIdentities(demoData.athletes, ['demo-02', 'demo-04']);
+  const checks: SourceCheck[] = [
+    { identity: { source: 'Example Platform A', sourceAthleteId: 'a-1002' }, status: 'private', checkedAt: '2026-10-30T12:00:00Z' },
+  ];
+  const labels = coverageGaps(demoData.athletes, tracked, checks).map(gapLabel);
+  assert.deepEqual(labels, [
+    "Demo Athlete 02's Example Platform A profile is private, so entries there are unknown.",
+    "Demo Athlete 04 hasn't been checked on Example Platform B yet, so entries there are unknown.",
+  ]);
+  const missing = coverageGaps(demoData.athletes, trackedIdentities(demoData.athletes, ['demo-04']), [
+    { identity: { source: 'Example Platform B', sourceAthleteId: 'b-2004' }, status: 'not-found', checkedAt: '2026-10-30T12:00:00Z' },
+  ]);
+  assert.match(gapLabel(missing[0]), /wasn't found on Example Platform B \(last tried 2026-10-30\), so entries there are unknown\.$/);
+  for (const label of [...labels, gapLabel(missing[0])]) assert.match(label, /unknown\.$/);
 });

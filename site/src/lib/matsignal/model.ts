@@ -206,6 +206,63 @@ export function hiddenByAge(data: DemoData, tracked: IdentityRef[]): number {
   ).length;
 }
 
+/**
+ * The last time MatSignal checked one identity on its platform. Only 'ok' says
+ * anything about which registrations exist: every other outcome means "unknown",
+ * and the page must say so rather than show a partial schedule as complete.
+ */
+export type SourceStatus = 'ok' | 'private' | 'not-found' | 'blocked' | 'unavailable';
+
+export interface SourceCheck {
+  identity: IdentityRef;
+  status: SourceStatus;
+  /** ISO 8601. */
+  checkedAt: string;
+}
+
+export interface CoverageGap {
+  athlete: Athlete;
+  source: string;
+  status: Exclude<SourceStatus, 'ok'> | 'unchecked';
+  checkedAt?: string;
+}
+
+/** Tracked identities whose latest check didn't succeed, or that were never checked. */
+export function coverageGaps(athletes: Athlete[], tracked: IdentityRef[], checks: SourceCheck[]): CoverageGap[] {
+  const owners = new Map(athletes.flatMap((a) => a.identities.map((i) => [identityKey(i), a] as const)));
+  const latest = new Map<string, SourceCheck>();
+  for (const c of checks) {
+    const key = identityKey(c.identity);
+    const prev = latest.get(key);
+    if (!prev || Date.parse(c.checkedAt) > Date.parse(prev.checkedAt)) latest.set(key, c);
+  }
+  const gaps: CoverageGap[] = [];
+  for (const ref of tracked) {
+    const athlete = owners.get(identityKey(ref));
+    if (!athlete) continue;
+    const check = latest.get(identityKey(ref));
+    if (!check) gaps.push({ athlete, source: ref.source, status: 'unchecked' });
+    else if (check.status !== 'ok') gaps.push({ athlete, source: ref.source, status: check.status, checkedAt: check.checkedAt });
+  }
+  return gaps;
+}
+
+/** One plain sentence per gap. Each ends by saying the entries there are unknown. */
+export function gapLabel(gap: CoverageGap): string {
+  const who = gap.athlete.displayName;
+  const when = gap.checkedAt ? ` (last tried ${gap.checkedAt.slice(0, 10)})` : '';
+  switch (gap.status) {
+    case 'private':
+      return `${who}'s ${gap.source} profile is private, so entries there are unknown.`;
+    case 'not-found':
+      return `${who} wasn't found on ${gap.source}${when}, so entries there are unknown.`;
+    case 'unchecked':
+      return `${who} hasn't been checked on ${gap.source} yet, so entries there are unknown.`;
+    default:
+      return `${gap.source} couldn't be checked for ${who}${when}, so entries there are unknown.`;
+  }
+}
+
 /** A time is known only if the source published one and didn't mark it unknown. */
 export const hasKnownTime = (match?: Match): match is Match & { startsAt: string } =>
   !!match?.startsAt && match.timeKind !== 'unknown';
