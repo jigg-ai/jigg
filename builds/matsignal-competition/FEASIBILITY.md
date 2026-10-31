@@ -64,3 +64,39 @@ Both platforms mix youth divisions into the same lists and brackets (VERIFIED fo
 - Whether Smoothcomp profiles show upcoming events to logged-out visitors, or only to their owner.
 - Whether the competing services named in issue #8 (comp-hub, trackbjj, trackmat) have platform agreements. Their claims are untested, and their existence proves nothing about permission. Smoothcomp's own app already lets athletes follow others (DOCUMENTED, support 398).
 - Operating cost of a scheduled backend. Nothing exists to measure yet. Deploy Previews used so far: 0 Netlify credits.
+
+## Follow-up, 2026-10-30: permission and link-out questions (Q1–Q7)
+
+All checked by the builder, by hand, in an ordinary browser, on pages that load normally: Smoothcomp's legal pages, About page and help centre, and IBJJF's terms. No profile or event page was opened. Not legal advice.
+
+1. **Public API or partner program: none published.**
+   - VERIFIED: the help-centre search for "api" returns only payment-gateway keys (Stripe, Paystack), staff roles, organizer status and the federation platform.
+   - VERIFIED: a web search for a Smoothcomp developer, API or partner program found nothing.
+   - VERIFIED: ToS §6.1's "partners … that we cooperate with" offer features *inside* the platform; it is not a data-access route.
+   - So the only route is a bespoke request.
+2. **Contact route: no data-partnership channel.**
+   - VERIFIED: the [About page](https://smoothcomp.com/en/about)'s only business route is "BUSINESS INQUIRIES", aimed at organizers ("Planning to start using Smoothcomp for your tournament?"). It lists a sales/support/project role and the company, Smoothcomp AB, Sweden.
+   - VERIFIED: [athlete support](https://support.smoothcomp.com/article/321-contact-support) is redirected to organizers.
+   - So a Test A request would go through that business-inquiries route.
+3. **Third parties using Smoothcomp data with permission: none found** on Smoothcomp's own site or help centre. A wider search is needed (research team).
+4. **Organizer route: weak.** The [SaaS agreement](https://smoothcomp.com/en/agreements?t=saas), VERIFIED:
+   - §2a names "data" among the Provider IP that "shall remain the sole and exclusive property of Provider".
+   - §2c bars the organizer from letting any third party "frame, mirror, republish … download, transmit or distribute all or any portion of the Services".
+   - §1e: registrations "shall remain on Smoothcomp", with no export "into another tournament platform", and "attempts to circumvent our terms can result in the termination of the organizer account".
+   - Organizers can download their own event's registrations as CSV ([support 109](https://support.smoothcomp.com/article/109-download-registrations-as-a-csv-file)), and Smoothcomp is the data controller ([support 196](https://support.smoothcomp.com/article/196-who-can-access-my-data-and-can-i-hide-it-from-them)).
+   - So an organizer feeding MatSignal would likely need Smoothcomp's consent anyway.
+5. **Logged-out profile visibility: partly UNKNOWN.**
+   - DOCUMENTED ([support 398](https://support.smoothcomp.com/article/398-athlete-profile)): profiles can be "private or … public"; the profile "shows upcoming events you're registered for"; and "results are only shown for events that have published and made their results public".
+   - The article is addressed to the profile's owner. It doesn't say whether *visitors* see the upcoming-events section, or which setting is the default. The founder can settle this by opening a profile while logged out.
+6. **Linking: allowed on Smoothcomp, restricted on IBJJF.**
+   - VERIFIED: Smoothcomp's visitor [Terms](https://smoothcomp.com/en/agreements?t=tos) contain no linking or framing restriction. "Link" appears only for connecting accounts. The framing ban in SaaS §2c binds organizers, not visitors.
+   - VERIFIED: IBJJF's [Terms of Use](https://ibjjf.com/terms-of-use) (last updated 2025-10-06) list "Engage in unauthorized framing of or linking to the Services" under §4 Prohibited Activities.
+   - So Test B is consistent with Smoothcomp's visitor terms, and IBJJF stays out of it.
+7. **URL stability: partly UNKNOWN.**
+   - DOCUMENTED ([support 178](https://support.smoothcomp.com/article/178-how-to-create-your-federation-company-platform)): a federation subdomain "will not be possible for you to change after you have created it".
+   - VERIFIED from the public event calendar: event IDs come from one numeric sequence across the main domain and organizer subdomains (e.g. `smoothcomp.com/en/event/27515`, `<org>.smoothcomp.com/en/event/28006`).
+   - UNKNOWN: whether one profile ID resolves identically on every subdomain. A human check is needed.
+
+**Effect on the recommendation:** unchanged (ALTERNATIVE), but sharper:
+- Test A has to go to Smoothcomp itself, through its organizer-facing business route. Organizers can't grant this on their own.
+- Test B (link-out, no fetching) is consistent with Smoothcomp's visitor terms and should exclude IBJJF.
