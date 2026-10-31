@@ -19,7 +19,7 @@ last_verified: ""
 pricing_as_of: ""
 
 # Time and cost (CONTEXT §5). Recorded from the 2026-10-30 Claude Code session on.
-# The coordinator's earlier scaffolding (commits dd8885d..a6b6093) was not timed.
+# The earlier scaffolding (commits dd8885d..a6b6093) was not timed.
 human_time:
   minutes:
   basis: unavailable  # the founder's directing and review time wasn't tracked
