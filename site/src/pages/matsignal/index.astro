@@ -292,15 +292,21 @@
   </body>
 </html>
 
-<style>
-  :global(*){box-sizing:border-box}
-  :global(html){scroll-behavior:smooth}
-  :global(body){margin:0;background:#101a1d;color:#f4f8f4;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;line-height:1.5}
-  :global(button),:global(input),:global(select){font:inherit}
-  :global(button){cursor:pointer}
-  :global(button:disabled){cursor:not-allowed;opacity:.45}
-  :global(a){color:inherit}
-  :global(:focus-visible){outline:3px solid #d4f27a;outline-offset:3px}
+<style is:global>
+  /* Global, not scoped. Astro scopes a component's styles by tagging every element
+     in the markup with a data-astro-cid attribute and requiring it in each selector,
+     but the rows the script builds with createElement never get that attribute, so
+     with scoped styles the search results, squad and match queue rendered unstyled.
+     This page loads no shared layout or site stylesheet, so global here still means
+     "this page only": the bundle ships with /matsignal/ and nothing else. */
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:#101a1d;color:#f4f8f4;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;line-height:1.5}
+  button,input,select{font:inherit}
+  button{cursor:pointer}
+  button:disabled{cursor:not-allowed;opacity:.45}
+  a{color:inherit}
+  :focus-visible{outline:3px solid #d4f27a;outline-offset:3px}
   .skip{position:absolute;top:-5rem;left:1rem;z-index:20;background:#d4f27a;color:#131c19;padding:.6rem 1rem}
   .skip:focus{top:1rem}
   .shell{max-width:1340px;margin:auto;padding:0 clamp(20px,4.5vw,72px)}
