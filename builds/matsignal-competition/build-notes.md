@@ -6,7 +6,7 @@
 - **User problem:** Tracking multiple teammates across separate competition-registration/bracket systems is inconvenient, particularly during events. Founder experienced this personally; broader demand not yet proven.
 - **Authorization:** Begin build-out. First reversible slice is a nonpublished, isolated interactive preview and synthetic fixtures; no collecting real athlete records, credential creation, domain spend, scraping, live sync, or site launch.
 - **Demo acceptance checks:** search and disambiguate sample athletes; add/remove watchlist with keyboard; list upcoming events and chronological match-day sample; support empty states; hard-label all demo content; preserve watchlist locally; label unimplemented features. Check that Astro build succeeds before considering PR ready (NOT YET RUN).
-- **Process note:** This scaffolding was committed via the Jigg.AI GitHub connector by the coordinator, not represented as an executed Claude Code session. Repo-local `npm run build` and a genuine browser preview are still pending.
+- **Process note:** This scaffolding was committed through the Jigg.AI GitHub connector, not as an executed Claude Code session. Repo-local `npm run build` and a genuine browser preview are still pending.
 - **Costs/time:** unmeasured; no cost claim.
 
 ## Next engineering work
@@ -25,7 +25,7 @@
 
 **Builder:** Claude Code (Claude Opus 5.5) in the Claude desktop app on the founder's Mac. Started 18:59 PDT; this entry written 19:31 PDT.
 
-**Credential gate (H-01): not met, waived by the founder.** This runtime holds account-wide GitHub credentials: the account-level SSH key and GitHub CLI tokens with `repo` scope. Issue #8 and the founder's priority update both say to stop in that case. The founder instead told this session in chat to build ("you are the builder, go ahead with the build on jigg.ai, fix what's needed"), and, when asked about the conflict, answered "make sure all commits and pushes are done using jigg's ID". So every commit is authored and committed as Jigg.AI Bot, and pushes go over SSH as `jigg-ai`. No repository other than `jigg-ai/jigg` was accessed. The coordinator's 02:09 UTC notice restating the gate came before that instruction. The gate itself is still unresolved for any future builder.
+**Credential gate (H-01): not met, waived by the founder.** This runtime holds account-wide GitHub credentials: the account-level SSH key and GitHub CLI tokens with `repo` scope. Issue #8 and the founder's priority update both say to stop in that case. The founder instead told this session in chat to build ("you are the builder, go ahead with the build on jigg.ai, fix what's needed"), and, when asked about the conflict, answered "make sure all commits and pushes are done using jigg's ID". So every commit is authored and committed as Jigg.AI Bot, and pushes go over SSH as `jigg-ai`. No repository other than `jigg-ai/jigg` was accessed. The repository scope requirement had been reiterated before that instruction. The gate itself is still unresolved for any future builder.
 
 **What happened, in order:**
 - **Review of `a6b6093` on the Deploy Preview** (posted on PR #9). The interactive half of the page was unstyled. Root cause: Astro scopes component CSS with a `data-astro-cid` attribute that `createElement` rows never get.
@@ -55,12 +55,12 @@
 
 **Session:** 20:16–20:19 PDT, plus the Q1–Q7 research earlier in the evening (not separately timed). Same builder and credential waiver as above.
 
-- **Research questions.** The founder sent research questions to the coordinator. The builder answered Q1–Q7 itself and added them to [FEASIBILITY.md](FEASIBILITY.md) (`6134825`). Two parts need a human with a normal browser and went to the founder:
+- **Source-access questions.** The founder requested follow-up on source availability. The builder answered Q1–Q7 itself and added them to [FEASIBILITY.md](FEASIBILITY.md) (`6134825`). Two parts need a human with a normal browser and went to the founder:
   - Q5: does a logged-out visitor see a profile's upcoming events?
   - Q7: is a profile ID the same on every subdomain?
 
-  The rest went to the research team.
-- **Coordinator notice** (issue #8, 03:15 UTC): continue PR #9 within authorized scope. No new data adapter, license or outreach is approved. Comp Hub's and TrackMat's published scraping is their own disclosure, not precedent.
+  The remaining questions require separate review.
+- **Scope reminder:** Continue PR #9 within the approved scope. No new data adapter, license or outreach is approved. Other products' descriptions of scraping are not permission to do the same.
 - **`d7e91a8`:** per-source capability matrix (`sources.ts`) with `assertAutomatedAccessPermitted()`, the code form of Gate B. It throws for every source today, including unknown ones.
 - **`d7d7b5f`:** Smoothcomp link parser (`smoothcomp.ts`). It refuses lookalike hosts, `javascript:`/`data:` URLs, credentials and ports, and strips tracking parameters. It only parses; nothing is fetched.
 - **Account proposal:** [ACCOUNTS.md](ACCOUNTS.md), a free-account design proposal (HANDOFF §5).
