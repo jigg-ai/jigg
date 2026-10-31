@@ -148,6 +148,7 @@
         searchAthletes,
         timeKindLabel,
         timeLabel,
+        trackedIdentities,
       } from '../../lib/matsignal/model.ts';
 
       const searchField = document.getElementById('athlete-search') as HTMLInputElement;
@@ -219,7 +220,10 @@
           const avatar = node('span', 'avatar', athlete.id.slice(-2));
           avatar.setAttribute('aria-hidden', 'true');
           const info = node('div', 'athlete-info');
-          const sources = athlete.identities.map((i) => i.source).join(' · ');
+          // One entry per platform identity; an unconfirmed same-name record says so.
+          const sources = athlete.identities
+            .map((i) => (i.match === 'candidate' ? `${i.source} (unconfirmed)` : i.source))
+            .join(' · ');
           info.append(
             node('strong', '', athlete.displayName),
             node('span', 'affiliation', `${athlete.affiliationHint} · ${athlete.academyHint}`),
@@ -262,7 +266,7 @@
       }
       function renderQueue() {
         matchQueue.replaceChildren();
-        const entries = buildQueue(demoData, selected);
+        const entries = buildQueue(demoData, trackedIdentities(demoData.athletes, selected));
         if (!entries.length) {
           const empty = node('div', 'empty-queue');
           empty.append(node('strong', '', 'No tracked matches yet.'), node('p', '', 'Select a sample athlete above to see their upcoming match queue.'));

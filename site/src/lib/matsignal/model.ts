@@ -10,62 +10,92 @@
 export type TimeKind = 'scheduled' | 'estimated' | 'unknown';
 
 /**
- * One athlete record as a single source publishes it. `sourceAthleteId` is that
- * source's own identifier: not a universal personal ID, and not comparable across
- * sources.
+ * Points at one athlete record on one platform. `sourceAthleteId` is that
+ * platform's own identifier: not a universal personal ID, and never compared
+ * across platforms.
  */
-export interface SourceIdentity {
+export interface IdentityRef {
   source: string;
   sourceAthleteId: string;
+}
+
+export const identityKey = (ref: IdentityRef): string => `${ref.source}:${ref.sourceAthleteId}`;
+
+/**
+ * Whether a source identity is known to be this athlete. `candidate` covers a
+ * same-name record nobody has confirmed: it is shown, but its registrations and
+ * matches stay out of the athlete's queue until a user (or a reliable source
+ * link) confirms it.
+ */
+export type IdentityMatch = 'confirmed' | 'candidate';
+
+/** One athlete record as a single platform publishes it. */
+export interface SourceIdentity extends IdentityRef {
   observedName: string;
+  profileUrl?: string;
+  match: IdentityMatch;
   /** ISO 8601. When this identity was last checked against its source. */
   checkedAt: string;
 }
 
 /**
  * An athlete in MatSignal's local index. Not proof of identity: identities from
- * different sources stay separate unless something reliable links them.
+ * different platforms stay separate records unless something reliable links them.
  */
 export interface Athlete {
   id: string;
   displayName: string;
-  /** The team name given at registration. A hint, never an official roster claim. */
+  aliases?: string[];
+  /** The team name given at registration. A hint, never proof of membership in a physical gym. */
   affiliationHint?: string;
   academyHint?: string;
   identities: SourceIdentity[];
 }
 
 export interface CompetitionEvent {
+  /** Unique in the index; real adapters prefix the platform's own event ID. */
   id: string;
   name: string;
-  /** The organizer platform that publishes this event. */
+  /** The platform that publishes this event. */
   source: string;
   /** The event's local calendar date, YYYY-MM-DD. */
   date: string;
+  url?: string;
 }
 
 export type RegistrationStatus = 'registered' | 'withdrawn' | 'unknown';
 
+/** A registration as the platform shows it: keyed by that platform's identity, never by a local guess. */
 export interface Registration {
-  athleteId: string;
+  identity: IdentityRef;
   eventId: string;
+  division?: string;
   status: RegistrationStatus;
-  source: string;
   /** ISO 8601. When the source was observed to show this registration. */
   observedAt: string;
 }
 
 /** A match. Mat, opponent and time are present only when the source published them. */
 export interface Match {
-  athleteId: string;
+  identity: IdentityRef;
   eventId: string;
   mat?: string;
   opponentLabel?: string;
   /** ISO 8601 with the event's UTC offset, e.g. 2026-11-14T11:40:00-05:00. */
   startsAt?: string;
   timeKind: TimeKind;
-  source: string;
   observedAt: string;
+}
+
+/**
+ * A user-curated set of source identities. Membership is the user's choice; it
+ * says nothing about an official roster or academy. Production groups need a free
+ * account (HANDOFF §5); the demo keeps its selection in localStorage instead.
+ */
+export interface TrackingGroup {
+  id: string;
+  name: string;
+  members: IdentityRef[];
 }
 
 export interface DemoData {
@@ -79,17 +109,18 @@ export interface DemoData {
 export interface QueueEntry {
   athlete: Athlete;
   event: CompetitionEvent;
+  registration: Registration;
   match?: Match;
 }
 
 export const ALL_AFFILIATIONS = 'all';
 
-/** Case-insensitive match on name, affiliation or academy, in fixture order. */
+/** Case-insensitive match on name, aliases, affiliation or academy, in index order. */
 export function searchAthletes(athletes: Athlete[], query: string, affiliation: string): Athlete[] {
   const q = query.trim().toLowerCase();
   return athletes.filter((a) => {
     if (affiliation !== ALL_AFFILIATIONS && a.affiliationHint !== affiliation) return false;
-    return [a.displayName, a.affiliationHint, a.academyHint].join(' ').toLowerCase().includes(q);
+    return [a.displayName, ...(a.aliases ?? []), a.affiliationHint, a.academyHint].join(' ').toLowerCase().includes(q);
   });
 }
 
@@ -107,6 +138,38 @@ export function restoreSelection(raw: string | null, athletes: Athlete[]): strin
   if (!Array.isArray(parsed)) return [];
   const known = new Set(athletes.map((a) => a.id));
   return [...new Set(parsed.filter((v): v is string => typeof v === 'string' && known.has(v)))];
+}
+
+/** The identities a selection of athletes tracks: confirmed ones only. */
+export function trackedIdentities(athletes: Athlete[], selectedIds: Iterable<string>): IdentityRef[] {
+  const selected = new Set(selectedIds);
+  return athletes
+    .filter((a) => selected.has(a.id))
+    .flatMap((a) => a.identities.filter((i) => i.match === 'confirmed'))
+    .map(({ source, sourceAthleteId }) => ({ source, sourceAthleteId }));
+}
+
+/**
+ * Adds identities a source returned for a search to the local index, so the next
+ * search reuses them instead of rediscovering them. A known identity is refreshed
+ * in place; a new one becomes its own athlete. Nothing is merged by name: two
+ * platforms' records for the same name stay two athletes until something reliable
+ * links them.
+ */
+export function upsertDiscovered(athletes: Athlete[], found: SourceIdentity[]): Athlete[] {
+  const next = athletes.map((a) => ({ ...a, identities: [...a.identities] }));
+  for (const identity of found) {
+    const key = identityKey(identity);
+    const owner = next.find((a) => a.identities.some((i) => identityKey(i) === key));
+    if (owner) {
+      owner.identities = owner.identities.map((i) =>
+        identityKey(i) === key ? { ...i, observedName: identity.observedName, profileUrl: identity.profileUrl ?? i.profileUrl, checkedAt: identity.checkedAt } : i,
+      );
+    } else {
+      next.push({ id: `ath:${key}`, displayName: identity.observedName, identities: [{ ...identity, match: 'confirmed' }] });
+    }
+  }
+  return next;
 }
 
 /** A time is known only if the source published one and didn't mark it unknown. */
@@ -139,19 +202,24 @@ export function compareQueueEntries(a: QueueEntry, b: QueueEntry): number {
   return 0;
 }
 
-/** Selected athletes' registrations, with any published match, in queue order. Withdrawals are left out. */
-export function buildQueue(data: DemoData, selectedIds: Iterable<string>): QueueEntry[] {
-  const selected = new Set(selectedIds);
-  const athletes = new Map(data.athletes.map((a) => [a.id, a]));
+/**
+ * The tracked identities' registrations, with any published match, in queue
+ * order. Withdrawals are left out, and so is any identity that isn't tracked:
+ * which, by trackedIdentities, includes every unconfirmed candidate.
+ */
+export function buildQueue(data: DemoData, tracked: IdentityRef[]): QueueEntry[] {
+  const keys = new Set(tracked.map(identityKey));
+  const owners = new Map(data.athletes.flatMap((a) => a.identities.map((i) => [identityKey(i), a] as const)));
   const events = new Map(data.events.map((e) => [e.id, e]));
   const entries: QueueEntry[] = [];
-  for (const r of data.registrations) {
-    if (!selected.has(r.athleteId) || r.status === 'withdrawn') continue;
-    const athlete = athletes.get(r.athleteId);
-    const event = events.get(r.eventId);
+  for (const registration of data.registrations) {
+    const key = identityKey(registration.identity);
+    if (!keys.has(key) || registration.status === 'withdrawn') continue;
+    const athlete = owners.get(key);
+    const event = events.get(registration.eventId);
     if (!athlete || !event) continue;
-    const match = data.matches.find((m) => m.athleteId === r.athleteId && m.eventId === r.eventId);
-    entries.push({ athlete, event, match });
+    const match = data.matches.find((m) => identityKey(m.identity) === key && m.eventId === registration.eventId);
+    entries.push({ athlete, event, registration, match });
   }
   return entries.sort(compareQueueEntries);
 }

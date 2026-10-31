@@ -1,15 +1,23 @@
-// Fictional MatSignal demo fixtures. Every athlete, team, academy, event, organizer
-// and source below is invented. model.test.ts fails if an athlete is named anything
-// but "Demo Athlete NN", so real people can't be swapped in without the tests
-// noticing. Do NOT replace these with real records before the source-permission,
-// safeguarding and account decisions in HANDOFF §4–5.
+// Fictional MatSignal demo fixtures. Every athlete, team, academy, event, platform
+// and identifier below is invented. model.test.ts fails if an athlete is named
+// anything but "Demo Athlete NN", so real people can't be swapped in without the
+// tests noticing. Do NOT replace these with real records before the
+// source-permission, safeguarding and account decisions in HANDOFF §4–5.
 //
-// The dates and UTC offsets are illustrative too. Each event has one organizer:
-// the original inline fixtures listed the Autumn Open under two platforms, which a
-// real event never is.
-import type { DemoData } from './model.ts';
+// What the shapes demonstrate:
+// - Registrations and matches are keyed by a platform's own identity, never by a
+//   local guess. Demo Athlete 01 competes on both platforms, so it has two
+//   confirmed identities.
+// - Demo Athlete 03 also has an unconfirmed same-name candidate on Platform B,
+//   with a registration. It shows in search but stays out of the queue until
+//   someone confirms it.
+// - Each event has exactly one platform. Dates and UTC offsets are illustrative.
+import type { DemoData, IdentityRef } from './model.ts';
 
 const OBSERVED = '2026-10-30T12:00:00Z';
+const A = 'Example Platform A';
+const B = 'Example Platform B';
+const id = (source: string, sourceAthleteId: string): IdentityRef => ({ source, sourceAthleteId });
 
 export const demoData: DemoData = {
   athletes: [
@@ -18,54 +26,61 @@ export const demoData: DemoData = {
       displayName: 'Demo Athlete 01',
       affiliationHint: 'Example Alliance',
       academyHint: 'Northside Academy',
-      identities: [{ source: 'Illustrative Source A', sourceAthleteId: 'a-1001', observedName: 'Demo Athlete 01', checkedAt: OBSERVED }],
+      identities: [
+        { ...id(A, 'a-1001'), observedName: 'Demo Athlete 01', match: 'confirmed', checkedAt: OBSERVED },
+        { ...id(B, 'b-2001'), observedName: 'Demo Athlete 01', match: 'confirmed', checkedAt: OBSERVED },
+      ],
     },
     {
       id: 'demo-02',
       displayName: 'Demo Athlete 02',
       affiliationHint: 'Example Alliance',
       academyHint: 'Lakeside Jiu-Jitsu',
-      identities: [{ source: 'Illustrative Source B', sourceAthleteId: 'b-2002', observedName: 'Demo Athlete 02', checkedAt: OBSERVED }],
+      identities: [{ ...id(A, 'a-1002'), observedName: 'Demo Athlete 02', match: 'confirmed', checkedAt: OBSERVED }],
     },
     {
       id: 'demo-03',
       displayName: 'Demo Athlete 03',
       affiliationHint: 'Sample Jiu-Jitsu',
       academyHint: 'Sample City Academy',
-      identities: [{ source: 'Illustrative Source A', sourceAthleteId: 'a-1003', observedName: 'Demo Athlete 03', checkedAt: OBSERVED }],
+      identities: [
+        { ...id(A, 'a-1003'), observedName: 'Demo Athlete 03', match: 'confirmed', checkedAt: OBSERVED },
+        { ...id(B, 'b-2003'), observedName: 'Demo Athlete 03', match: 'candidate', checkedAt: OBSERVED },
+      ],
     },
     {
       id: 'demo-04',
       displayName: 'Demo Athlete 04',
       affiliationHint: 'Sample Jiu-Jitsu',
       academyHint: 'Uptown Grappling',
-      identities: [{ source: 'Illustrative Source B', sourceAthleteId: 'b-2004', observedName: 'Demo Athlete 04', checkedAt: OBSERVED }],
+      identities: [{ ...id(B, 'b-2004'), observedName: 'Demo Athlete 04', match: 'confirmed', checkedAt: OBSERVED }],
     },
   ],
   events: [
-    { id: 'sample-autumn-open', name: 'Sample Autumn Open', source: 'Example Organizer A', date: '2026-11-14' },
-    { id: 'sample-winter-open', name: 'Sample Winter Open', source: 'Example Organizer B', date: '2026-12-05' },
+    { id: 'a:sample-autumn-open', name: 'Sample Autumn Open', source: A, date: '2026-11-14' },
+    { id: 'b:sample-winter-open', name: 'Sample Winter Open', source: B, date: '2026-12-05' },
   ],
   registrations: [
-    { athleteId: 'demo-01', eventId: 'sample-autumn-open', status: 'registered', source: 'Example Organizer A', observedAt: OBSERVED },
-    { athleteId: 'demo-01', eventId: 'sample-winter-open', status: 'registered', source: 'Example Organizer B', observedAt: OBSERVED },
-    { athleteId: 'demo-02', eventId: 'sample-autumn-open', status: 'registered', source: 'Example Organizer A', observedAt: OBSERVED },
-    { athleteId: 'demo-03', eventId: 'sample-autumn-open', status: 'registered', source: 'Example Organizer A', observedAt: OBSERVED },
-    { athleteId: 'demo-04', eventId: 'sample-winter-open', status: 'registered', source: 'Example Organizer B', observedAt: OBSERVED },
+    { identity: id(A, 'a-1001'), eventId: 'a:sample-autumn-open', status: 'registered', observedAt: OBSERVED },
+    { identity: id(B, 'b-2001'), eventId: 'b:sample-winter-open', status: 'registered', observedAt: OBSERVED },
+    { identity: id(A, 'a-1002'), eventId: 'a:sample-autumn-open', status: 'registered', observedAt: OBSERVED },
+    { identity: id(A, 'a-1003'), eventId: 'a:sample-autumn-open', status: 'registered', observedAt: OBSERVED },
+    { identity: id(B, 'b-2003'), eventId: 'b:sample-winter-open', status: 'registered', observedAt: OBSERVED },
+    { identity: id(B, 'b-2004'), eventId: 'b:sample-winter-open', status: 'registered', observedAt: OBSERVED },
   ],
-  // Winter Open registrations have no match yet: the organizer hasn't published one.
+  // Winter Open registrations have no match yet: the platform hasn't published one.
   matches: [
     {
-      athleteId: 'demo-01', eventId: 'sample-autumn-open', mat: 'Mat 3', opponentLabel: 'Demo Athlete 07',
-      startsAt: '2026-11-14T11:40:00-05:00', timeKind: 'estimated', source: 'Example Organizer A', observedAt: OBSERVED,
+      identity: id(A, 'a-1001'), eventId: 'a:sample-autumn-open', mat: 'Mat 3', opponentLabel: 'Demo Athlete 07',
+      startsAt: '2026-11-14T11:40:00-05:00', timeKind: 'estimated', observedAt: OBSERVED,
     },
     {
-      athleteId: 'demo-02', eventId: 'sample-autumn-open', mat: 'Mat 5', opponentLabel: 'Demo Athlete 08',
-      startsAt: '2026-11-14T10:55:00-05:00', timeKind: 'estimated', source: 'Example Organizer A', observedAt: OBSERVED,
+      identity: id(A, 'a-1002'), eventId: 'a:sample-autumn-open', mat: 'Mat 5', opponentLabel: 'Demo Athlete 08',
+      startsAt: '2026-11-14T10:55:00-05:00', timeKind: 'estimated', observedAt: OBSERVED,
     },
     {
-      athleteId: 'demo-03', eventId: 'sample-autumn-open', mat: 'Mat 1', opponentLabel: 'Demo Athlete 09',
-      startsAt: '2026-11-14T13:20:00-05:00', timeKind: 'scheduled', source: 'Example Organizer A', observedAt: OBSERVED,
+      identity: id(A, 'a-1003'), eventId: 'a:sample-autumn-open', mat: 'Mat 1', opponentLabel: 'Demo Athlete 09',
+      startsAt: '2026-11-14T13:20:00-05:00', timeKind: 'scheduled', observedAt: OBSERVED,
     },
   ],
 };
