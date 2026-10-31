@@ -19,7 +19,7 @@ The page's job is to explain the hypothesis and invite qualified owners to a con
 
 ## Public rationale
 
-Read [THESIS.md](THESIS.md), the **draft public Build Thesis**, as the rationale for undertaking this experiment. It explains the buyer journey and why the question may be commercially useful **without claiming unverified market evidence**. The builder may refine presentation and draft a Jigg.AI build-journal explanation from this *public* material, but must obtain founder approval before publishing the thesis or article. Keep customer-facing landing-page copy concise and relevant to gym owners; do not turn it into an internal research narrative. No private sourcing reports or agent conversations are needed.
+Read [THESIS.md](THESIS.md), the **draft public Build Thesis**, as the rationale for undertaking this experiment. It explains the buyer journey and why the question may be commercially useful **without claiming unverified market evidence**. The builder may refine presentation and draft a Jigg.AI build-journal explanation from this *public* material, but must obtain founder approval before publishing the thesis or article. Keep customer-facing landing-page copy concise and relevant to gym owners; keep it focused on the proposed customer problem. No private sourcing reports or agent conversations are needed.
 
 ## Creative ownership
 The builder owns original logo/icon design, brand visuals, typography, color system, responsive UI, illustrations and implementation choices, subject to founder preview review. Produce 2–3 headline options. Keep the copy clear and credible; "A Jigg.AI experiment" attribution and a link to jigg.ai should be present. No invented case studies, screenshots of fictional functionality, fabricated success numbers or endorsements. Name and mark remain subject to founder/clearance review.
@@ -38,7 +38,7 @@ Suggested sections: hero + CTA; simple funnel visual; owner-oriented questions a
 ## Boundaries
 No CRM API access, member records, student/minor/payment data, autonomous customer outreach, paid advertisements, new paid accounts, backend, login or SaaS functionality. No claims of current product availability, proven conversion lift, AI-driven automated follow-up or certified integrations.
 
-The public build journal covers **design and execution only**. Do not publish or request private strategic evaluation, internal research discussions, bot exchanges, unreleased commercial assumptions, private repository links, or customer information. This brief supplies the complete public implementation scope.
+The public build journal covers **design and execution only**. Do not publish unreleased commercial assumptions or customer information. This brief supplies the complete implementation scope.
 
 ## Technical gate
 Before work, the named builder acknowledges this exact brief and supplies expected branch, risks and dependencies. The return packet must contain PR, preview, image/logo assets, test results, confirmed or blocked contact delivery, routing/DNS proposal, measured costs and needed approvals. Founder must separately authorize production release and traffic acquisition. A finished landing page does not validate a business.
