@@ -33,12 +33,15 @@ npm install            # first time
 npm run dev            # dev server at localhost:4321 (drafts visible)
 npm run build          # static build to site/dist/ — the real validator
 npm run preview        # serve the built output (drafts hidden, production-like)
+npm test               # unit tests for pure logic (src/lib/**/*.test.ts)
 ```
 
-There is no test runner or linter — `npm run build` is the check that matters (it
+There is no linter, and `npm run build` is still the check that matters (it
 type-checks .astro, validates every entry against the zod schema, and fails on a bad
-frontmatter field). The build-log check set lives in `builds/<slug>/test.md` and is
-run by hand, not by a framework.
+frontmatter field). `npm test` runs Node's built-in test runner over TypeScript
+directly (Node 22.18+, no dependency); so far it covers only the MatSignal demo
+model. The build-log check set lives in `builds/<slug>/test.md` and is run by hand,
+not by a framework.
 
 To verify the core invariant (one new markdown file lights up every journal view), add a
 temporary `.mdx` under `site/src/content/builds/`, `npm run build`, and grep
