@@ -30,7 +30,7 @@ Follow the repository's governing documentation in this order:
 2. [MatSignal BRIEF.md](BRIEF.md) (project scope); [THESIS.md](THESIS.md) (**public** Build Thesis, currently draft); [test.md](test.md) (precommitted acceptance tests); [build-notes.md](build-notes.md) (public execution log).
 3. Inspect actual Astro components, routes, `netlify.toml`, shared layouts, contact, privacy and analytics code. Favor existing conventions over new infrastructure.
 
-This HANDOFF is the builder's **single execution contract**. When another public project document differs materially, surface the inconsistency in the PR rather than silently choosing the more convenient interpretation. All materials needed to implement the page are public. **Do not ask for, access or mention internal research artifacts, private repositories, bot exchanges or candidate-selection criteria.**
+This HANDOFF is the builder's **single execution contract**. When another public project document differs materially, surface the inconsistency in the PR rather than silently choosing the more convenient interpretation. The stated documents define the project scope. **Do not pull unrelated materials into this implementation.**
 
 ## C. Visual / creative mandate
 
@@ -91,7 +91,7 @@ This is distinct from the Jigg.AI Build Thesis, which is for the studio's **publ
 
 **No** SaaS backend, accounts, gym dashboards, live pipeline analytics, AI model integrations, PushPress/other CRM connectivity, texting automation, scraping gym owner lists, customer contact/outreach, trial-member data, payment collection, subscriptions, advertising, hosting spend or new external accounts. No customer interviews without separate founder authorization. No full public launch until founder approval.
 
-**Confidentiality boundary:** Engineering/design decisions are public; unpublished candidate discovery, internal evaluation, bot deliberations, proprietary source archives and other confidential context are not. The builder must use a **repo-scoped identity/integration with access to `jigg-ai/jigg` only**; access scope is **not yet independently verified**. An owner-wide `jigg-ai` token may expose other private repos. The builder must not request broad access. Public Git history cannot be reliably erased after accidental disclosure.
+**Repository boundary:** Use a **repo-scoped identity/integration with access to `jigg-ai/jigg` only**; access scope is **not yet independently verified**. Do not use or request account-wide credentials. Public Git history cannot be reliably erased after accidental disclosure.
 
 ## G. Execution workflow and checkpoints
 
@@ -138,4 +138,4 @@ Blockers and unapproved dependencies:
 Request to founder: APPROVE PREVIEW / REVISE / STOP / PERMISSION NEEDED
 ```
 
-This package is sufficient to begin *engineering*. It intentionally contains no proprietary product-selection process or private research materials.
+This package is sufficient to begin *engineering*. Use it only for the specified engineering work.
