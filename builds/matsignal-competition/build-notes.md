@@ -14,3 +14,9 @@
 1. Validate site build and actual Netlify deploy preview; correct any failures.
 2. Founder review of UX, then explicit data-source and persistence implementation milestones.
 3. Implement a verified, permitted source adapter with source links/freshness. Add real free account-backed group storage separately.
+
+## 2026-10-30 — Prototype branch and Netlify result
+
+- Isolated application route `site/src/pages/matsignal/index.astro` committed under `build/matsignal-competition`; draft [PR #9](https://github.com/jigg-ai/jigg/pull/9) and [issue #8](https://github.com/jigg-ai/jigg/issues/8) created. No main merge.
+- Four explicit synthetic fixtures, free demo search/filter, track/untrack, browser-local sample watchlist and event-day ordering. These are **not** actual registered athletes or official match schedules.
+- Netlify deploy-preview check for app commit `0475e1e62bf766b6b0ace408fd82915d563058a4` reported **SUCCESS / Preview ready**. Browser preview route could not be inspected from the available webpage viewer. Marked functional interaction and accessibility testing **NOT VERIFIED**.
