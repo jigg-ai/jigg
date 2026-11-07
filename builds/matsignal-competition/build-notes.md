@@ -116,7 +116,8 @@ superseded when the product moved out of this site, and it stays off `main` on p
   - "It's them" is now asked only when just the name matches; name-and-team matches count without
     asking. The privacy page says so.
   - **[my setup]** While taking this build log's screenshots: on a phone, the shared page's header
-    didn't wrap, so the whole page scrolled sideways. Fixed with two lines of CSS.
+    didn't wrap, so the whole page scrolled sideways. Fixed with two lines of CSS and deployed the
+    same evening, after the unit tests, type check and smoke test passed again.
 
 ## Time
 
