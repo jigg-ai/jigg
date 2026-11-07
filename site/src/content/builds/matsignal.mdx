@@ -1,0 +1,311 @@
+---
+title: "MatSignal: from a teammate-tracking headache to a live product in four working days"
+category: "websites"
+tool: "Claude Code"
+tool_version: "2.1.309–2.1.317"
+built_with: ["Claude Opus 5.5"]
+stack: ["Cloudflare Workers", "Cloudflare D1", "Cloudflare Access"]
+runs_on_site: false
+status: "verified"
+summary: "MatSignal is a free tool for jiu-jitsu teams: keep a squad, see who from it is entered at upcoming competitions, and post one competition's link in the team chat. It's the first build in this journal that is a product rather than a page, with its own subdomain, its own private repository, its own infrastructure and real people's names in it. Claude Code took it from a problem I have myself to live in four working days and about 4 h 50 min of agent time, and it's worth it for that, as long as a human keeps the decisions about data and has every change reviewed: its own tests caught its worst bug, and independent reviews caught more. The caveat: one competition is covered so far, copied in by hand for this proof-of-concept phase (automating that is next), and nothing yet shows that anyone besides me wants it. This log gets an update after that competition, on November 14."
+repro_pack: false
+published: 2026-11-06
+last_verified: 2026-11-06
+human_time:
+  basis: unavailable
+agent_time:
+  minutes: 292
+  basis: measured
+paid_plans:
+  - { tool: "Cloudflare", plan: "Workers Paid", price: "US$5", period: month }
+featured: false
+meta_line: "102 commits · 1 competition live"
+tool_summary: "AI pair-builder in your terminal"
+tool_verdict: "Took a product with real people's data from an idea to live in about five hours of agent time, and wrote the adversarial tests that caught its own worst bug. It also wrote that bug, and its built-in browser isn't a phone. Decisions about data, accounts and money stayed with me, which is where they belong."
+accessibility: "Advanced"
+---
+
+import ShortVersion from '../../components/post/ShortVersion.astro';
+import ProcessStep from '../../components/post/ProcessStep.astro';
+import StatTiles from '../../components/post/StatTiles.astro';
+import Figure from '../../components/post/Figure.astro';
+import ToolVerdict from '../../components/post/ToolVerdict.astro';
+
+<ShortVersion>
+MatSignal answers one question for a jiu-jitsu team: **who from my squad is competing, and
+where?** You keep a squad of teammates, it shows which of them are entered at upcoming
+competitions and in which divisions, and you can post one competition's link in the team chat.
+No account. It's the first build in this journal that is a real product rather than a page on
+this site: its own subdomain, its own private repository, its own infrastructure, and real
+people's names in it. Claude Code took it from a problem I have myself to live in four working
+days and **about 4 h 50 min of agent time**. Worth it, with one condition: a human keeps the
+decisions about data and has every change reviewed. Its own tests caught its worst bug, and
+independent reviews caught more. The caveat: **one competition is covered so far,
+copied in by hand** for this proof-of-concept phase (automating that is the next phase), and
+nothing yet shows that anyone besides me wants it. That competition is
+on November 14, and this log gets an update after it.
+</ShortVersion>
+
+<Figure
+  src="/img/matsignal/shared-and-owner-phone.jpg"
+  width={1024}
+  height={1593}
+  alt="Two phone screens side by side. Left, the page a teammate gets from a shared link: a box explaining that MatSignal shows who from a team is entered at upcoming jiu-jitsu competitions, free and with no account, with a link to track your own squad; then 'Squad at this competition: 4 entered, page updated 7:20 PM', the competition 'Example Grappling Open', Nov 28, 2026, a line saying the list was copied from Smoothcomp 2 minutes ago, four athletes from Sample Academy and Sample Academy North with their divisions, each marked 'Name and team match', and a 'Copy to my squad' button. Right, the owner's squad: the same competition with a 'Shared' button open on a panel holding the short link, Copy and 'Turn off link', and the same four athletes, each with a quiet 'Not them' button."
+  caption="Left: what a teammate sees after tapping a shared link, which is only the squad's athletes entered at that competition. Right: the owner's side, with that competition's link open. A local copy with a made-up competition and made-up athletes, so the link points at the local server. Each screen is cropped and the two are set side by side; nothing else is changed."
+/>
+
+## The problem it started from
+
+I train jiu-jitsu, and on most competition weekends some of my teammates are entered somewhere.
+Finding out who, where and in which division means opening each event's participant list, on
+whichever registration platform that organizer uses, and searching it name by name. Then again
+closer to the date, because people register late, and again on the day. Nobody on the team has
+the whole picture; whoever cares most does the searching, every time.
+
+Written down, the questions were small: who from my squad is entered, at which competitions, in
+which divisions, and what changed since I last looked. On the day: in what order they fight and
+on which mat. Afterwards: results. **MatSignal answers the first set today.** The competition-day
+and results parts aren't built.
+
+## What it does today
+
+- **Search** the competitions it covers by name or by team.
+- **Track** people into a squad. The squad lives in your browser, with a cookie backup so Safari's
+  automatic clean-up doesn't lose it. No account.
+- **Read the squad as an agenda:** the next competition first, who's entered and in which
+  divisions, and what's new since your last visit.
+- **Matching is honest about doubt.** When an entry's name and team both match what you saved,
+  it counts. When only the name matches, you're asked *It's them* or *Not them*.
+- **Share one competition** as a short link. Anyone can open it without an account and sees only
+  the squad's athletes entered at that competition. The link's preview names them, though how
+  WhatsApp shows it hasn't been tested yet. The owner can turn a link off at any time.
+
+## A first for this journal: a product, not a page
+
+Builds #1 to #4 run on this site. MatSignal doesn't: it's at
+[matsignal.jigg.ai](https://matsignal.jigg.ai), and nearly everything about how it's built
+follows from that.
+
+```text
+jigg.ai (Netlify)
+  /builds/matsignal ......... this page
+
+github.com/jigg-ai/jigg (public)
+  builds/matsignal-competition/
+    the build notes and the test record
+
+MatSignal's repository (private)
+  the code, its tests and the runbook
+
+matsignal.jigg.ai (Cloudflare)
+  Worker ............ pages, search, sharing, admin
+  D1 ................ competitions, adult entries, shared squads
+  Durable Objects ... removal requests, the search guard
+  Cron .............. every minute: deletions and checks
+  Access ............ the admin login
+```
+
+- **Two repositories.** This one, public, holds the journal: this page, the build notes and the
+  test record. MatSignal's code is in its own private repository. It handles real people's names,
+  and its defences against bulk harvesting work better unread. So this page shows the shape of the
+  system, not its code.
+- **Its own infrastructure.** It runs on Cloudflare Workers with a D1 database, not on Netlify like
+  this site. It needs a database, a job that runs every minute, and a place to keep removal
+  requests outside the database (more below). And a product deploys often: on this site every
+  production deploy is metered, and MatSignal's shouldn't spend the journal's allowance.
+- **A real admin login.** The admin page is behind Cloudflare Access, with a one-time code by
+  email, and the Worker checks that login again itself, so a misconfigured gate stays shut.
+- **It started here.** On October 30 I built a demo of it inside this site, with four made-up
+  athletes. It moved out the same evening, once the work needed real data; the database and
+  scheduled jobs came the next morning. The demo never merged.
+
+## Where the entries come from
+
+MatSignal shows entries from competitions' public participant lists. During the beta I add each
+competition by hand: its public list is opened in an ordinary browser, copied, and pasted into
+MatSignal's admin page. MatSignal keeps only the adult entries (name, team and division) and drops
+anyone listed as under 18. Today it makes no requests of its own to the registration platforms for
+these lists. That is why every competition says how old its copy is ("Copied from Smoothcomp 8 h ago"),
+and why a late registration appears only after the next copy. Entries are deleted three days after
+the event. Anyone can remove themselves with the form on the privacy page, and the removal holds
+through later copies and database restores. Today that covers one competition: Grappling X,
+Washington State, November 14.
+
+Copying by hand is for this first, proof-of-concept phase: it was the quickest way to find out
+whether the squad and the shared links are worth having, before building anything that runs on its
+own. The next phase automates it. MatSignal will read the participant lists of the competitions it
+covers on a schedule, under its own honest name, following each site's robots.txt and stopping when
+a site refuses. Everything above still applies to what it reads: adults only, name, team and
+division, deleted after the event, and removals that stick.
+
+## Rules that shaped the build
+
+These were fixed before any real entry went in, and most of the code follows from them.
+
+- **Adults only, failing closed.** Only Adult and Master divisions are read. Anyone a list shows as
+  under 18 is dropped, even inside an adult division, and a division the reader can't classify is
+  left out.
+- **Keep less.** Name, team and division. No ages, birth years, countries, photos or contact
+  details, and entries go three days after the event.
+- **A removal sticks.** The form hides a person at once and deletes them. The request is also kept
+  outside the database, so neither a re-copied list nor a database restore can bring them back.
+- **Search is for finding teammates, not harvesting.** Searches need four letters, results are
+  capped, and a guard watches for sweeps and narrows what a sweeping visitor can see. Pages ask
+  search engines not to index them. I'm not publishing the guard's thresholds.
+- **A shared link shows only who's entered at that competition**, not the rest of the squad, and
+  nothing about who opens a link is kept.
+
+## The honest process
+
+<ProcessStep result="fail" title="My own optimisation made the sweep guard useless" tag="my-setup">
+Squad checks, the request that asks "are any of these names entered anywhere?", were charged
+against the visitor's search budget for every name, every time. I changed them to charge only names
+not yet checked that day, and in the same change stopped counting them against the budget shared by
+everyone. When the sweep test ran again, it confirmed every name in a 2,000-person made-up roster.
+Fixed before launch. The fix had a flaw of its own: one visitor could use up the shared budget for
+everyone else. That was fixed too.
+</ProcessStep>
+
+<ProcessStep result="fail" title="A missing blank line could give a minor's name to an adult's entry" tag="my-setup">
+A copied participant list arrives as plain text, one field per line. If a minor's lines ran
+straight into an adult's, with no blank line between them, the reader could attach the minor's name
+to the adult's entry, which is exactly the thing the adults-only rule exists to prevent. Caught in
+review before launch. Now a name has to sit within two lines of its birth year, and every division
+heading resets the reader.
+</ProcessStep>
+
+<ProcessStep result="fail" title="A saved web page imported as zero athletes" tag="my-setup">
+The first import path took a saved web page. The reader found no athletes in one, and nothing
+stopped an empty copy from replacing a good list. Saved pages are now refused, only copied text is
+read, and a copy with no adults has to be confirmed before it replaces a list that had some.
+</ProcessStep>
+
+<ProcessStep result="fail" title="The review browser silently refuses dialogs" tag="tool-limit">
+I review the work in the Claude desktop app's built-in browser. There, `confirm()` returns "no"
+without showing anything, and clipboard writes are refused. So "Turn off link" did nothing, with no
+error. The fix: questions asked inside the page, and a fallback for copying. The lesson stands:
+the built-in browser is not a phone, and nothing in it reminds you of that.
+</ProcessStep>
+
+<ProcessStep result="fail" title="Two tests that were wrong for the wrong reasons" tag="my-setup">
+The end-to-end smoke test checks that search results carry no birth years. It matched timestamps
+and failed on a clean result. And a test of the removal form removed its own made-up person for
+good, because removals are permanent by design, so the next run was missing a name. The smoke test
+now uses fresh made-up names each run.
+</ProcessStep>
+
+<ProcessStep result="fail" title="Cloudflare wants a workers.dev subdomain before it will deploy" tag="tool-limit">
+The first deploy failed with "You need a workers.dev subdomain", although this Worker serves only
+its own domain and has workers.dev switched off. Opening Workers & Pages in the dashboard once
+creates one, and the next deploy went through. Cloudflare's quirk, not Claude Code's.
+</ProcessStep>
+
+<ProcessStep result="fail" title="Pinning production broke local runs" tag="my-setup">
+Writing the production database's id into the config pointed local runs at an empty database
+("no such table"), and setting the admin login's values locked local admin. Local runs now have
+their own database and their own settings, so nothing local can reach production.
+</ProcessStep>
+
+<ProcessStep result="fail" title="&quot;Live&quot; promised more than the page knew" tag="my-setup">
+The shared page said "Live, checked 6:14 PM". The page does refresh itself, but the entries change
+only when a list is copied again, so "live" was wrong exactly when it mattered: a late
+registration. An outside review of the interface caught it. It now says "Page updated 6:14 PM",
+next to how old the copy is.
+</ProcessStep>
+
+<ProcessStep result="fail" title="A phone bug found while taking this page's screenshots" tag="my-setup">
+On a phone, the shared page's header didn't wrap, so the whole page scrolled sideways. That's the
+page a teammate opens from the chat, on a phone. Found while taking the screenshots above, and fixed
+the same evening.
+</ProcessStep>
+
+<ProcessStep result="pass" title="What worked">
+Writing the adversarial checks early. The sweep test, the restore drill and the end-to-end smoke
+test run against the Worker locally, on made-up data, and the sweep test caught the worst bug I
+wrote. Two independent review passes, by agents that hadn't seen my reasoning, found more. And every decision about
+data, accounts, the domain and money stayed with a human: Claude Code walked through the Cloudflare
+setup step by step, while the deploy key lives in the Mac's keychain and was never printed.
+</ProcessStep>
+
+## The test
+
+No single score: what matters here is a set of checks that each guard one promise.
+
+<StatTiles variant="metric" stats={[
+  { value: "47", label: "unit tests pass", tone: "ok" },
+  { value: "57", label: "end-to-end checks pass", tone: "ok" },
+  { value: "12", label: "restore-drill checks pass", tone: "ok" },
+]} />
+
+- **The smoke test** drives the product's API end to end against the local Worker, on a made-up
+  competition: pages, search, the squad check, the cookie backup, the kill switch, imports and their
+  safety checks, sharing, and turning links off. It doesn't click through the page itself, which is
+  how the silent "Turn off link" got past it. It last ran on November 6, before the last deploy.
+- **The restore drill** imitates restoring the database to before a removal (it puts the removed
+  person's row back and deletes the removal record) and checks that the very next search still
+  doesn't show them. Stopped shares and turned-off links get the same treatment. Run straight
+  after two smoke tests, it hit a rate limit and crashed instead of failing cleanly; a minute later
+  it passed. The drill should check the server's answer. **[my setup]**
+- **The sweep test** runs scripted harvesting against 2,000 made-up athletes: one visitor sweeping
+  every surname, a sweep spread over 200 addresses, and bulk checks of full names. An ordinary
+  visitor typing a dozen names was never refused. The single-address sweeps were refused part-way,
+  the sweep spread over 200 addresses was narrowed to full names only, and half the bulk checks were
+  refused. But **every one of those paths still collected more than my own target of 2% of the
+  roster.** Tightening the guard is open, and the per-path numbers stay private.
+
+**Not tested yet:** real phones (Safari, Chrome, and links opened inside WhatsApp or Instagram),
+a screen reader, and a competition day.
+
+## Time and cost
+
+<StatTiles variant="fact" stats={[
+  { value: "4 h 52 min", label: "Agent time, Oct 30 – Nov 6" },
+  { value: "102", label: "Commits" },
+  { value: "US$5/mo", label: "Cloudflare Workers Paid" },
+]} />
+
+The agent time comes from the timestamps in the Claude Code session's own log: the time between my
+message and the end of the agent's work on it, with any idle gap over five minutes left out. My own
+time directing and reviewing wasn't tracked, so there's no human-time figure to compare it with,
+and that comparison is the one this journal is supposed to make. Next build, it gets a timer from
+the first message.
+
+The code is about 6,700 lines, tests included. MatSignal's deploys cost nothing on Netlify; this
+page costs one production deploy there when it's published.
+
+## What happens next
+
+This is a living log. After November 14 it gets an update: whether the squad view and the shared
+links held up on a real competition day, and more competitions. Then the next phase: replacing the
+hand copy with MatSignal reading the lists itself, within the rules above, so that coverage stops
+depending on someone pasting a list. The number that would say whether
+MatSignal deserves more of my time is whether people who get a link go on to keep a squad of their
+own. MatSignal doesn't count anything like that today, and whether it should is a decision still
+open.
+
+## Reproduce this
+
+The code is private, so what's reproducible is the approach: the structure above, the rules, and
+the way it's tested.
+
+- [**`build-notes.md`**](https://github.com/jigg-ai/jigg/blob/main/builds/matsignal-competition/build-notes.md)
+  is the journal, dead ends included, with how the agent time was measured.
+- [**`test.md`**](https://github.com/jigg-ai/jigg/blob/main/builds/matsignal-competition/test.md)
+  lists every check, when it last ran, and what hasn't been tested.
+
+## The tool
+
+<ToolVerdict tool="Claude Code" toolSummary="AI pair-builder in your terminal">
+This is the biggest thing Claude Code has built for this journal: not a page or a fix but a small
+product with a database, scheduled jobs, an admin login, a defence against harvesting, and real
+people's data, on infrastructure set up from scratch. It got there in about five hours of agent
+time over four days. What made it trustworthy wasn't the speed. It wrote adversarial tests against
+its own code (a sweep test, a restore drill, an end-to-end smoke test), and the sweep test caught
+the worst bug it wrote.
+
+It also wrote that bug, in the middle of an optimisation, and two independent review passes found
+more that it had missed. Its built-in browser hides failures a phone wouldn't, and it chose
+"live" for a page that isn't. Plan for an independent review of every change and a test on a real
+phone. Keep the decisions about whose data goes in, which accounts exist and what gets spent with a
+human. Do that, and it's an AI tool worth your time for building a real product, not just a demo.
+</ToolVerdict>

@@ -10,6 +10,24 @@ point. See `builds/website/test.md` for the per-check detail on build #1.
 
 ---
 
+## MatSignal, build #5: open after publishing (opened 2026-11-06)
+
+The build log says these are untested or open. Each is a promise to come back:
+
+- **The update after Grappling X (Nov 14).** The log says it gets one: how the squad view and the
+  shared links did on a real competition day, and more competitions. Recheck `last_verified`
+  then.
+- **Real phones.** Safari on iPhone, Chrome on Android, and links opened inside WhatsApp and
+  Instagram (Send…, copying, the link preview). A screen reader too.
+- **The search guard** collects more than the 2% target on every attack path in the sweep test.
+  Tightening it is the founder's decision; the product repository has the numbers.
+- **The restore drill** crashes instead of failing cleanly when the server refuses a request.
+  A product-repository fix.
+- **Human time.** This build has none recorded. Start a timer from the first message on the
+  next build, so the human/agent gap can be stated (CONTEXT §5).
+
+---
+
 ## Engagement models — gates before `feat/engagements` merges (opened 2026-10-27)
 
 The three ways to engage (CONTEXT §16) are built on `feat/engagements`. The merge waits for
