@@ -4,9 +4,8 @@ What was checked, when it last ran, and what hasn't been tested. The checks live
 private repository and run against its local Worker on made-up data only. No aggregate score is
 claimed: each check guards one promise, and a total would hide which.
 
-The October 30 demo inside this site had its own record, on the unmerged
-[`build/matsignal-competition`](https://github.com/jigg-ai/jigg/blob/build/matsignal-competition/builds/matsignal-competition/test.md)
-branch. It applies to that demo, not to the product below.
+The October 30 demo inside this site, never merged, had its own record. It applies to that demo,
+not to the product below.
 
 ## Automated checks
 

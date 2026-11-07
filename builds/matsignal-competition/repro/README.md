@@ -11,9 +11,6 @@ how it was tested.
 - [`../test.md`](../test.md): every check, its result, when it last ran, and what hasn't been
   tested.
 - [`../meta.yaml`](../meta.yaml): the build's facts (versions, time, paid plans).
-- The October 30 demo and its research, on the unmerged
-  [`build/matsignal-competition`](https://github.com/jigg-ai/jigg/tree/build/matsignal-competition/builds/matsignal-competition)
-  branch.
 
 ## Not public, on purpose
 

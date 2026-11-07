@@ -14,13 +14,9 @@ private.
 
 ## Before: the demo inside this site (2026-10-30)
 
-MatSignal started as a demo page inside this site, on the branch `build/matsignal-competition`,
-with four made-up athletes and no real data. Its notes, test record and feasibility research are on
-that branch:
-[build-notes.md](https://github.com/jigg-ai/jigg/blob/build/matsignal-competition/builds/matsignal-competition/build-notes.md),
-[test.md](https://github.com/jigg-ai/jigg/blob/build/matsignal-competition/builds/matsignal-competition/test.md).
-That branch is not merged. The code it contains (the demo page and an early source model) was
-superseded when the product moved out of this site, and it stays off `main` on purpose.
+MatSignal started as a demo page inside this site, with four made-up athletes and no real data,
+on a branch that was never merged. The demo page and its early code were superseded when the
+product moved out of this site, and they stay off `main` on purpose.
 
 ## Day 1: out of the site (2026-10-30, 21:12–23:34)
 
