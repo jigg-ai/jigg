@@ -17,8 +17,8 @@ Read in this order before doing substantive work:
 3. [`STYLE.md`](STYLE.md) — house voice for anything published.
 4. [`site/BRIEF.md`](site/BRIEF.md) — the spec for the site build specifically.
 
-Current state: the site is live at https://jigg.ai (Netlify) with four published
-builds (#1 the site, #2 Botpress, #3 HeyGen explainer, #4 signup hardening). The studio
+Current state: the site is live at https://jigg.ai (Netlify) with five published
+builds (#1 the site, #2 Botpress, #3 HeyGen explainer, #4 signup hardening, #5 MatSignal). The studio
 repositioning (CONTEXT.md, October 2026) is in progress on one branch, `feat/studio`, to
 ship as one PR and one merge. See each `builds/<slug>/test.md` for which checks have and
 haven't been run. When extending the site, follow `site/BRIEF.md` and CONTEXT §6 rather
