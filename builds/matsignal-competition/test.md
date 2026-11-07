@@ -43,11 +43,14 @@ should check the server's answer and fail cleanly.
 - After the founder's import, Grappling X shows 64 adult entries, fresh.
 - A shared page's link preview names the competition and points its picture at the live icon.
 
-## Fixed but not yet on the live site
+## Found after launch, fixed the same evening
 
-- On a phone, the shared page's header didn't wrap, so the whole page scrolled sideways. Fixed and
-  checked locally at 390 px wide (the page is exactly 390 px, no sideways scroll). Not deployed at
-  the time of writing.
+- On a phone, the shared page's header didn't wrap, so the whole page scrolled sideways. Found while
+  taking this build log's screenshots. Fixed and checked locally at 390 px wide, with a full header
+  (the page is exactly 390 px, no sideways scroll). Deployed 2026-11-06, after the unit tests (47/47),
+  the type check and the smoke test (57/57) passed again. On the live site, the stylesheet has the
+  fix and a shared page at 390 px doesn't scroll sideways. That live check used a link that no longer
+  works, whose header is short: no live squad was created for it.
 
 ## Not tested
 
