@@ -12,17 +12,19 @@ branch. It applies to that demo, not to the product below.
 
 | Check | What it guards | Result | Last run |
 |---|---|---|---|
-| Unit tests (`npm test`) | Name and team matching, the adults-only division rule, reading copied participant lists (including the minor's-name gap rule), refusing saved web pages and copies with no athletes | **47/47 pass** | 2026-11-06, before the deploy |
-| Type check (`npm run check`) | The Worker's TypeScript against Cloudflare's generated types | **Pass** | 2026-11-06, before the deploy |
-| End-to-end smoke test (`npm run test:smoke`) | Pages and `noindex`, robots.txt, search, the squad check, the cookie backup, the kill switch, adding a competition by link, imports and their safety checks, no ages or birth years in results, removals, sharing, competition links, turning a link off, admin stopping a share | **57/57 pass** | 2026-11-06 19:33 PST |
+| Unit tests (`npm test`) | Name and team matching, the adults-only division rule, reading copied participant lists (including the minor's-name gap rule), refusing saved web pages and copies with no athletes | **47/47 pass** | 2026-11-06, before each of that day's two deploys |
+| Type check (`npm run check`) | The Worker's TypeScript against Cloudflare's generated types | **Pass** | 2026-11-06, before each of that day's two deploys |
+| End-to-end smoke test (`npm run test:smoke`) | Through the API, not the page itself: Pages and `noindex`, robots.txt, search, the squad check, the cookie backup, the kill switch, adding a competition by link, imports and their safety checks, no ages or birth years in results, removals, sharing, competition links, turning a link off, admin stopping a share | **57/57 pass** | 2026-11-06 19:33 PST, and again before the phone-fix deploy |
 | Restore drill (`npm run drill:restore`) | After an imitated database restore to before a removal: the removed person stays hidden on the very next search and is deleted again; a stopped share and a turned-off link stay gone | **12/12 pass** | 2026-11-06 19:34 PST |
 | Sweep test (`npm run test:sweep`) | The search guard against scripted harvesting of a 2,000-athlete made-up roster | **Partial**: see below | 2026-11-06 15:06 PST |
 
 **The sweep test.** Five scripted visitors: an ordinary one typing twelve names letter by letter, a
 single address sweeping every surname, a single address sweeping first name plus initial, 200
 addresses sweeping every surname, and bulk checks of full names across 50 addresses. The ordinary
-visitor was never refused, and every sweep was cut short. The guard still lets more through than
-the target of 2% of the roster on more than one path, worst on the bulk check of full names.
+visitor was never refused. The single-address sweeps were refused part-way, the 200-address sweep
+was never refused but was narrowed to full names only part-way, and half the bulk checks were
+refused. Every one of the four attack paths still collected more than the target of 2% of the
+roster, worst the bulk check of full names.
 Tightening it is an open decision. The per-path numbers are kept in the product repository, not
 here.
 

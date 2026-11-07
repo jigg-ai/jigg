@@ -63,7 +63,8 @@ superseded when the product moved out of this site, and it stays off `main` on p
 
 - **Layout.** Search across the top and foldable; the squad below as an agenda, the next
   competition open; Watch moved onto the competition's own line; "new since your last visit" marks.
-- **Imports, after a review pass:**
+- **Imports, after two independent review passes** (separate agents that hadn't seen the
+  builder's reasoning)**:**
   - **[my setup]** A saved web page imported as zero athletes, and nothing stopped an empty copy
     replacing a good list. Saved pages are now refused (copied text only), a copy with no athletes
     is refused, and a copy with no adults has to be confirmed before it replaces a list that had
@@ -105,7 +106,7 @@ superseded when the product moved out of this site, and it stays off `main` on p
   - After the deploy: the live database binding confirmed through the API, every `/admin` path
     redirecting to the login, security headers, no request logs, and the minute job running.
 - **Live.** The founder imported the first competition by hand on the live site: Grappling X
-  (Nov 14), 64 adult entries.
+  Washington State Jiu Jitsu Championships (Auburn, WA, Nov 14), 64 adult entries.
 - **After launch, the same evening:**
   - An icon (browser tab, home screen, and the shared link's preview picture).
   - **[my setup]** An outside review of the interface: "Live, checked 6:14 PM" promised more than the
@@ -142,7 +143,7 @@ Two things this number is not:
 
 ## Numbers
 
-- 101 commits in the product repository, Oct 30 – Nov 6.
+- 102 commits in the product repository, Oct 30 – Nov 6, the phone fix included.
 - About 6,700 lines of TypeScript, JavaScript, HTML, CSS and SQL, tests included.
 - Paid: Cloudflare Workers Paid, US$5 a month. MatSignal's deploys cost nothing on Netlify.
 

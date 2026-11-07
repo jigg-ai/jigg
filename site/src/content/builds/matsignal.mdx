@@ -2,12 +2,12 @@
 title: "MatSignal: from a teammate-tracking headache to a live product in four working days"
 category: "websites"
 tool: "Claude Code"
-tool_version: "2.1.317"
+tool_version: "2.1.309–2.1.317"
 built_with: ["Claude Opus 5.5"]
 stack: ["Cloudflare Workers", "Cloudflare D1", "Cloudflare Access"]
 runs_on_site: false
 status: "draft"
-summary: "MatSignal is a free tool for jiu-jitsu teams: keep a squad, see who from it is entered at upcoming competitions, and post one competition's link in the team chat. It's the first build in this journal that is a product rather than a page, with its own subdomain, its own private repository, its own infrastructure and real people's names in it. Claude Code took it from a problem I have myself to live in four working days and about 4 h 50 min of agent time. The caveat: one competition is covered so far, copied in by hand for this proof-of-concept phase (automating that is next), and nothing yet shows that anyone besides me wants it. This log gets an update after that competition, on November 14."
+summary: "MatSignal is a free tool for jiu-jitsu teams: keep a squad, see who from it is entered at upcoming competitions, and post one competition's link in the team chat. It's the first build in this journal that is a product rather than a page, with its own subdomain, its own private repository, its own infrastructure and real people's names in it. Claude Code took it from a problem I have myself to live in four working days and about 4 h 50 min of agent time, and it's worth it for that, as long as a human keeps the decisions about data and has every change reviewed: its own tests caught its worst bug, and independent reviews caught more. The caveat: one competition is covered so far, copied in by hand for this proof-of-concept phase (automating that is next), and nothing yet shows that anyone besides me wants it. This log gets an update after that competition, on November 14."
 repro_pack: false
 human_time:
   basis: unavailable
@@ -17,7 +17,7 @@ agent_time:
 paid_plans:
   - { tool: "Cloudflare", plan: "Workers Paid", price: "US$5", period: month }
 featured: false
-meta_line: "101 commits · 1 competition live"
+meta_line: "102 commits · 1 competition live"
 tool_summary: "AI pair-builder in your terminal"
 tool_verdict: "Took a product with real people's data from an idea to live in about five hours of agent time, and wrote the adversarial tests that caught its own worst bug. It also wrote that bug, and its built-in browser isn't a phone. Decisions about data, accounts and money stayed with me, which is where they belong."
 accessibility: "Advanced"
@@ -36,7 +36,9 @@ competitions and in which divisions, and you can post one competition's link in 
 No account. It's the first build in this journal that is a real product rather than a page on
 this site: its own subdomain, its own private repository, its own infrastructure, and real
 people's names in it. Claude Code took it from a problem I have myself to live in four working
-days and **about 4 h 50 min of agent time**. The caveat: **one competition is covered so far,
+days and **about 4 h 50 min of agent time**. Worth it, with one condition: a human keeps the
+decisions about data and has every change reviewed. Its own tests caught its worst bug, and
+independent reviews caught more. The caveat: **one competition is covered so far,
 copied in by hand** for this proof-of-concept phase (automating that is the next phase), and
 nothing yet shows that anyone besides me wants it. That competition is
 on November 14, and this log gets an update after it.
@@ -46,7 +48,7 @@ on November 14, and this log gets an update after it.
   src="/img/matsignal/shared-and-owner-phone.jpg"
   width={1024}
   height={1593}
-  alt="Two phone screens side by side. Left, the page a teammate gets from a shared link: a box explaining that MatSignal shows who from a team is entered at upcoming jiu-jitsu competitions, free and with no account, with a link to track your own squad; then 'Squad at this competition: 4 entered, page updated 7:20 PM', the competition 'Example Grappling Open', Nov 28, 2026, a line saying the list was copied from Smoothcomp 2 minutes ago, four athletes from Sample Academy with their divisions, each marked 'Name and team match', and a 'Copy to my squad' button. Right, the owner's squad: the same competition with a 'Shared' button open on a panel holding the short link, Copy and 'Turn off link', and the same four athletes, each with a quiet 'Not them' button."
+  alt="Two phone screens side by side. Left, the page a teammate gets from a shared link: a box explaining that MatSignal shows who from a team is entered at upcoming jiu-jitsu competitions, free and with no account, with a link to track your own squad; then 'Squad at this competition: 4 entered, page updated 7:20 PM', the competition 'Example Grappling Open', Nov 28, 2026, a line saying the list was copied from Smoothcomp 2 minutes ago, four athletes from Sample Academy and Sample Academy North with their divisions, each marked 'Name and team match', and a 'Copy to my squad' button. Right, the owner's squad: the same competition with a 'Shared' button open on a panel holding the short link, Copy and 'Turn off link', and the same four athletes, each with a quiet 'Not them' button."
   caption="Left: what a teammate sees after tapping a shared link, which is only the squad's athletes entered at that competition. Right: the owner's side, with that competition's link open. A local copy with a made-up competition and made-up athletes, so the link points at the local server. Each screen is cropped and the two are set side by side; nothing else is changed."
 />
 
@@ -73,8 +75,8 @@ and results parts aren't built.
 - **Matching is honest about doubt.** When an entry's name and team both match what you saved,
   it counts. When only the name matches, you're asked *It's them* or *Not them*.
 - **Share one competition** as a short link. Anyone can open it without an account and sees only
-  the squad's athletes entered at that competition; in WhatsApp the link preview already names
-  them. The owner can turn a link off at any time.
+  the squad's athletes entered at that competition. The link's preview names them, though how
+  WhatsApp shows it hasn't been tested yet. The owner can turn a link off at any time.
 
 ## A first for this journal: a product, not a page
 
@@ -88,7 +90,7 @@ jigg.ai (Netlify)
 
 github.com/jigg-ai/jigg (public)
   builds/matsignal-competition/
-    the build notes, the test record, this post
+    the build notes and the test record
 
 MatSignal's repository (private)
   the code, its tests and the runbook
@@ -112,8 +114,8 @@ matsignal.jigg.ai (Cloudflare)
 - **A real admin login.** The admin page is behind Cloudflare Access, with a one-time code by
   email, and the Worker checks that login again itself, so a misconfigured gate stays shut.
 - **It started here.** On October 30 I built a demo of it inside this site, with four made-up
-  athletes. It moved out the next morning, once the work needed real data, a database and
-  scheduled jobs. The demo never merged; its notes are linked at the end.
+  athletes. It moved out the same evening, once the work needed real data; the database and
+  scheduled jobs came the next morning. The demo never merged; its notes are linked at the end.
 
 ## Where the entries come from
 
@@ -179,9 +181,8 @@ read, and a copy with no adults has to be confirmed before it replaces a list th
 <ProcessStep result="fail" title="The review browser silently refuses dialogs" tag="tool-limit">
 I review the work in the Claude desktop app's built-in browser. There, `confirm()` returns "no"
 without showing anything, and clipboard writes are refused. So "Turn off link" did nothing, with no
-error. A real browser shows the dialog. The fix, asking inside the page and copying with a
-fallback, is better on phones anyway, but the lesson stands: the built-in browser is not a phone,
-and nothing in it reminds you of that.
+error. The fix: questions asked inside the page, and a fallback for copying. The lesson stands:
+the built-in browser is not a phone, and nothing in it reminds you of that.
 </ProcessStep>
 
 <ProcessStep result="fail" title="Two tests that were wrong for the wrong reasons" tag="my-setup">
@@ -194,8 +195,7 @@ now uses fresh made-up names each run.
 <ProcessStep result="fail" title="Cloudflare wants a workers.dev subdomain before it will deploy" tag="tool-limit">
 The first deploy failed with "You need a workers.dev subdomain", although this Worker serves only
 its own domain and has workers.dev switched off. Opening Workers & Pages in the dashboard once
-creates one, and the next deploy went through. Cloudflare's quirk, not Claude Code's, and it read the
-error correctly.
+creates one, and the next deploy went through. Cloudflare's quirk, not Claude Code's.
 </ProcessStep>
 
 <ProcessStep result="fail" title="Pinning production broke local runs" tag="my-setup">
@@ -219,8 +219,8 @@ the same evening.
 
 <ProcessStep result="pass" title="What worked">
 Writing the adversarial checks early. The sweep test, the restore drill and the end-to-end smoke
-test run against the real Worker on made-up data, and the sweep test caught the worst bug I wrote.
-Review passes by a fresh agent that hadn't seen my reasoning caught others. And every decision about
+test run against the Worker locally, on made-up data, and the sweep test caught the worst bug I
+wrote. Two independent review passes, by agents that hadn't seen my reasoning, found more. And every decision about
 data, accounts, the domain and money stayed with a human: Claude Code walked through the Cloudflare
 setup step by step, while the deploy key lives in the Mac's keychain and was never printed.
 </ProcessStep>
@@ -235,17 +235,21 @@ No single score: what matters here is a set of checks that each guard one promis
   { value: "12", label: "restore-drill checks pass", tone: "ok" },
 ]} />
 
-- **The smoke test** runs the whole product against the local Worker on a made-up competition:
-  pages, search, the squad check, the cookie backup, the kill switch, imports and their safety
-  checks, sharing, and turning links off. It last ran on November 6, before the deploy.
+- **The smoke test** drives the product's API end to end against the local Worker, on a made-up
+  competition: pages, search, the squad check, the cookie backup, the kill switch, imports and their
+  safety checks, sharing, and turning links off. It doesn't click through the page itself, which is
+  how the silent "Turn off link" got past it. It last ran on November 6, before the last deploy.
 - **The restore drill** imitates restoring the database to before a removal (it puts the removed
   person's row back and deletes the removal record) and checks that the very next search still
-  doesn't show them. Stopped shares and turned-off links get the same treatment.
+  doesn't show them. Stopped shares and turned-off links get the same treatment. Run straight
+  after two smoke tests, it hit a rate limit and crashed instead of failing cleanly; a minute later
+  it passed. The drill should check the server's answer. **[my setup]**
 - **The sweep test** runs scripted harvesting against 2,000 made-up athletes: one visitor sweeping
   every surname, a sweep spread over 200 addresses, and bulk checks of full names. An ordinary
-  visitor typing a dozen names was never refused, and every sweep was cut short. But on more than
-  one path the guard still lets through more than my own target of 2% of the roster. Tightening it is open,
-  and the per-path numbers stay private.
+  visitor typing a dozen names was never refused. The single-address sweeps were refused part-way,
+  the sweep spread over 200 addresses was narrowed to full names only, and half the bulk checks were
+  refused. But **every one of those paths still collected more than my own target of 2% of the
+  roster.** Tightening the guard is open, and the per-path numbers stay private.
 
 **Not tested yet:** real phones (Safari, Chrome, and links opened inside WhatsApp or Instagram),
 a screen reader, and a competition day.
@@ -253,8 +257,8 @@ a screen reader, and a competition day.
 ## Time and cost
 
 <StatTiles variant="fact" stats={[
-  { value: "4 h 50 min", label: "Agent time, Oct 30 – Nov 6" },
-  { value: "101", label: "Commits" },
+  { value: "4 h 52 min", label: "Agent time, Oct 30 – Nov 6" },
+  { value: "102", label: "Commits" },
   { value: "US$5/mo", label: "Cloudflare Workers Paid" },
 ]} />
 
@@ -299,8 +303,8 @@ time over four days. What made it trustworthy wasn't the speed. It wrote adversa
 its own code (a sweep test, a restore drill, an end-to-end smoke test), and the sweep test caught
 the worst bug it wrote.
 
-It also wrote that bug, in the middle of an optimisation, and a fresh agent reviewing the diff
-found more that it had missed. Its built-in browser hides failures a phone wouldn't, and it chose
+It also wrote that bug, in the middle of an optimisation, and two independent review passes found
+more that it had missed. Its built-in browser hides failures a phone wouldn't, and it chose
 "live" for a page that isn't. Plan for an independent review of every change and a test on a real
 phone. Keep the decisions about whose data goes in, which accounts exist and what gets spent with a
 human. Do that, and it's an AI tool worth your time for building a real product, not just a demo.

@@ -1,17 +1,18 @@
 # MatSignal (PRD-003), build #5. Fields mirror builds/_template/meta.yaml and
 # site/src/content.config.ts. The product's code is in its own private repository;
-# this folder holds the public record (notes, tests, the post and its pack).
+# this folder holds the public record (notes, tests, the pack); the post itself is
+# site/src/content/builds/matsignal.mdx.
 # Note: builds/matsignal/ is the unrelated, held PRD-002 folder, not this build.
 title: "MatSignal: from a teammate-tracking headache to a live product in four working days"
 slug: "matsignal"     # site/src/content/builds/matsignal.mdx -> /builds/matsignal
 category: "websites"
 tool: "Claude Code"
-tool_version: "2.1.317"  # 2.1.309 on Oct 30 – Nov 1, 2.1.317 on Nov 6 (session log)
+tool_version: "2.1.309–2.1.317"  # 2.1.309 on Oct 30 – Nov 1, 2.1.317 on Nov 6 (session log)
 built_with: ["Claude Opus 5.5"]
 stack: ["Cloudflare Workers", "Cloudflare D1", "Cloudflare Access"]
 runs_on_site: false   # live at matsignal.jigg.ai, its own product, not a feature of this site
 status: draft
-summary: ""
+summary: "MatSignal is a free tool for jiu-jitsu teams: keep a squad, see who from it is entered at upcoming competitions, and post one competition's link in the team chat. It's the first build in this journal that is a product rather than a page, with its own subdomain, its own private repository, its own infrastructure and real people's names in it. Claude Code took it from a problem I have myself to live in four working days and about 4 h 50 min of agent time, and it's worth it for that, as long as a human keeps the decisions about data and has every change reviewed: its own tests caught its worst bug, and independent reviews caught more. The caveat: one competition is covered so far, copied in by hand for this proof-of-concept phase (automating that is next), and nothing yet shows that anyone besides me wants it. This log gets an update after that competition, on November 14."
 test_score: ""
 affiliate_url: ""
 repro_pack: false
@@ -29,7 +30,7 @@ paid_plans:
   - { tool: "Cloudflare", plan: "Workers Paid", price: "US$5", period: month }
 
 featured: false
-meta_line: ""
+meta_line: "102 commits · 1 competition live"
 tool_summary: "AI pair-builder in your terminal"
-tool_verdict: ""
+tool_verdict: "Took a product with real people's data from an idea to live in about five hours of agent time, and wrote the adversarial tests that caught its own worst bug. It also wrote that bug, and its built-in browser isn't a phone. Decisions about data, accounts and money stayed with me, which is where they belong."
 accessibility: "Advanced"
