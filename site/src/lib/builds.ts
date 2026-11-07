@@ -2,7 +2,10 @@ import { getCollection, type CollectionEntry } from 'astro:content';
 
 export type Build = CollectionEntry<'builds'>;
 
-const publishedTime = (b: Build) => b.data.published?.getTime() ?? 0;
+// A draft has no `published` date until sign-off. It sorts as the newest, which is where
+// it lands once published, so a Deploy Preview shows it where it will appear (the home
+// page lists only the newest few). The live site never lists drafts.
+const publishedTime = (b: Build) => b.data.published?.getTime() ?? Number.MAX_SAFE_INTEGER;
 
 /**
  * Drafts are hidden on the LIVE SITE ONLY — not on every production build.
