@@ -4,20 +4,47 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import BotpressWebchat from '../components/BotpressWebchat.astro';
+import { ORGANIZATION_ID, FOUNDER } from '../lib/site';
 
 interface Props {
   title: string;
   description?: string;
+  /**
+   * Optional social card for this page: a site-relative path to a real image, with
+   * its pixel size and alt text. There is no site-wide default card (the old one was
+   * withdrawn in October for overclaiming), so pages without one emit no og:image.
+   */
+  image?: { src: string; width: number; height: number; alt: string };
 }
 
 const {
   title,
   description = 'Jigg.AI is an AI-accelerated software engineering studio: experienced engineering judgment, AI-accelerated execution, and a public build journal that shows how the work is done.',
+  image,
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const siteName = 'Jigg.AI';
 const fullTitle = title === siteName ? title : `${title} · ${siteName}`;
+// og:image must be absolute: scrapers don't resolve relative paths.
+const ogImage = image ? new URL(image.src, Astro.site).toString() : undefined;
+// The large card crops to 2:1, which cuts a square photo through the face; a square or
+// portrait image gets the small card instead.
+const twitterCard = image && image.width / image.height < 1.5 ? 'summary' : 'summary_large_image';
+
+// Organization structured data on every page. The founder's Person entity lives on
+// the founder page and is referenced here by @id, so the two describe one graph.
+const organization = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  '@id': ORGANIZATION_ID,
+  name: siteName,
+  url: new URL('/', Astro.site).toString(),
+  description:
+    'AI-accelerated software engineering studio with a public build journal: rapid prototyping and product delivery, legacy modernization and systems engineering, and AI integration and automation.',
+  founder: { '@id': FOUNDER.personId },
+  sameAs: ['https://github.com/jigg-ai'],
+};
 ---
 
 <!doctype html>
@@ -36,7 +63,18 @@ const fullTitle = title === siteName ? title : `${title} · ${siteName}`;
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:card" content={twitterCard} />
+    {
+      image && (
+        <>
+          <meta property="og:image" content={ogImage} />
+          <meta property="og:image:width" content={String(image.width)} />
+          <meta property="og:image:height" content={String(image.height)} />
+          <meta property="og:image:alt" content={image.alt} />
+        </>
+      )
+    }
+    <script type="application/ld+json" set:html={JSON.stringify(organization)} />
     <slot name="head" />
   </head>
   <body>

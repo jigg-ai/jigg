@@ -239,6 +239,23 @@ Site changes after build #1 that don't earn a build log of their own (PROCESS st
   the widget's child count, but Turnstile adds a zero-height wrapper as soon as it loads.
   Measured: 0px while the invisible check runs, 72px with a challenge. Height is the
   signal now, in a shared `turnstile-client.ts` used by both forms.
+- **Founder page** (2026-11-09, `feat/founder-page`) — `/about/sasha-matison/`, the
+  one third-person credentials page, decided by the founder in jigg-research issue #3
+  and specified there by a separate design worker. Every fact comes from `FOUNDER` in
+  `lib/site.ts`. The career history is the founder's LinkedIn, one highlight per role:
+  the profile hit LinkedIn's sign-in wall in the browser pane, and macOS blocked the
+  PDF export in Downloads, so it arrived as screenshots. Judgment calls were shown for
+  review rather than made silently: MIT is "graduate coursework" (no degree, so it isn't
+  in `alumniOf`), DevDraft's customers aren't named (on the studio site they would read
+  as Jigg.AI's clients), and the page never uses a pronoun, only the name. About's lead
+  shrank to a blurb with a "full profile" link, so the two pages don't compete for the
+  name. The site had no JSON-LD outside build pages: there is now a sitewide
+  Organization, the founder page's Person, and build articles, all joined by `@id`.
+  `BaseLayout` takes an optional per-page `og:image`, unused until a real photo exists.
+- **Stale styles in the dev server [tool limit, cause unconfirmed].** A new scoped rule
+  didn't apply in `npm run dev` while `npm run build` had it; a dev-server restart fixed
+  it. The same thing happened with a new collection in October. Restart before judging
+  a style change.
 
 ## Artifacts
 <!-- screenshots of each view; the deploy URL; a short screen recording if useful -->

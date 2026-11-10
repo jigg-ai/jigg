@@ -10,6 +10,34 @@ point. See `builds/website/test.md` for the per-check detail on build #1.
 
 ---
 
+## Founder page — open items (opened 2026-11-09)
+
+From jigg-research issue #3. The page ships without these; each is tracked there too.
+
+- ~~**Headshot.**~~ Done 2026-11-09: the founder chose the LinkedIn profile photo
+  (400×400), shown at 200px so it stays sharp on 2× screens. A larger original would
+  allow a bigger photo and a better link-preview card; it replaces one field,
+  `FOUNDER.headshot`, which also feeds `og:image` and the Person `image`.
+- **`sashamatison.com`.** Cloudflare DNS and one redirect rule, executed by the founder.
+  The final 301 to `/about/sasha-matison/` goes on only once that URL returns 200 in
+  production. Afterwards, verify all four http/https × apex/www variants, the
+  certificates and the no-mail records, and post the evidence in the issue.
+- **GitHub `smatison` in the Person's `sameAs`**, once the reciprocal links are approved.
+- **The career rows are copied from LinkedIn, not linked.** Re-check them whenever either
+  changes.
+- **The chat bubble covers the end of a line on phones.** At 375×812 the Botpress bubble
+  sits over the end of the founder page's "private by default" line on first load. It
+  never covers the CTA. It's the sitewide widget, so a fix is a sitewide change, checked
+  across pages, scoped on its own. Flagged by the designer and coordinator in issue #3.
+- **Sitemap dates from git, deferred out of PR #12.** Agreed 2026-10-27, and excluded from
+  the founder-page PR by the coordinator. Derive each page's `lastmod` from the last commit
+  that touched its own source, replacing the hand-kept `PAGE_REVISED` map, which went
+  stale within a day in October. Also emit date-only values, since midnight UTC can
+  predate a Pacific-time change, and give build pages a date for edits after
+  publishing (`/builds/website/` was edited 2026-07-30 but shows 2026-07-17).
+
+---
+
 ## MatSignal, build #5: open after publishing (opened 2026-11-06)
 
 The build log says these are untested or open. Each is a promise to come back:

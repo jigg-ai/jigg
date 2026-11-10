@@ -15,23 +15,21 @@ const { Content } = await render(entry);
       <Content />
     </div>
 
-    {/* The one place the current lead is named (CONTEXT §4). It reads from
-        lib/site.ts, the single source for person-specific facts; every other studio
-        page makes the role promise instead. */}
+    {/* The current lead, named briefly (CONTEXT §4). The credentials themselves live
+        on the founder page, so the two pages don't compete for the name; this blurb
+        reads from lib/site.ts like that page does. Every other studio page makes the
+        role promise instead. */}
     <section class="founder" id="lead" aria-labelledby="lead-title">
       <h2 id="lead-title">Who leads Jigg.AI</h2>
       <p class="name">{FOUNDER.name} <span class="mono">{FOUNDER.title}</span></p>
       <p>
-        {FOUNDER.summary}, who leads every client engagement from the first conversation
-        to what's delivered.
-        {FOUNDER.linkedin && (
-          <>
-            {' '}
-            <a href={FOUNDER.linkedin} rel="me noopener">LinkedIn</a> has the full history.
-          </>
-        )}
+        {FOUNDER.firstName} is {FOUNDER.summary}, and leads every client engagement from
+        the first conversation to what's delivered.
       </p>
-      <p class="cta"><a class="btn btn--primary" href="/contact">Discuss a project</a></p>
+      <p class="links">
+        <a class="btn btn--primary" href="/contact">Discuss a project</a>
+        <a class="profile" href={FOUNDER.page}>{FOUNDER.name} — full profile</a>
+      </p>
     </section>
   </article>
 </BaseLayout>
@@ -56,5 +54,6 @@ const { Content } = await render(entry);
   .founder > * + * { margin-top: 0.8rem; }
   .name { font-family: var(--font-serif); font-size: 1.25rem; }
   .name .mono { margin-left: 0.5rem; }
-  .cta { margin-top: 1.4rem; }
+  .links { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.25rem; margin-top: 1.4rem; }
+  .profile { text-decoration-color: var(--brand); }
 </style>

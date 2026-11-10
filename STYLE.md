@@ -19,10 +19,18 @@ Two surfaces, two voices (CONTEXT §4). The rules under "Both" apply everywhere.
 - "Jigg.AI" is the subject: "Jigg.AI builds…", not "we build…". Never a "we" that
   suggests a team that doesn't exist. Say plainly that clients work directly with the
   engineering lead responsible for their project.
-- Name the current engineering lead only on About (CONTEXT §4), with the verified
-  credential line and a LinkedIn link; elsewhere, use the role. Credentials describe the
-  person, never Jigg.AI. Stress ownership and continuity, never that the lead is
-  replaceable. No résumé, no biography.
+- Name the current engineering lead only on About and the founder page (CONTEXT §4);
+  elsewhere, use the role. Credentials describe the person, never Jigg.AI. Stress
+  ownership and continuity, never that the lead is replaceable. No résumé, no biography,
+  with one narrow exception below.
+- **The founder page** (`/about/sasha-matison/`) is the single dedicated, third-person
+  credentials page. It may carry verified career history, a real portrait, selected
+  Jigg.AI builds and a project-contact CTA. Every fact on it is one the founder has
+  confirmed; an unconfirmed title, date or employer is left out, not hedged. Refer to the
+  founder by name; pronouns only as the founder states them, never guessed. Everything
+  else stays as it is: other studio pages are Jigg.AI-first, About keeps a short blurb
+  that links the page, and the build journal keeps the builder persona, with no
+  personal bylines, retroactive or new.
 - Capabilities, not hype. No generic AI marketing, no invented achievements, no client
   logos or outcomes without written permission, and never name a prospective client.
 - Every service names its evidence. An internal build is a demonstration, not a client
