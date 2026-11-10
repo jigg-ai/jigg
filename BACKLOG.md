@@ -25,6 +25,16 @@ From jigg-research issue #3. The page ships without these; each is tracked there
 - **GitHub `smatison` in the Person's `sameAs`**, once the reciprocal links are approved.
 - **The career rows are copied from LinkedIn, not linked.** Re-check them whenever either
   changes.
+- **The chat bubble covers the end of a line on phones.** At 375×812 the Botpress bubble
+  sits over the end of the founder page's "private by default" line on first load. It
+  never covers the CTA. It's the sitewide widget, so a fix is a sitewide change, checked
+  across pages, scoped on its own. Flagged by the designer and coordinator in issue #3.
+- **Sitemap dates from git, deferred out of PR #12.** Agreed 2026-10-27, and excluded from
+  the founder-page PR by the coordinator. Derive each page's `lastmod` from the last commit
+  that touched its own source, replacing the hand-kept `PAGE_REVISED` map, which went
+  stale within a day in October. Also emit date-only values, since midnight UTC can
+  predate a Pacific-time change, and give build pages a date for edits after
+  publishing (`/builds/website/` was edited 2026-07-30 but shows 2026-07-17).
 
 ---
 
