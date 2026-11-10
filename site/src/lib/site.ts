@@ -135,10 +135,16 @@ export const FOUNDER = {
       source: LINKEDIN_2026_11_09,
     },
   ] as EducationRow[],
-  // The founder's own original photo, once supplied: { src, width, height, alt }.
-  // Not a copy saved from LinkedIn (resized and recompressed). No placeholder face is
-  // ever rendered; the page lays out without it.
-  headshot: undefined as undefined | { src: string; width: number; height: number; alt: string },
+  // The founder's photo, supplied by the founder on 2026-11-09: the LinkedIn profile
+  // photo at its full 400×400, by the founder's choice. Shown at 200px, so it stays
+  // sharp on 2× screens; a larger original can replace it here. Without a photo the
+  // page lays out without one: no placeholder face is ever rendered.
+  headshot: {
+    src: '/img/about/sasha-matison.jpg',
+    width: 400,
+    height: 400,
+    alt: 'Sasha Matison',
+  } as undefined | { src: string; width: number; height: number; alt: string },
 };
 
 export const CONTACT_EMAIL = 'hello@jigg.ai';

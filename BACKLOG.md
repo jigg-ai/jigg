@@ -14,9 +14,10 @@ point. See `builds/website/test.md` for the per-check detail on build #1.
 
 From jigg-research issue #3. The page ships without these; each is tracked there too.
 
-- **Headshot.** The founder's original photo file, not the LinkedIn copy (resized and
-  recompressed). `FOUNDER.headshot` takes it; the page's photo, its `og:image` and the
-  Person `image` all come from that one field.
+- ~~**Headshot.**~~ Done 2026-11-09: the founder chose the LinkedIn profile photo
+  (400×400), shown at 200px so it stays sharp on 2× screens. A larger original would
+  allow a bigger photo and a better link-preview card; it replaces one field,
+  `FOUNDER.headshot`, which also feeds `og:image` and the Person `image`.
 - **`sashamatison.com`.** Cloudflare DNS and one redirect rule, executed by the founder.
   The final 301 to `/about/sasha-matison/` goes on only once that URL returns 200 in
   production. Afterwards, verify all four http/https × apex/www variants, the
