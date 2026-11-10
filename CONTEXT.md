@@ -87,7 +87,8 @@ Every build log pairs a tool with a real artifact built with it. Page anatomy:
   | Layer | Identity |
   |---|---|
   | Public site (Home, Services, Contact) | Jigg.AI, with the engineering-lead promise; no name |
-  | About | The current lead, named once: Sasha Matison, Founder & Principal Engineer, with the verified credential line and LinkedIn |
+  | About | The current lead, named in a short blurb: Sasha Matison, Founder & Principal Engineer, with the verified credential line and a link to the founder page |
+  | Founder page (`/about/sasha-matison/`) | The lead's one credentials page: confirmed career history, a real portrait once supplied, selected builds, LinkedIn and a contact CTA |
   | Discovery conversation | An introduction to the lead who would own the project |
   | Contract | The named lead, qualifications, responsibilities and agreed substitution terms (PROCESS → Client work) |
 
@@ -96,10 +97,16 @@ Every build log pairs a tool with a real artifact built with it. Page anatomy:
   never worded as a property of Jigg.AI. Checked against LinkedIn by the founder,
   2026-10-26: "a software engineer with 25+ years of experience, including engineering
   management at Amazon", on About under the name line "Sasha Matison, Founder & Principal
-  Engineer". One number format
-  ("25+"). LinkedIn holds the full history: no résumé, no biography, no photo required.
-  Person-specific facts live in one file (`site/src/lib/site.ts`), so the site changes in
-  one place if the lead ever does.
+  Engineer". One number format ("25+"). Person-specific facts live in one file
+  (`site/src/lib/site.ts`), so the site changes in one place if the lead ever does.
+- **The founder page is a deliberate exception, decided by the founder on 2026-11-09**
+  (jigg-research issue #3). Until then the rule was no résumé and no biography, with
+  LinkedIn holding the history. A dedicated page now gives the name one canonical,
+  citable home (`sashamatison.com` will redirect to it), and its Person entity (JSON-LD) is
+  linked to the sitewide Organization. The exception is narrow: one page, third person,
+  no pronouns, confirmed facts only (an unconfirmed claim is omitted, never marked
+  pending, because the repository is public), and no photo until a real one is supplied.
+  The brand, the role promise and the journal's builder persona are unchanged.
 - **Journal disclosure:** "Builds and write-ups are produced using AI tools, under human
   direction. Results, limitations and verification status are documented for each
   project."
@@ -279,8 +286,10 @@ app; several "Jiggy/Jiggle" AI tools), so: always present as "Jigg.AI," never ba
 so the brand out-signals the noise.
 
 ## 15. Still open
-- Revisit naming the lead on the site once there are independently verifiable client
-  outcomes and delivery no longer depends on one person.
+- Naming the lead was to be revisited once there were independently verifiable client
+  outcomes. The founder chose to go further before that, with a dedicated founder page
+  (§4, 2026-11-09). Still open: how the page and the brand relate once delivery no longer
+  depends on one person.
 - Jigg.AI owning client relationships assumes engagements are contracted by Jigg.AI as a
   business entity, not by an individual. Settle the entity before the first engagement.
 - **The thesis to prove:** that a founder-led, AI-native operation can deliver results
@@ -289,7 +298,6 @@ so the brand out-signals the noise.
   outcomes. Until there is evidence, it stays out of site copy.
 - How Contact inquiries are delivered (Netlify Forms, or a function that sends email).
 - Whether build #3's AI-presenter video stays featured anywhere on the studio site.
-- The exact credential line, pending LinkedIn verification.
 - Which open-source project build #5 modernizes.
 - Final category set and which get hub pages first (start with only categories that
   have real posts — avoid thin pages).
