@@ -10,6 +10,23 @@ point. See `builds/website/test.md` for the per-check detail on build #1.
 
 ---
 
+## Founder page — open items (opened 2026-11-09)
+
+From jigg-research issue #3. The page ships without these; each is tracked there too.
+
+- **Headshot.** The founder's original photo file, not the LinkedIn copy (resized and
+  recompressed). `FOUNDER.headshot` takes it; the page's photo, its `og:image` and the
+  Person `image` all come from that one field.
+- **`sashamatison.com`.** Cloudflare DNS and one redirect rule, executed by the founder.
+  The final 301 to `/about/sasha-matison/` goes on only once that URL returns 200 in
+  production. Afterwards, verify all four http/https × apex/www variants, the
+  certificates and the no-mail records, and post the evidence in the issue.
+- **GitHub `smatison` in the Person's `sameAs`**, once the reciprocal links are approved.
+- **The career rows are copied from LinkedIn, not linked.** Re-check them whenever either
+  changes.
+
+---
+
 ## MatSignal, build #5: open after publishing (opened 2026-11-06)
 
 The build log says these are untested or open. Each is a promise to come back:
