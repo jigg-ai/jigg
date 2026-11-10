@@ -1,0 +1,256 @@
+---
+// The founder page: the one dedicated, third-person credentials page on the site
+// (CONTEXT §4, STYLE "Studio pages"). Every fact on it comes from FOUNDER in
+// lib/site.ts, which holds only what the founder has confirmed; nothing here is
+// typed in by hand, so a correction there lands here and on About together.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPublishedBuilds } from '../../lib/builds';
+import { FOUNDER, ORGANIZATION_ID } from '../../lib/site';
+
+// Selected work: three of Jigg.AI's own builds, each with what it demonstrates and
+// its honest limit. Titles and links come from the builds collection; a reference to
+// a build that is missing or still a draft fails the build instead of shipping a dead
+// link (the same rule as Services' evidence).
+const SELECTED_WORK = [
+  {
+    build: 'matsignal',
+    shows: 'Product delivery',
+    text: 'A free competition-tracking tool for jiu-jitsu teams, taken from a real problem to a live product on its own subdomain in four working days.',
+    limit: 'One competition is covered so far, and demand is not yet proven.',
+  },
+  {
+    build: 'buttondown-hardening',
+    shows: 'Production reliability',
+    text: 'Layered abuse controls for a public signup endpoint after bots found it, failing closed when a check can’t run.',
+    limit: '12 of 13 planned acceptance checks pass; the 13th was skipped on purpose and recorded.',
+  },
+  {
+    build: 'website',
+    shows: 'Software architecture',
+    text: 'This site: one content collection drives every journal view, so publishing a build means adding one file.',
+    limit: 'The real time sink was the Git and GitHub setup, not the code.',
+  },
+] as const;
+
+const builds = await getPublishedBuilds();
+const byId = new Map(builds.map((b) => [b.id, b]));
+const work = SELECTED_WORK.map((w) => {
+  const build = byId.get(w.build);
+  if (!build) throw new Error(`about/sasha-matison: selected work references unknown or unpublished build "${w.build}"`);
+  return { ...w, title: build.data.title, href: `/builds/${build.id}/` };
+});
+
+const pageUrl = new URL(FOUNDER.page, Astro.site).toString();
+const intro = `${FOUNDER.name} is ${FOUNDER.intro}.`;
+const description = `${FOUNDER.name} is ${FOUNDER.title} of Jigg.AI: ${FOUNDER.summary}.`;
+const headshot = FOUNDER.headshot;
+
+// ProfilePage with the founder as its main entity. The Person is linked to the
+// sitewide Organization by @id (BaseLayout), and sameAs lists only profiles the
+// founder has confirmed as theirs. alumniOf carries only unambiguous credentials. No
+// image until a real photo exists.
+const profile = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfilePage',
+  '@id': pageUrl,
+  url: pageUrl,
+  mainEntity: {
+    '@type': 'Person',
+    '@id': FOUNDER.personId,
+    name: FOUNDER.name,
+    url: pageUrl,
+    jobTitle: FOUNDER.title,
+    description: intro,
+    worksFor: { '@id': ORGANIZATION_ID },
+    sameAs: [FOUNDER.linkedin],
+    alumniOf: FOUNDER.education
+      .filter((e) => e.alumni)
+      .map((e) => ({ '@type': 'CollegeOrUniversity', name: e.school })),
+    ...(headshot && { image: new URL(headshot.src, Astro.site).toString() }),
+  },
+};
+---
+
+<BaseLayout title={`${FOUNDER.name} — ${FOUNDER.title}`} description={description} image={headshot}>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(profile)} />
+  </Fragment>
+
+  <article class="container founder-page">
+    <header class:list={['hero', { 'hero--photo': headshot }]}>
+      <div class="hero-text">
+        <p class="eyebrow">{FOUNDER.title} · Jigg.AI</p>
+        <h1>{FOUNDER.name}</h1>
+        <p class="tagline">Software engineer. Engineering leader. Builder.</p>
+        <p class="intro">{intro}</p>
+        <p class="intro">
+          Today {FOUNDER.firstName} leads Jigg.AI as its {FOUNDER.title}, directing every
+          client engagement from the first conversation to what’s delivered: experienced
+          engineering judgment, with AI accelerating the execution.
+        </p>
+        <p class="actions">
+          <a class="btn btn--primary" href="/contact/">Discuss a project</a>
+          <a class="btn" href="#selected-work">See selected work</a>
+        </p>
+        <p class="trust">
+          Work directly with the engineering lead responsible for delivery. Client work
+          stays private by default.
+        </p>
+      </div>
+      {
+        headshot && (
+          <figure class="portrait">
+            <img
+              src={headshot.src}
+              width={headshot.width}
+              height={headshot.height}
+              alt={headshot.alt}
+              fetchpriority="high"
+            />
+          </figure>
+        )
+      }
+    </header>
+
+    <section class="block" id="experience" aria-labelledby="experience-title">
+      <h2 id="experience-title">Engineering experience</h2>
+      <ol class="rows">
+        {
+          FOUNDER.career.map((row) => (
+            <li class="row">
+              <p class="org">
+                {row.org}
+                <span class="mono">{row.period}</span>
+              </p>
+              <div>
+                <p class="role">{row.role}</p>
+                <p class="detail">{row.detail}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+      <h3 class="sub">Education</h3>
+      <ul class="rows rows--compact">
+        {
+          FOUNDER.education.map((e) => (
+            <li class="row">
+              <p class="org">{e.school}</p>
+              <p class="role">{e.credential}</p>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="more">
+        <a href={FOUNDER.linkedin} rel="me noopener">Full profile on LinkedIn →</a>
+      </p>
+    </section>
+
+    <section class="block" id="selected-work" aria-labelledby="work-title">
+      <h2 id="work-title">Selected work</h2>
+      <p class="section-lead">
+        Practical engineering, documented in the open. These are Jigg.AI’s own projects,
+        written up in its <a href="/builds/">build journal</a>, not paid-client case
+        studies.
+      </p>
+      <ol class="rows">
+        {
+          work.map((w) => (
+            <li class="row">
+              <p class="shows mono">{w.shows}</p>
+              <div>
+                <h3><a href={w.href}>{w.title}</a></h3>
+                <p class="detail">{w.text}</p>
+                <p class="limit">{w.limit}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <section class="block closing" aria-labelledby="closing-title">
+      <h2 id="closing-title">Have something to build, fix or modernize?</h2>
+      <p>
+        Tell Jigg.AI about the project or the technical problem. You’ll hear back from the
+        engineering lead accountable for the work, not a sales team.
+      </p>
+      <p class="actions">
+        <a class="btn btn--primary" href="/contact/">Discuss a project</a>
+        <a href={FOUNDER.linkedin} rel="me noopener">LinkedIn</a>
+        <a href="/services/">Services</a>
+      </p>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .founder-page { padding-top: clamp(2rem, 5vw, 3.5rem); }
+
+  /* Text first in the source, so on a phone the name, opening paragraph and CTA come
+     before the photo; on wider screens the photo sits to the right. */
+  .hero { display: grid; gap: 2rem; }
+  @media (min-width: 48rem) {
+    .hero--photo { grid-template-columns: minmax(0, 1fr) 16rem; align-items: start; gap: 3rem; }
+  }
+  .hero-text { max-width: var(--measure); }
+  .hero h1 { font-size: var(--step-display); margin-top: 0.5rem; }
+  .tagline {
+    font-family: var(--font-serif);
+    font-size: clamp(1.15rem, 1.05rem + 0.4vw, 1.35rem);
+    color: var(--ink-muted);
+    margin-top: 0.6rem;
+  }
+  .intro { font-size: 1.12rem; margin-top: 1.25rem; }
+  .intro + .intro { margin-top: 0.8rem; }
+  .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.25rem; margin-top: 1.5rem; }
+  .actions > a:not(.btn) { text-decoration-color: var(--brand); }
+  .trust { color: var(--ink-muted); font-size: var(--step-small); margin-top: 1rem; }
+  .portrait img { border-radius: var(--radius); border: 1px solid var(--border); }
+
+  .block { border-top: 1px solid var(--border); margin-top: 3rem; padding-top: 2rem; scroll-margin-top: 5rem; }
+  .block .section-lead { margin-top: 0.8rem; }
+  .section-lead a { color: var(--ink); text-decoration-color: var(--brand); }
+
+  .rows { list-style: none; padding: 0; margin-top: 1.25rem; max-width: 50rem; }
+  .row {
+    display: grid;
+    grid-template-columns: 12rem minmax(0, 1fr);
+    gap: 0.35rem 1.5rem;
+    padding-block: 1rem;
+    border-top: 1px solid var(--border);
+  }
+  .row:last-child { border-bottom: 1px solid var(--border); }
+  .org { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 500; }
+  .org .mono { display: block; font-family: var(--font-mono); font-size: var(--step-small); font-weight: 400; margin-top: 0.15rem; }
+  .role { font-weight: 560; }
+  .shows { padding-top: 0.2rem; text-transform: uppercase; letter-spacing: 0.02em; font-size: var(--step-small); }
+  .row h3 { font-size: 1.15rem; line-height: 1.3; }
+  .row h3 a { text-decoration-color: var(--brand); }
+  .detail { margin-top: 0.3rem; }
+  .role + .detail { color: var(--ink-muted); }
+  .limit { color: var(--ink-muted); font-size: var(--step-small); margin-top: 0.4rem; }
+  .sub {
+    font-family: var(--font-mono);
+    font-size: var(--step-small);
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-top: 2rem;
+  }
+  .rows--compact { margin-top: 0.75rem; }
+  /* Education: school over credential, so long names don't wrap in the narrow column. */
+  .rows--compact .row { grid-template-columns: 1fr; gap: 0.1rem; padding-block: 0.7rem; }
+  .rows--compact .org { font-size: 1.05rem; }
+  .rows--compact .role { font-weight: 400; color: var(--ink-muted); }
+  .more { margin-top: 1rem; }
+  .more a { text-decoration-color: var(--brand); }
+
+  .closing p { max-width: var(--measure); margin-top: 0.8rem; }
+  .closing .actions { margin-top: 1.4rem; }
+
+  @media (max-width: 40rem) {
+    .row { grid-template-columns: 1fr; }
+  }
+</style>

@@ -87,6 +87,7 @@ const PAGE_REVISED = new Map(
     ['/builds/', '2026-10-26'],   // journal links (Subscribe, Tools) added to the archive
     ['/services/', '2026-10-27'],
     ['/about/', '2026-10-26'],
+    ['/about/sasha-matison/', '2026-11-09'],
     ['/contact/', '2026-10-27'],
     ['/privacy/', '2026-10-27'],  // matches the page's own "Last updated" line
   ].map(([path, date]) => [path, new Date(date)]),
