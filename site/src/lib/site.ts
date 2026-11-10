@@ -50,7 +50,7 @@ export const FOUNDER = {
   summary:
     'a software engineer with 25+ years of experience, including engineering management at Amazon',
   intro:
-    'a software engineer with 25+ years of experience building software and leading engineering teams: enterprise engineering at Netegrity and CA Technologies, engineering management at Amazon, technical leadership at Avolin, and independent software ventures',
+    'a software engineer with 25+ years of experience building software and leading engineering teams, from enterprise security software at Netegrity and CA Technologies to engineering management at Amazon',
   linkedin: 'https://www.linkedin.com/in/sashamatison',
   // The dedicated credentials page (CONTEXT §4) and its Person entity.
   page: '/about/sasha-matison/',

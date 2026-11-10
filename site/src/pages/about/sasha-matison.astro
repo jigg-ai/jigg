@@ -82,11 +82,10 @@ const profile = {
         <p class="eyebrow">{FOUNDER.title} · Jigg.AI</p>
         <h1>{FOUNDER.name}</h1>
         <p class="tagline">Software engineer. Engineering leader. Builder.</p>
-        <p class="intro">{intro}</p>
         <p class="intro">
-          Today {FOUNDER.firstName} leads Jigg.AI as its {FOUNDER.title}, directing every
-          client engagement from the first conversation to what’s delivered: experienced
-          engineering judgment, with AI accelerating the execution.
+          {intro} Today {FOUNDER.firstName} leads Jigg.AI as its {FOUNDER.title}, pairing
+          experienced engineering judgment with AI-accelerated execution on every client
+          engagement.
         </p>
         <p class="actions">
           <a class="btn btn--primary" href="/contact/">Discuss a project</a>
@@ -202,7 +201,6 @@ const profile = {
     margin-top: 0.6rem;
   }
   .intro { font-size: 1.12rem; margin-top: 1.25rem; }
-  .intro + .intro { margin-top: 0.8rem; }
   .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.25rem; margin-top: 1.5rem; }
   .actions > a:not(.btn) { text-decoration-color: var(--brand); }
   .trust { color: var(--ink-muted); font-size: var(--step-small); margin-top: 1rem; }
