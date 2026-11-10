@@ -10,6 +10,8 @@
 export const LEAD_PROMISE =
   'Every engagement is guided by experienced engineering judgment, with AI accelerating implementation, testing and iteration. You work directly with the engineering lead responsible for your project.';
 
+export const ORGANIZATION_ID = 'https://jigg.ai/#organization';
+
 export const FOUNDER = {
   name: 'Sasha Matison',
   title: 'Founder & Principal Engineer',
@@ -17,6 +19,9 @@ export const FOUNDER = {
   summary:
     'A software engineer with 25+ years of experience, including engineering management at Amazon',
   linkedin: 'https://www.linkedin.com/in/sashamatison',
+  // The dedicated credentials page (CONTEXT §4) and its Person entity.
+  page: '/about/sasha-matison/',
+  personId: 'https://jigg.ai/about/sasha-matison/#person',
 };
 
 export const CONTACT_EMAIL = 'hello@jigg.ai';
