@@ -28,6 +28,9 @@ const siteName = 'Jigg.AI';
 const fullTitle = title === siteName ? title : `${title} · ${siteName}`;
 // og:image must be absolute: scrapers don't resolve relative paths.
 const ogImage = image ? new URL(image.src, Astro.site).toString() : undefined;
+// The large card crops to 2:1, which cuts a square photo through the face; a square or
+// portrait image gets the small card instead.
+const twitterCard = image && image.width / image.height < 1.5 ? 'summary' : 'summary_large_image';
 
 // Organization structured data on every page. The founder's Person entity lives on
 // the founder page and is referenced here by @id, so the two describe one graph.
@@ -60,7 +63,7 @@ const organization = {
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:card" content={twitterCard} />
     {
       image && (
         <>
