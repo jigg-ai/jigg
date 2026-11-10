@@ -27,9 +27,10 @@ Two surfaces, two voices (CONTEXT §4). The rules under "Both" apply everywhere.
   credentials page. It may carry verified career history, a real portrait, selected
   Jigg.AI builds and a project-contact CTA. Every fact on it is one the founder has
   confirmed; an unconfirmed title, date or employer is left out, not hedged. Refer to the
-  founder by name, never by pronoun. Everything else stays as it is: other studio pages
-  are Jigg.AI-first, About keeps a short blurb that links the page, and the build
-  journal keeps the builder persona, with no personal bylines, retroactive or new.
+  founder by name; pronouns only as the founder states them, never guessed. Everything
+  else stays as it is: other studio pages are Jigg.AI-first, About keeps a short blurb
+  that links the page, and the build journal keeps the builder persona, with no
+  personal bylines, retroactive or new.
 - Capabilities, not hype. No generic AI marketing, no invented achievements, no client
   logos or outcomes without written permission, and never name a prospective client.
 - Every service names its evidence. An internal build is a demonstration, not a client

@@ -104,8 +104,9 @@ Every build log pairs a tool with a real artifact built with it. Page anatomy:
   LinkedIn holding the history. A dedicated page now gives the name one canonical,
   citable home (`sashamatison.com` will redirect to it), and its Person entity (JSON-LD) is
   linked to the sitewide Organization. The exception is narrow: one page, third person,
-  no pronouns, confirmed facts only (an unconfirmed claim is omitted, never marked
-  pending, because the repository is public), and no photo until a real one is supplied.
+  pronouns only as the founder states them, confirmed facts only (an unconfirmed claim
+  is omitted, never marked pending, because the repository is public), and no photo
+  until a real one is supplied.
   The brand, the role promise and the journal's builder persona are unchanged.
 - **Journal disclosure:** "Builds and write-ups are produced using AI tools, under human
   direction. Results, limitations and verification status are documented for each
