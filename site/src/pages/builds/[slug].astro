@@ -5,6 +5,7 @@ import { getPublishedBuilds, isoDate } from '../../lib/builds';
 import RunsOnSiteBadge from '../../components/RunsOnSiteBadge.astro';
 import BuildStamp from '../../components/BuildStamp.astro';
 import StudioLink from '../../components/StudioLink.astro';
+import { ORGANIZATION_ID } from '../../lib/site';
 
 export async function getStaticPaths() {
   const builds = await getPublishedBuilds();
@@ -27,8 +28,10 @@ const jsonLd = {
   description: data.summary,
   ...(data.published && { datePublished: isoDate(data.published) }),
   ...(data.last_verified && { dateModified: isoDate(data.last_verified) }),
-  author: { '@type': 'Organization', name: 'Jigg.AI' },
-  publisher: { '@type': 'Organization', name: 'Jigg.AI' },
+  // The same Organization node BaseLayout emits sitewide, joined by @id. The author
+  // stays the studio: build logs carry no personal byline (STYLE, CONTEXT §4).
+  author: { '@type': 'Organization', '@id': ORGANIZATION_ID, name: 'Jigg.AI' },
+  publisher: { '@type': 'Organization', '@id': ORGANIZATION_ID, name: 'Jigg.AI' },
   mainEntityOfPage: new URL(Astro.url.pathname, Astro.site).toString(),
 };
 ---
