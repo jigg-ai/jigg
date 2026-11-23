@@ -8,10 +8,11 @@ scope:
   - "Custom applications and internal tools"
   - "Websites"
 evidence:
+  - build: "matsignal"
   - build: "website"
   - build: "buttondown-hardening"
   - text: "The engineering lead's professional experience"
-    href: "/about#lead"
+    href: "/about/sasha-matison/"
 note: "The builds are Jigg.AI's own projects, documented in public. They show the method; they are not client engagements."
 ---
 
