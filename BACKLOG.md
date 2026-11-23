@@ -10,6 +10,34 @@ point. See `builds/website/test.md` for the per-check detail on build #1.
 
 ---
 
+## Studio pages: cross-lab review, with the harness build (opened 2026-11-23)
+
+Decided with the founder on 2026-11-23: About and Services get a short section on independent
+review by models from different labs, but only when the AI-harness build is being worked on.
+They don't go in with the Fireworks build, whose single review round is a pilot.
+
+- **Evidence first.** Point to the Fireworks build (step one: open-weight models as reviewers)
+  and the harness build (results across review rounds). No claim on a studio page that those
+  builds don't show.
+- **Founder decision needed before any copy:** how cross-lab review applies to client work.
+  Services promises that AI tools are agreed with the client first and that the client's
+  policies win. Reviews by several labs could send client code to Fireworks, xAI or Google;
+  Kimi and DeepSeek come from Chinese labs, even though Fireworks runs them in the US. Opt-in
+  per provider is the likely default; the founder decides.
+- **No selling inside build logs.** The benefit is described on the studio pages, not in the logs.
+- **The positioning to carry into About and Services** (founder, 2026-11-23). Jigg.AI finds
+  problems worth solving (MatSignal began as the founder's own pain point and became a product),
+  solves them with an engineering process that uses models from several labs under human
+  direction, and makes chosen parts of that work public in the build journal. That gives
+  prospective clients a deep look at how the studio works. Each part exists elsewhere; the
+  combination is what's distinctive. Back it with outcomes: MatSignal's traction, and the harness
+  build's time and cost. Write it for a studio that will grow: other people will join and lead
+  projects, so the promise stays about the role ("the engineering lead responsible for your
+  project"), and the public builds and PROCESS.md double as how a new lead learns the process.
+  CONTEXT.md gets the same positioning when the studio pages change.
+
+---
+
 ## Founder page — open items (opened 2026-11-09)
 
 From jigg-research issue #3. The page ships without these; each is tracked there too.
@@ -18,10 +46,10 @@ From jigg-research issue #3. The page ships without these; each is tracked there
   (400×400), shown at 200px so it stays sharp on 2× screens. A larger original would
   allow a bigger photo and a better link-preview card; it replaces one field,
   `FOUNDER.headshot`, which also feeds `og:image` and the Person `image`.
-- **`sashamatison.com`.** Cloudflare DNS and one redirect rule, executed by the founder.
-  The final 301 to `/about/sasha-matison/` goes on only once that URL returns 200 in
-  production. Afterwards, verify all four http/https × apex/www variants, the
-  certificates and the no-mail records, and post the evidence in the issue.
+- ~~**`sashamatison.com`.**~~ Done 2026-11-10: Cloudflare DNS and one redirect rule (all incoming
+  requests, static 301 to `/about/sasha-matison/`), set up by the founder. All four
+  http/https × apex/www variants verified in one hop with valid certificates, and the no-mail
+  records in place (jigg-research#3).
 - **GitHub `smatison` in the Person's `sameAs`**, once the reciprocal links are approved.
 - **The career rows are copied from LinkedIn, not linked.** Re-check them whenever either
   changes.
@@ -42,9 +70,8 @@ From jigg-research issue #3. The page ships without these; each is tracked there
 
 The build log says these are untested or open. Each is a promise to come back:
 
-- **The update after Grappling X (Nov 14).** The log says it gets one: how the squad view and the
-  shared links did on a real competition day, and more competitions. Recheck `last_verified`
-  then.
+- ~~**The update after Grappling X (Nov 14).**~~ Done 2026-11-23: "Update, November 23" in the post,
+  with corrections where the November 6 text no longer holds, and `last_verified` moved to that day.
 - **Real phones.** Safari on iPhone, Chrome on Android, and links opened inside WhatsApp and
   Instagram (Send…, copying, the link preview). A screen reader too.
 - **The search guard** collects more than the 2% target on every attack path in the sweep test.
