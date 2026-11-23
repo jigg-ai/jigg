@@ -60,3 +60,20 @@ should check the server's answer and fail cleanly.
 - A screen reader.
 - A competition day: the first is Grappling X, November 14.
 - Load beyond the sweep test.
+
+## The competition day, observed (Grappling X, 2026-11-14)
+
+Not a re-run of the checks above; what the live product's own counts showed (engagement readout
+of 2026-11-19).
+
+- **Shared link:** opened 25 times from Nov 13 to 18 by browsers that don't own the squad, 12 of
+  them on the day, mostly on phones, from about 6 browsers new to MatSignal.
+- **Copy to my squad:** 0 presses. **New squads after Nov 11:** 2.
+- **Found the day before, on a real phone:**
+  - the participants bookmark arriving without athletes (Smoothcomp started loading them by
+    script); worked around by pasting the page;
+  - stale WhatsApp link previews; fixed.
+- **Still not tested:** a screen reader. Real phones are no longer untested: the competition day
+  ran on them, though no structured phone test was done.
+- **Counts before 2026-11-20 are skewed:** every browser holding a squad was counted as new. [my
+  setup]
