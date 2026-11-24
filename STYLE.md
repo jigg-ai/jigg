@@ -19,8 +19,10 @@ Two surfaces, two voices (CONTEXT §4). The rules under "Both" apply everywhere.
     commentary, and operational detail that adds risk but no understanding.
   - Never leave out a fact whose absence makes the rest untrue, and never let an old claim
     stand once it no longer holds. Being caught out is the real risk to the business.
-  - A risk taken on purpose is stated plainly, with its reasoning, its limits and its exit.
-    It's not hidden, and it's not dressed up.
+  - Say plainly what the build does, including a risk taken on purpose: never hidden,
+    never dressed up. A build log doesn't have to elaborate every decision. The reasoning
+    behind a product decision and its next steps can stay internal, and a short statement
+    is often the right one.
 - Lead with a self-contained summary (the citation hook): what it is, whether it's
   worth it, the one caveat.
 - Fair to tools: separate tool limitations from my own setup mistakes.
