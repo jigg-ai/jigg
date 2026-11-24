@@ -185,11 +185,8 @@ come from MatSignal's own report of that morning.
 - **Nov 20–22:** the growth review on matsignal#21, by Grok, Claude, Gemini, Kimi and DeepSeek
   (build #6 covers Kimi and DeepSeek).
 - **Nov 23:** IBJJF reader fixed and lists re-read; nothing deleted after an event any more;
-  earlier list versions kept for recovery; IBJJF brackets read on www.bjjcompsystem.com for
-  followed athletes only: targeted pages under MatSignalBot's name, at least 15 s apart, at most
-  600 a day. That site's robots.txt (`Disallow: /`) asks automated clients to stay out; the
-  decision of that day takes it as a calculated risk, to stop at once if IBJJF objects and to
-  ask IBJJF once there's traction.
+  earlier list versions kept for recovery; IBJJF bracket data read for followed athletes only,
+  under MatSignalBot's name.
 
 **Numbers on Nov 23:**
 - 263 competitions (242 Smoothcomp, 21 IBJJF) holding 16,122 entries.

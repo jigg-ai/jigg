@@ -148,16 +148,9 @@ down as a decision before it starts:
    and sent in. Smoothcomp hasn't been asked yet. MatSignalBot itself sends Smoothcomp no automated
    requests beyond a small, supervised test.
 4. **Brackets, for followed athletes only**, from November 23. Once competition day became the
-   heart of the product, entry lists and podiums weren't enough: a squad needs its athletes' match
-   times and results. So MatSignalBot reads IBJJF's bracket pages on `www.bjjcompsystem.com`, but
-   only the divisions that hold an athlete someone follows, never a whole tournament. Reads are at
-   least 15 seconds apart and capped at 600 a day, and everyone viewing a division shares one read.
-   A failed request rests the site for two minutes, longer if failures repeat, and a refusal stops
-   MatSignalBot there until a person has looked. That site's robots.txt asks every automated client
-   to stay out. MatSignal doesn't crawl it: it fetches the few bracket pages people are following,
-   under MatSignalBot's name, at a slower pace than a person browsing them. It's a calculated risk I
-   took knowingly. MatSignal will ask IBJJF once it has traction, and stops at once if IBJJF says
-   no.
+   heart of the product, a squad needed its athletes' match times and results. So MatSignalBot
+   reads IBJJF bracket data for the athletes people follow: only the divisions that hold one,
+   never a whole tournament, under its own name and slower than a person browsing.
 
 The common thread: each new way of reading is a written decision before it runs. The rules differ
 by reader. MatSignalBot, the reader MatSignal runs itself, says who it is on every request, stays
@@ -167,11 +160,11 @@ own operating rules, which this log doesn't cover.
 ### Where the November 6 text no longer holds
 
 - **Under-18s.** "Anyone a list shows as under 18 is dropped" no longer holds. Since November 17
-  MatSignal lists everyone registered in an adult or master bracket, whatever their age, as the
-  organizer's public list shows them. Some organizers open an adult bracket to younger athletes
-  (ADCC's "Adult (age 15+)"), and IBJJF places athletes by birth year, so an IBJJF adult can be 17
-  on the day. Youth brackets are still never read, no ages are kept, and the removal form deletes
-  an entry at once. A privacy assessment of this is open.
+  MatSignal lists everyone registered in an adult or master bracket, whatever their age, exactly
+  as the organizer's public list shows them on IBJJF or Smoothcomp. Some organizers open an adult
+  bracket to younger athletes (ADCC's "Adult (age 15+)"), and IBJJF places athletes by birth year,
+  so an IBJJF adult can be 17 on the day. Youth brackets are still never read, no ages are kept,
+  and the removal form deletes an entry at once.
 - **Deletion.** Lists are no longer deleted three days after the event (above).
 - **Search engines.** Competition pages are indexed now. Squads and shared links still aren't,
   and no indexed page shows a name.
