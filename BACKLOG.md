@@ -10,34 +10,6 @@ point. See `builds/website/test.md` for the per-check detail on build #1.
 
 ---
 
-## Studio pages: cross-lab review, with the harness build (opened 2026-11-23)
-
-Decided with the founder on 2026-11-23: About and Services get a short section on independent
-review by models from different labs, but only when the AI-harness build is being worked on.
-They don't go in with the Fireworks build, whose single review round is a pilot.
-
-- **Evidence first.** Point to the Fireworks build (step one: open-weight models as reviewers)
-  and the harness build (results across review rounds). No claim on a studio page that those
-  builds don't show.
-- **Founder decision needed before any copy:** how cross-lab review applies to client work.
-  Services promises that AI tools are agreed with the client first and that the client's
-  policies win. Reviews by several labs could send client code to Fireworks, xAI or Google;
-  Kimi and DeepSeek come from Chinese labs, even though Fireworks runs them in the US. Opt-in
-  per provider is the likely default; the founder decides.
-- **No selling inside build logs.** The benefit is described on the studio pages, not in the logs.
-- **The positioning to carry into About and Services** (founder, 2026-11-23). Jigg.AI finds
-  problems worth solving (MatSignal began as the founder's own pain point and became a product),
-  solves them with an engineering process that uses models from several labs under human
-  direction, and makes chosen parts of that work public in the build journal. That gives
-  prospective clients a deep look at how the studio works. Each part exists elsewhere; the
-  combination is what's distinctive. Back it with outcomes: MatSignal's traction, and the harness
-  build's time and cost. Write it for a studio that will grow: other people will join and lead
-  projects, so the promise stays about the role ("the engineering lead responsible for your
-  project"), and the public builds and PROCESS.md double as how a new lead learns the process.
-  CONTEXT.md gets the same positioning when the studio pages change.
-
----
-
 ## Founder page — open items (opened 2026-11-09)
 
 From jigg-research issue #3. The page ships without these; each is tracked there too.
