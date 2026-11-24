@@ -36,13 +36,14 @@ const builds = defineCollection({
       'writing', 'research', 'design', 'agents',
     ]),
     // Three distinct roles — do not merge them:
-    //  1. `tool`        the PRIMARY tool under review. The /tools index key AND the
-    //                   affiliate target. Exactly one per build.
+    //  1. `tool`        the PRIMARY tool under review. The /tools index key, and the
+    //                   only tool that can have an affiliate link (ToolVerdict's
+    //                   disclosed CTA, after the proof). Exactly one per build.
     //  2. `built_with`  the production AIs used to MAKE the build.
     //  3. `stack`       supporting tools/services the build runs on.
     // `built_with` and `stack` are display-only: they never create a /tools entry and
-    // are never affiliate-linked. That visible link/no-link split is what shows a
-    // reader which tool is actually under review, without having to explain it.
+    // are never affiliate-linked. The stamp's labels ("Primary tool:", "Built with:",
+    // "Stack:") show a reader which tool is under review.
     // Bake versions into the strings where they're pinnable and meaningful
     // ("Astro 7.1", "Claude Opus 4.8"); name un-versioned hosted services plainly
     // ("Netlify", "GitHub", "Cloudflare").

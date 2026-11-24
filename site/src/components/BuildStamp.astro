@@ -4,9 +4,11 @@ import { monShort } from '../lib/builds';
 // The single metadata stamp at the top of EVERY build page, in one fixed order:
 //   Primary tool · Built with · Stack · pricing as of · last verified
 //
-// Only the primary tool is ever linked (to its affiliate URL). `built_with` and
-// `stack` are deliberately plain text — that visible link/no-link split is what
-// shows a reader which tool is actually under review, with no caption needed.
+// Nothing in the stamp is linked. The "Primary tool:" label is what shows a reader
+// which tool is under review; `built_with` and `stack` are labelled the same way.
+// A build's only affiliate link is ToolVerdict's disclosed CTA, after the proof
+// (CONTEXT §3, §13; founder, 2026-11-23). The stamp sits above the proof, so it
+// never carries one.
 // Empty segments are dropped entirely rather than padded.
 //
 // Cost, hosting and framework deliberately do NOT live here: they're fact tiles
@@ -15,7 +17,6 @@ import { monShort } from '../lib/builds';
 interface Props {
   tool: string;
   toolVersion?: string;
-  affiliateUrl?: string;
   builtWith?: string[];
   stack?: string[];
   pricingAsOf?: Date;
@@ -24,7 +25,6 @@ interface Props {
 const {
   tool,
   toolVersion,
-  affiliateUrl,
   builtWith,
   stack,
   pricingAsOf,
@@ -37,13 +37,7 @@ const primary = [tool, toolVersion].filter(Boolean).join(' ');
 <p class="stamp mono">
   <span class="seg">
     <span class="label">Primary tool:</span>{' '}
-    {
-      affiliateUrl ? (
-        <a href={affiliateUrl} target="_blank" rel="sponsored nofollow noopener">{primary}</a>
-      ) : (
-        <span class="value">{primary}</span>
-      )
-    }
+    <span class="value primary">{primary}</span>
   </span>
 
   {builtWith && builtWith.length > 0 && (
@@ -76,11 +70,5 @@ const primary = [tool, toolVersion].filter(Boolean).join(' ');
   }
   .label { color: var(--ink-faint); }
   .value { color: var(--ink-muted); }
-  .stamp a {
-    color: var(--ink);
-    text-decoration: underline;
-    text-decoration-color: var(--brand);
-    text-underline-offset: 0.15em;
-  }
-  .stamp a:hover { text-decoration-color: currentColor; }
+  .primary { color: var(--ink); }
 </style>
