@@ -51,8 +51,9 @@ how that work is done.
 Every build log pairs a tool with a real artifact built with it. Page anatomy:
 - Summary / citation hook up top — self-contained: what it is, worth it or not, the
   one caveat. (Written so an AI answer engine can cite it.)
-- Metadata stamp — a single compact line in fixed order: primary tool (the only
-  linked item, to its affiliate URL, carrying its version) · production AIs
+- Metadata stamp — a single compact line in fixed order: primary tool (labelled,
+  carrying its version, and not linked: a build's only affiliate link is the disclosed
+  CTA after the proof, founder 2026-11-23) · production AIs
   (built_with) · stack · "pricing as of <date>" · "last verified <date>". Segments
   with no value are omitted, not padded. Perishable facts live here, separate from the
   evergreen narrative; an archived/superseded state applies when no longer current.

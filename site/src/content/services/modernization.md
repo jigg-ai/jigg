@@ -10,7 +10,7 @@ scope:
   - "Architecture reviews and improvements"
 evidence:
   - text: "The engineering lead's professional experience in software engineering and engineering management"
-    href: "/about#lead"
+    href: "/about/sasha-matison/"
   - text: "Planned for the build journal: an aging open-source application, modernized in public, with its existing behavior pinned by tests before anything changes"
 note: "There is no public modernization build yet, so this rests on professional experience. No client names or outcomes are claimed."
 ---

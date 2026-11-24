@@ -21,23 +21,78 @@
 // a dashboard. A wider figure was tried here and looked like a mistake, not emphasis.
 // If a screenshot is too dense to read at column width, the fix is the IMAGE, not the
 // layout: crop the chrome, compress dead space between columns, or show fewer rows.
+//
+// `darkSrc` is the same screenshot taken in the product's dark mode, at the same size.
+// This site is light-only, so a reader would otherwise never see the other theme: the
+// figure shows the light one and a small Light/Dark switch swaps them. The switch is
+// added by script, so without it the light screenshot stands alone. The hidden image is
+// lazy and not displayed, so it isn't fetched until someone asks for it. Its alt text is
+// the same, since the content is.
 interface Props {
   src: string;
   alt: string;
   caption?: string;
   width?: number;
   height?: number;
+  darkSrc?: string;
 }
-const { src, alt, caption, width, height } = Astro.props;
+const { src, alt, caption, width, height, darkSrc } = Astro.props;
 ---
 
-<figure class="shot">
-  <img src={src} alt={alt} width={width} height={height} loading="lazy" decoding="async" />
+<figure class="shot" data-mode={darkSrc ? 'light' : undefined}>
+  {
+    darkSrc && (
+      <div class="modes" role="group" aria-label="Screenshot theme" hidden>
+        <button type="button" data-mode="light" aria-pressed="true">Light</button>
+        <button type="button" data-mode="dark" aria-pressed="false">Dark</button>
+      </div>
+    )
+  }
+  <img class="light" src={src} alt={alt} width={width} height={height} loading="lazy" decoding="async" />
+  {darkSrc && <img class="dark" src={darkSrc} alt={alt} width={width} height={height} loading="lazy" decoding="async" />}
   {caption && <figcaption>{caption}</figcaption>}
 </figure>
 
+<script>
+  for (const fig of document.querySelectorAll<HTMLElement>('figure.shot[data-mode]')) {
+    const modes = fig.querySelector<HTMLElement>('.modes');
+    if (!modes) continue;
+    modes.hidden = false;
+    modes.addEventListener('click', (e) => {
+      const pick = (e.target as Element).closest<HTMLButtonElement>('button[data-mode]');
+      if (!pick) return;
+      fig.dataset.mode = pick.dataset.mode;
+      for (const b of modes.querySelectorAll('button')) b.setAttribute('aria-pressed', String(b === pick));
+    });
+  }
+</script>
+
 <style>
   .shot { margin: 0; }
+  .shot[data-mode='light'] img.dark,
+  .shot[data-mode='dark'] img.light { display: none; }
+  .modes {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.25rem;
+    margin-bottom: 0.5rem;
+  }
+  .modes[hidden] { display: none; }
+  .modes button {
+    font: inherit;
+    font-size: 0.82rem;
+    padding: 0.2rem 0.7rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--ink-muted);
+    cursor: pointer;
+  }
+  .modes button[aria-pressed='true'] {
+    border-color: var(--ink-muted);
+    color: var(--ink);
+    font-weight: 600;
+  }
   .shot img {
     width: 100%;
     border: 1px solid var(--border);

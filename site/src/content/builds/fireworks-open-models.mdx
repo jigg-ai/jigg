@@ -1,0 +1,256 @@
+---
+title: "Open-weight models join the review: Kimi and DeepSeek on Fireworks"
+category: "agents"
+tool: "Fireworks AI"
+built_with: ["Claude Opus 5.5"]
+stack: ["Kimi K3.1 Pro", "DeepSeek V4.1 Flash", "Brave Search API", "Slack", "GitHub"]
+runs_on_site: false
+status: "verified"
+summary: "Kimi K3.1 Pro and DeepSeek V4.1 Flash, two open-weight models served by Fireworks AI from the US, are now part of Jigg.AI's review process: the first open models in it, alongside Claude, Grok, Gemini and ChatGPT. Their first job was reviewing a growth proposal for MatSignal (build #5), after Claude, Grok and Gemini had. Setup took an evening, a review pass cost 9 to 67 cents in inference at list price, and in their first round both models independently caught something none of the other three had: the proposal would have reversed a decision already on record. Worth it as an extra critique from outside the usual labs, with a human deciding what each finding is worth."
+repro_pack: false
+published: 2026-11-23
+last_verified: 2026-11-23
+pricing_as_of: 2026-11-23
+human_time:
+  basis: unavailable
+agent_time:
+  basis: unavailable
+featured: false
+meta_line: "2 open models · 9–67¢ a pass"
+tool_summary: "Serverless inference for open-weight models · pay per token"
+tool_verdict: "Served Kimi and DeepSeek from the US at its listed prices, with no prompts or outputs kept by default on Chat Completions and caching that worked without being asked; a review pass cost 9 to 67 cents in inference. The US routes are missing from its model list, a requested JSON schema came back as plain JSON mode, and the US region is a product feature, not a contract term."
+accessibility: "Some setup"
+---
+
+import ShortVersion from '../../components/post/ShortVersion.astro';
+import ProcessStep from '../../components/post/ProcessStep.astro';
+import StatTiles from '../../components/post/StatTiles.astro';
+import ToolVerdict from '../../components/post/ToolVerdict.astro';
+
+<ShortVersion>
+Two open-weight models, **Kimi K3.1 Pro** and **DeepSeek V4.1 Flash**, served by
+[Fireworks AI](https://fireworks.ai) from the US, are now part of Jigg.AI's review process: the
+first open models in it, alongside Claude, Grok, Gemini and ChatGPT. Their first job was reviewing
+a growth proposal for [MatSignal](/builds/matsignal/), after Claude, Grok and Gemini had. Setup
+took an evening, and **a review pass cost 9 to 67 cents in inference** at Fireworks' list prices.
+In their first round, both models independently caught something none of the other three
+reviewers had: the proposal would have reversed a decision already on record. Worth it, as an
+extra critique from outside the usual labs, with a human deciding what each finding is worth.
+</ShortVersion>
+
+## Why reviewers from other labs
+
+Every build in this journal so far was made by one AI tool under one person's direction. That's
+the weak point of a one-person studio: there's no second engineer to say *that's wrong*. Since
+MatSignal, its plans and specs have gone out for independent review to models from other labs,
+Grok, Gemini and ChatGPT, on the theory that a model is worst at catching its own kind of
+mistake.
+
+That isn't a second accountable engineer. It's an independent critique channel that defends
+against one model's blind spots, with a human adjudicating every finding, and it doesn't replace
+expert review of a high-risk change, such as a security review. This round reviewed a growth
+proposal, not production code.
+
+Those are all closed models from large US labs. Kimi (from Moonshot AI) and DeepSeek are
+open-weight models from Chinese labs, built by different teams, and other providers can host
+them. Adding
+them tests two things: whether reviewers that different add findings the others miss, and whether
+they can run under the same rules as the rest, with their data handled the way the provider's
+terms say.
+
+## How it's set up
+
+- **Fireworks runs both models** on its own servers, not the labs'. Both go through its US-only
+  routes, which Fireworks describes as serving inference "exclusively from the US", for a
+  premium: 1.25× the base price for Kimi and 1.5× for DeepSeek.
+- **A small worker, built with Claude Code, gives each model a seat.** Each review runs on a fresh
+  copy of the product's repository holding only tracked files, with read-only tools: list, read
+  and search files, and see recent changes. No shell, no git, no writing, no network of its own.
+- **Independence is enforced, not requested.** On a first pass the worker hides every earlier
+  review from the model, and it can't read the issue where the others posted. The second pass
+  gets the issue, so each model can answer the others by name.
+- **Web access is narrow.** DeepSeek's seat can search through the Brave Search API and open only
+  pages its search or its reading turned up. It honours each site's robots.txt and refuses the sites I've
+  excluded, through redirects and archive copies too. Kimi's seat had no web access in this round.
+- **It can't cite what it didn't read.** A check refuses any source the run never opened.
+- **Money has a cap.** Before every call, the worst case has to fit what's left of a per-run cap,
+  and a run stopped by its cap can resume. The cap is mine to set, in chat, with an amount.
+- **Assignments arrive through Slack**, and each review comes back as a commit, posted unedited
+  in the issue with its source link.
+
+## The first round: MatSignal's growth proposal
+
+The proposal was a plan for growing MatSignal without much of my time. Grok, Claude and Gemini
+had already reviewed it in two passes each. On November 20 and 21, Kimi and DeepSeek each did a
+first pass blind and a second pass with everything else visible.
+
+**What only they found.** Both caught, independently and on their first pass, that the proposal's
+automatic removal of thin pages from search contradicted a founder decision from November 17 that
+every competition page is indexed. None of the three earlier reviewers had raised it. Beyond that:
+
+- DeepSeek showed that a promise in the proposal, never to expose minors, couldn't be kept,
+  because MatSignal stores no ages; that the proposal had dropped the success bar MatSignal had
+  already set itself; and that a setting I use to keep my own visits out of the counts lapses
+  after about a week in Safari.
+- Kimi showed that hand-written competition pages skip the rule that a page needs at least one
+  entry. DeepSeek's second pass found the other half: those pages also never leave the sitemap,
+  so two of them were advertising a finished event from November 23 on.
+
+DeepSeek's citations of MatSignal's code, file and line, checked out when they were spot-checked
+afterwards.
+
+**Where they were wrong, or changed their minds.** DeepSeek corrected two of its own first-pass
+claims in its second pass, one of them about when pages were indexed, where Claude had it right.
+Kimi withdrew one idea and demoted two others once it saw the other reviewers' evidence. DeepSeek credited a
+point to the wrong numbered finding in Kimi's review. And when a cap note stopped Kimi
+mid-review, Kimi blamed the cost cap; the cause was the worker's note, and the mismatch was caught
+before anything was posted.
+
+**What happened to it.** Nothing yet. The founder decisions on the proposal are still open, so
+no finding from Kimi or DeepSeek has changed MatSignal so far. That's the number that will
+matter, and it's carried forward.
+
+<StatTiles variant="metric" stats={[
+  { value: "2", label: "open models, one review round, two passes each", tone: "ok" },
+  { value: "1", label: "issue both caught that 3 earlier reviewers missed", tone: "ok" },
+  { value: "0", label: "findings acted on so far" },
+  { value: "0", label: "pages opened on excluded sites", tone: "ok" },
+]} />
+
+## The honest process
+
+<ProcessStep result="fail" title="Kimi on Bedrock: every call refused" tag="my-setup">
+The plan was Kimi on Amazon Bedrock. Four calls in a row came back 401. The cause was mine:
+macOS's password prompt had cut the API key to 128 characters when I read it from the keychain.
+About 30 minutes lost. Then I switched to Fireworks, because it serves DeepSeek as well.
+</ProcessStep>
+
+<ProcessStep result="fail" title="The cost meter stopped Kimi after three calls, twice" tag="my-setup">
+The worker's worst-case estimate counted every byte of a long file as a token, so a $1 cap looked
+spent after three calls ($0.26, then $0.28). It now plans from the token counts Fireworks reports.
+</ProcessStep>
+
+<ProcessStep result="fail" title="It also charged the first review twice its list price" tag="my-setup">
+Each call was charged at the higher of two readings of its usage. Kimi's first pass was metered at
+$1.43; re-priced from its recorded usage, it cost $0.67. Fixed the same evening, and the
+earlier figure stays in the record as charged.
+</ProcessStep>
+
+<ProcessStep result="fail" title="A last-call warning cut Kimi's second pass short" tag="my-setup">
+The note that tells a model its next call is its last one treated 115 KB of reading as that many
+tokens; the real count was about 27,000. Kimi stopped at $0.13 with an incomplete review, which
+was not posted. A rerun finished for $0.31. Part of this is still open: a $1 cap can't cover
+reading about 120,000 characters, and the worker has no tokenizer yet.
+</ProcessStep>
+
+<ProcessStep result="fail" title="A JSON schema came back as plain JSON mode" tag="tool-limit">
+In the first hand test, a request for a strict JSON schema was echoed back by Fireworks as plain
+JSON mode. The answer was valid JSON anyway, but strict schema enforcement is unconfirmed.
+</ProcessStep>
+
+<ProcessStep result="fail" title="The US routes aren't in the model list" tag="tool-limit">
+Fireworks' list of available models doesn't show the US-only routes. They work when called by
+name, which is how the worker calls them.
+</ProcessStep>
+
+<ProcessStep result="fail" title="DeepSeek cited pages it had never opened" tag="tool-limit">
+In a research test before the MatSignal review, DeepSeek cited pages it hadn't opened, and the
+worker's citation check refused them. That's what the check is for.
+</ProcessStep>
+
+<ProcessStep result="pass" title="What worked">
+Each model passed a hand test before any real work: Kimi found all four bugs planted in a sample,
+7 calls for 4 cents, and DeepSeek's tool calls and reasoning worked in 3 calls for under a cent.
+Prompt caching needed no setup: in Kimi's test, 4,307 of 4,308 repeated tokens came from the
+cache, 83% cheaper. From choosing Fireworks to Kimi's first posted review took about four hours.
+</ProcessStep>
+
+## The test
+
+The checks were set for this step: does each model run on Fireworks under the worker's rules,
+at the price Fireworks lists, and does it produce findings that hold up. They were run on
+November 23 against the run records and the review issue. Of the 11 checks, 9 pass, 1 failed
+and was fixed, and 1 is open. The tiles show eight of them; the test record has all 11.
+
+<StatTiles variant="metric" stats={[
+  { value: "Pass", label: "Both models answer on the US routes", tone: "ok" },
+  { value: "Pass", label: "Prices in the worker match Fireworks' list", tone: "ok" },
+  { value: "Fail", label: "Metered cost matched list price (first run 2×, fixed)" },
+  { value: "Pass", label: "No run spent past its approved budget, summed across resumes", tone: "ok" },
+  { value: "Pass", label: "First passes written blind (by design)", tone: "ok" },
+  { value: "Pass", label: "No excluded site opened", tone: "ok" },
+  { value: "Pass", label: "Findings no other reviewer had", tone: "ok" },
+  { value: "Open", label: "A finding acted on" },
+]} />
+
+**Not checked yet:** the charges against Fireworks' own bill, and blocking through redirects in
+a live run (no page in this round redirected to an excluded site). The [test
+record](https://github.com/jigg-ai/jigg/blob/main/builds/fireworks-open-models/test.md) has each
+check and its evidence.
+
+## What went to Fireworks
+
+Each review sent Fireworks a set of MatSignal's tracked documents and code (23 files for Kimi's
+first pass), the issue's comments on a second pass, and the text of any page DeepSeek opened.
+Both secret scans of the repository came back clean before its copy was made, and no list of
+athletes was among the files read.
+
+The worker calls one Fireworks API, Chat Completions. For open-model requests there, Fireworks'
+terms say prompts and outputs aren't stored without opting in, the data is held "only in volatile
+memory", and nothing trains on it without explicit opt-in; usage metadata is still logged. Its
+other APIs differ: the Responses API stores data when `store` is on, its default, and the Batch
+API isn't zero-retention. The worker uses neither. A secret scan isn't a full confidentiality
+review either, and none of this clears client code to be sent anywhere: on client work, which
+providers see the code is agreed with the client first. Two more limits, said plainly: the US-only routing is a product feature, not a promise in Fireworks' terms of service,
+and prompt caches last "several minutes" by Fireworks' current account, where my notes from
+November 20 said hours.
+
+## Time and cost
+
+<StatTiles variant="fact" stats={[
+  { value: "9–67¢", label: "Inference per review pass, at list price" },
+  { value: "~$1.40", label: "All Fireworks usage, recomputed at list prices" },
+  { value: "$2.50 / $12.50", label: "Kimi, US route, per million tokens in / out" },
+  { value: "$0.45 / $1.80", label: "DeepSeek, US route, per million tokens in / out" },
+]} />
+
+Three numbers, kept apart: about $1.40 is the recorded usage recomputed at Fireworks' list prices;
+about $2.17 is what my worker's meter first recorded, before its overcharge was fixed; and what
+Fireworks actually billed isn't reconciled yet. They cover both hand tests, a research test and
+every review run, including the one that stopped short. They're inference only: the setup,
+retries, 3.5 cents of Brave searches and my own time come on top. The models' own working time was short: Kimi's first pass
+ran for 2 minutes 22 seconds, DeepSeek's two passes for about 3 and 2 minutes. My time wasn't
+tracked: what's on record is 44 messages in the session that set this up, from the afternoon of
+November 20 to the evening of November 21.
+
+## What happens next
+
+Kimi and DeepSeek stay on as reviewers, next to the closed models. What counts from here is how
+often a review from another lab changes what gets built: findings verified, accepted and
+implemented, and false alarms.
+
+## Reproduce this
+
+The worker and the review files are in private repositories, so what's reproducible is the
+setup above and the record:
+
+- [**`build-notes.md`**](https://github.com/jigg-ai/jigg/blob/main/builds/fireworks-open-models/build-notes.md)
+  is the journal, with the timeline and every dead end.
+- [**`test.md`**](https://github.com/jigg-ai/jigg/blob/main/builds/fireworks-open-models/test.md)
+  lists each check, its evidence, and what hasn't been checked.
+
+## The tool
+
+<ToolVerdict tool="Fireworks AI" toolSummary="Serverless inference for open-weight models · pay per token">
+[Fireworks](https://fireworks.ai) did what it says: it served Kimi K3.1 Pro and DeepSeek V4.1 Flash from the US, at the
+prices it lists as far as the run records show (the bill isn't reconciled yet), behind one API
+key, with no prompts or outputs kept by default on the API the worker uses. Prompt caching
+worked without being asked, which matters when every review re-reads the same files. Every bug in
+this log that cost money was in my own worker, not in Fireworks.
+
+The rough edges are small but real. The US-only routes don't appear in its model list, a strict
+JSON schema came back as plain JSON mode, and the US region is a product feature rather than a
+contractual term, so anyone with a legal reason to keep data in one country should get that in
+writing. For putting open-weight models to work alongside the big labs' models, at cents a pass,
+it's an AI tool worth your time.
+</ToolVerdict>

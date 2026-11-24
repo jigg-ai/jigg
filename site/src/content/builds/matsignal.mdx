@@ -7,10 +7,10 @@ built_with: ["Claude Opus 5.5"]
 stack: ["Cloudflare Workers", "Cloudflare D1", "Cloudflare Access"]
 runs_on_site: false
 status: "verified"
-summary: "MatSignal is a free tool for jiu-jitsu teams: keep a squad, see who from it is entered at upcoming competitions, and post one competition's link in the team chat. It's the first build in this journal that is a product rather than a page, with its own subdomain, its own private repository, its own infrastructure and real people's names in it. Claude Code took it from a problem I have myself to live in four working days and about 4 h 50 min of agent time, and it's worth it for that, as long as a human keeps the decisions about data and has every change reviewed: its own tests caught its worst bug, and independent reviews caught more. The caveat: one competition is covered so far, copied in by hand for this proof-of-concept phase (automating that is next), and nothing yet shows that anyone besides me wants it. This log gets an update after that competition, on November 14."
+summary: "MatSignal is a free tool for jiu-jitsu teams: keep a squad, see who from it is entered at upcoming competitions, and post one competition's link in the team chat. It's the first build in this journal that is a product rather than a page, with its own subdomain, its own private repository, its own infrastructure and real people's names in it. Claude Code took it from a problem I have myself to live in four working days and about 4 h 50 min of agent time, and it's worth it for that, as long as a human keeps the decisions about data and has every change reviewed. Updated November 23: MatSignal is an MVP, built to test one thing first, whether a squad link passed around a team chat gets used. The first evidence came on a competition day, when one link was opened by about six browsers new to MatSignal: early use, not yet demand. Coverage is automated now, 263 competitions instead of one copied by hand, though many upcoming lists are out of date. The next step, people who open a link starting squads of their own, hasn't happened yet, and finding the channels for it is the next phase."
 repro_pack: false
 published: 2026-11-06
-last_verified: 2026-11-06
+last_verified: 2026-11-23
 human_time:
   basis: unavailable
 agent_time:
@@ -19,7 +19,7 @@ agent_time:
 paid_plans:
   - { tool: "Cloudflare", plan: "Workers Paid", price: "US$5", period: month }
 featured: false
-meta_line: "102 commits · 1 competition live"
+meta_line: "594 commits · 263 competitions live"
 tool_summary: "AI pair-builder in your terminal"
 tool_verdict: "Took a product with real people's data from an idea to live in about five hours of agent time, and wrote the adversarial tests that caught its own worst bug. It also wrote that bug, and its built-in browser isn't a phone. Decisions about data, accounts and money stayed with me, which is where they belong."
 accessibility: "Advanced"
@@ -40,19 +40,194 @@ this site: its own subdomain, its own private repository, its own infrastructure
 people's names in it. Claude Code took it from a problem I have myself to live in four working
 days and **about 4 h 50 min of agent time**. Worth it, with one condition: a human keeps the
 decisions about data and has every change reviewed. Its own tests caught its worst bug, and
-independent reviews caught more. The caveat: **one competition is covered so far,
-copied in by hand** for this proof-of-concept phase (automating that is the next phase), and
-nothing yet shows that anyone besides me wants it. That competition is
-on November 14, and this log gets an update after it.
+independent reviews caught more. **Updated November 23:** MatSignal is an MVP, built to test one thing first: whether a
+squad link passed around a team chat gets used. The first evidence came on a competition day, when
+one link was opened by about six browsers new to MatSignal: early use, not yet demand. Coverage is
+automated now, **263 competitions** instead of one copied by hand, though on November 23 the lists of
+106 of the 228 upcoming ones were out of date. The next step, people who open a link starting squads of their own, hasn't happened yet, and
+finding the channels for it is the next phase. [The update](#update-november-23) has the rest, including
+where MatSignal no longer does what this log first said, and [how the work ran](#how-the-work-ran)
+shows who did what.
 </ShortVersion>
 
 <Figure
-  src="/img/matsignal/shared-and-owner-phone.jpg"
-  width={1024}
-  height={1593}
-  alt="Two phone screens side by side. Left, the page a teammate gets from a shared link: a box explaining that MatSignal shows who from a team is entered at upcoming jiu-jitsu competitions, free and with no account, with a link to track your own squad; then 'Squad at this competition: 4 entered, page updated 7:20 PM', the competition 'Example Grappling Open', Nov 28, 2026, a line saying the list was copied from Smoothcomp 2 minutes ago, four athletes from Sample Academy and Sample Academy North with their divisions, each marked 'Name and team match', and a 'Copy to my squad' button. Right, the owner's squad: the same competition with a 'Shared' button open on a panel holding the short link, Copy and 'Turn off link', and the same four athletes, each with a quiet 'Not them' button."
-  caption="Left: what a teammate sees after tapping a shared link, which is only the squad's athletes entered at that competition. Right: the owner's side, with that competition's link open. A local copy with a made-up competition and made-up athletes, so the link points at the local server. Each screen is cropped and the two are set side by side; nothing else is changed."
+  src="/img/matsignal/competition-day-light.jpg"
+  darkSrc="/img/matsignal/competition-day-dark.jpg"
+  width={1200}
+  height={1954}
+  alt="Two phone screens side by side. Left, the page a teammate gets from a shared link on competition day: Demo Academy's squad at the Demo Winter Open, six entered, with its match list from Smoothcomp. Two matches are done, one marked 'Won · submission · 2:31' and one 'Lost · points'; then 'Up next' at 7:50 pm on Mat 1, and two later matches with their times and mats, each with a link to its bracket. Right, the owner's squad: three competitions, with the finished Demo Fall Cup open on its results, four competed, three match wins, and one gold, one silver and one bronze, then each athlete with their medal and wins."
+  caption="MatSignal on November 23. Left: what a teammate sees on competition day after tapping a shared link: the squad's matches so far, and who's up next, on which mat and when. Right: the owner's squad, with a finished competition's medals. A local copy with made-up competitions and athletes. Each screen is cropped and the two are set side by side; nothing else is changed."
 />
+
+## How the work ran
+
+MatSignal is Jigg.AI's own product, not a client's. It's also the first build in this journal to
+go through everything a product goes through: a problem, written specs, outside reviews, a
+release, real people's data, incidents, and a measure of success set before launch. So it's the
+fullest record here of how the work runs, and of who does what.
+
+**What stayed with a human.** I set the problem, and the bar for success before launch: five
+squads of three or more athletes and three shared links from people other than me, judged on
+December 14. Every decision about data was mine, and each one is written down with its reasons:
+who gets listed, what's kept, what's never deleted, which pages search engines see, and how
+MatSignal reads other people's sites. So were the accounts, the domain, the money, and every
+production deploy.
+
+**What the AI did.** Claude Code wrote the code and its tests, about 590 commits, and sends the
+crawl orders three times a day. Grok reads Smoothcomp's pages on those orders. Grok, Gemini,
+ChatGPT, Kimi and DeepSeek reviewed the plans and specs.
+
+**What kept it honest.**
+
+- **Specs before code, reviewed by models from other labs.** The search strategy went through
+  three review rounds, and the crawling spec through four reviews.
+- **Tests written to break it**, a sweep test against harvesting and a restore drill, run before
+  the first release.
+- **Every deploy recorded** with the version to roll back to.
+- **Incidents written up** with their cause, their fix and what was lost. The update below has
+  five.
+- **A bar set in advance**, so the result can't be argued afterwards.
+
+**What it isn't.** One person's product, with no client, no contract and no client's rules about
+data. It shows the method, not a client engagement.
+
+## Update, November 23
+
+This log went up on November 6 with one competition in MatSignal and a promise of an update
+after it. The update is nine days late, because MatSignal kept moving: about 470 commits since.
+**Everything after this section describes MatSignal as published on November 6.** Where something
+there no longer holds, it says so and points back here.
+
+### The competition day
+
+Grappling X was on November 14. One squad's link to it went into a team chat, and from November
+13 to 18 it was opened 25 times, 12 on the day, mostly on phones, by about six browsers new to
+MatSignal (browsers, not necessarily people). For the day itself, MatSignal gained match lists,
+with each match's mat and estimated time, and results with medals.
+
+### What changed since
+
+- **Coverage is automated.** MatSignal covers 263 competitions (242 on Smoothcomp, 21 IBJJF),
+  holding 16,122 entries, read on a schedule instead of pasted in by hand. Not all of it is
+  current: on November 23, 106 of the 228 upcoming competitions showed out-of-date lists. Two
+  readers do it.
+  MatSignalBot, MatSignal's own bot, signs every request and reads IBJJF's entry lists and its
+  calendar. Smoothcomp's pages are read by GrokBot, an AI agent (Grok) with its own browser,
+  working from orders MatSignal sends it.
+- **A page per competition.** Every covered competition with adult entries has a public page
+  with its academies and counts, never athletes' names, and those pages are in the sitemap.
+- **Competition day.** Match lists, results, and since November 23, IBJJF brackets for the
+  athletes people follow.
+- **Nothing is deleted after the event any more.** A competition and its lists are kept as last
+  read and marked completed or canceled, with a few earlier versions kept for recovery only. A
+  removal request still takes a person out at once.
+- **More than one AI reviews its plans.** Claude Code builds it. Grok, Gemini and ChatGPT
+  reviewed its specs, and from November 21 so did two open-weight models, Kimi and DeepSeek,
+  running on Fireworks. That step has [its own build log](/builds/fireworks-open-models/).
+
+### How MatSignal reads other sites
+
+How MatSignal gets its data grew with the product, one step at a time, and each step is written
+down as a decision before it starts:
+
+1. **By hand**, until November 16: a public list, opened in a browser and pasted in.
+2. **Entry lists, on a schedule.** MatSignalBot reads IBJJF's entry lists and its calendar under
+   its own name. It signs every request so a site can check who's asking, reads each list at most
+   once a day, obeys ibjjf.com's robots.txt, and stops at the first refusal until a person has
+   looked.
+3. **Smoothcomp, through an agent.** Smoothcomp's event and participants pages are read by
+   GrokBot, an AI agent (Grok) with its own browser, on orders from MatSignal, and MatSignal checks
+   each delivery before importing it. Match lists and finished brackets are still opened by hand
+   and sent in. Smoothcomp hasn't been asked yet. MatSignalBot itself sends Smoothcomp no automated
+   requests beyond a small, supervised test.
+4. **Brackets, for followed athletes only**, from November 23. Once competition day became the
+   heart of the product, a squad needed its athletes' match times and results. So MatSignalBot
+   reads IBJJF bracket data for the athletes people follow: only the divisions that hold one,
+   never a whole tournament, under its own name and at a limited rate.
+
+The common thread: each new way of reading is a written decision before it runs. The rules differ
+by reader. MatSignalBot, the reader MatSignal runs itself, says who it is on every request,
+keeps to a limited rate and stops at a refusal until someone has looked. GrokBot works to its
+own operating rules, which this log doesn't cover.
+
+### Where the November 6 text no longer holds
+
+- **Under-18s.** "Anyone a list shows as under 18 is dropped" no longer holds. Since November 17
+  MatSignal lists everyone registered in an adult or master bracket, whatever their age, exactly
+  as the organizer's public list shows them on IBJJF or Smoothcomp. Some organizers open an adult
+  bracket to younger athletes (ADCC's "Adult (age 15+)"), and IBJJF places athletes by birth year,
+  so an IBJJF adult can be 17 on the day. Youth brackets are still never read, no ages are kept,
+  and the removal form deletes an entry at once.
+- **Deletion.** Lists are no longer deleted three days after the event (above).
+- **Search engines.** Competition pages are indexed now. Squads and shared links still aren't,
+  and no indexed page shows a name.
+- **Reading.** The plan was for MatSignal to read lists "under its own honest name, following each
+  site's robots.txt". That holds for IBJJF's entry lists. Smoothcomp and IBJJF's brackets are read
+  differently, as the product grew: see [how MatSignal reads other sites](#how-matsignal-reads-other-sites).
+- **Counting.** MatSignal now counts how it's used, per day and without names: visits, searches,
+  squads started, shared links created and opened. Its privacy page lists every count.
+
+### What broke
+
+<ProcessStep result="fail" title="IBJJF changed its page, and a list went empty the day before its event" tag="my-setup">
+Around November 20 IBJJF changed the layout of its entry lists, and the reader stored New Jersey
+Fall Open's list, 825 entries, as empty the day before the event. I first read the empty page as
+a passing blip. It wasn't, and the real fix came on November 23. On both days of its event, New
+Jersey's pages had no list to show, and the copy of the list from November 19 is gone. Two
+safeguards came out of it: an empty read no longer replaces a list (the last good one is kept,
+and pages say what happened), and a few earlier versions of every list are now kept for recovery.
+</ProcessStep>
+
+<ProcessStep result="fail" title="The three-day rule deleted two competitions for good" tag="my-setup">
+On November 18 the Atlanta Fall Open's IBJJF lists were deleted, exactly as the rule above said
+they should be. Once MatSignal had results and past competitions worth keeping, that rule was
+losing data nobody could get back. It's why nothing is deleted after the event now. The same
+change stopped 39 more competitions from being deleted the following week.
+</ProcessStep>
+
+<ProcessStep result="fail" title="The adult-bracket rule dropped real adults" tag="my-setup">
+On November 17 the reader misread bracket labels. Grappling Industries' experience levels, such as
+"Adult … 2 - 5 Years", looked like ages under 18, and NAGA's "Director (40+)" classes weren't
+recognised. 172 of 1,863 entries in one order were dropped, and four competitions lost every row.
+The rule now reads each part of a label on its own, and the lost rows come back with each
+competition's next read.
+</ProcessStep>
+
+<ProcessStep result="fail" title="GrokBot's team column carried bracket text" tag="tool-limit">
+For two days GrokBot's files put bracket names into the team column: at worst 1,144 of 9,819
+entries. Grok fixed its own reader, and fresh reads clean up the rest.
+</ProcessStep>
+
+<ProcessStep result="fail" title="The usage counts were wrong until November 20" tag="my-setup">
+Every browser that held a squad was counted as new, and Cloudflare's own analytics collected
+nothing because MatSignal's security policy blocked its script. Counts from before November 20
+are skewed.
+</ProcessStep>
+
+### Where the MVP stands
+
+MatSignal set out to test one thing, whether a squad link passed around a team chat gets used,
+and November 14 gave the first evidence. In the three weeks since launch it has grown from one
+competition copied by hand into a product that largely runs itself:
+
+- **Automated crawls.** 263 competitions read on a schedule, with crawl orders going out three
+  times a day.
+- **A competition-day product.** Match lists with mats and times, results and medals, and
+  brackets for the athletes people follow.
+- **A refreshed interface**, after a user's feedback: calmer colours, and light and dark themes
+  that follow the phone (both in the screenshot above).
+- **A multi-model review pipeline.** Claude Code builds it, and Grok, Gemini, ChatGPT, Kimi and
+  DeepSeek review its plans and specs, with me deciding what each finding is worth.
+- **Search is finding it.** Google had 70 of its pages indexed on November 23, up from 44 two days
+  earlier.
+
+The next phase is growth: people who open a link starting squads of their own. The bar for it was
+set before launch, and it's judged on December 14.
+
+---
+
+**Original launch record, November 6.** Everything below is MatSignal as it was published on
+November 6, kept as a historical snapshot. Where it no longer holds, a note says so.
 
 ## The problem it started from
 
@@ -66,6 +241,8 @@ Written down, the questions were small: who from my squad is entered, at which c
 which divisions, and what changed since I last looked. On the day: in what order they fight and
 on which mat. Afterwards: results. **MatSignal answers the first set today.** The competition-day
 and results parts aren't built.
+
+*Since changed: match lists and results were built for November 14. See [the November 23 update](#update-november-23).*
 
 ## What it does today
 
@@ -131,12 +308,16 @@ the event. Anyone can remove themselves with the form on the privacy page, and t
 through later copies and database restores. Today that covers one competition: Grappling X,
 Washington State, November 14.
 
+*Since changed: lists are read automatically now, everyone registered in an adult or master bracket is listed whatever their age, and nothing is deleted after the event. See [the November 23 update](#update-november-23).*
+
 Copying by hand is for this first, proof-of-concept phase: it was the quickest way to find out
 whether the squad and the shared links are worth having, before building anything that runs on its
 own. The next phase automates it. MatSignal will read the participant lists of the competitions it
 covers on a schedule, under its own honest name, following each site's robots.txt and stopping when
 a site refuses. Everything above still applies to what it reads: adults only, name, team and
 division, deleted after the event, and removals that stick.
+
+*Since changed: Smoothcomp is read by GrokBot, an AI agent, and IBJJF's bracket pages are read for followed athletes. See [how MatSignal reads other sites](#how-matsignal-reads-other-sites).*
 
 ## Rules that shaped the build
 
@@ -154,6 +335,8 @@ These were fixed before any real entry went in, and most of the code follows fro
   search engines not to index them. I'm not publishing the guard's thresholds.
 - **A shared link shows only who's entered at that competition**, not the rest of the squad, and
   nothing about who opens a link is kept.
+
+*Since changed: the first two rules, and competition pages are indexed now, without names. See [the November 23 update](#update-november-23).*
 
 ## The honest process
 
@@ -256,6 +439,9 @@ No single score: what matters here is a set of checks that each guard one promis
 **Not tested yet:** real phones (Safari, Chrome, and links opened inside WhatsApp or Instagram),
 a screen reader, and a competition day.
 
+*Since changed: a competition day has happened, on real phones. A screen reader is still untested.
+See [the November 23 update](#update-november-23).*
+
 ## Time and cost
 
 <StatTiles variant="fact" stats={[
@@ -282,6 +468,8 @@ depending on someone pasting a list. The number that would say whether
 MatSignal deserves more of my time is whether people who get a link go on to keep a squad of their
 own. MatSignal doesn't count anything like that today, and whether it should is a decision still
 open.
+
+*Since changed: it counts that now, and the bar is set for December 14. See [the November 23 update](#update-november-23).*
 
 ## Reproduce this
 

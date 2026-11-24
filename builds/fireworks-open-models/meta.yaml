@@ -1,0 +1,33 @@
+# Open-weight models on Fireworks (Kimi K3.1 Pro, DeepSeek V4.1 Flash), build #6.
+# Fields mirror builds/_template/meta.yaml and site/src/content.config.ts. The post is
+# site/src/content/builds/fireworks-open-models.mdx. The worker that runs the models is in
+# a private repository, and the review files are in MatSignal's private repository. This
+# folder holds the public record.
+title: "Open-weight models join the review: Kimi and DeepSeek on Fireworks"
+slug: "fireworks-open-models"
+category: "agents"
+tool: "Fireworks AI"
+tool_version: ""      # hosted service, no version; the models' versions are in stack
+built_with: ["Claude Opus 5.5"]   # Claude Code built the worker
+stack: ["Kimi K3.1 Pro", "DeepSeek V4.1 Flash", "Brave Search API", "Slack", "GitHub"]
+runs_on_site: false
+status: verified
+summary: "Kimi K3.1 Pro and DeepSeek V4.1 Flash, two open-weight models served by Fireworks AI from the US, are now part of Jigg.AI's review process: the first open models in it, alongside Claude, Grok, Gemini and ChatGPT. Their first job was reviewing a growth proposal for MatSignal (build #5), after Claude, Grok and Gemini had. Setup took an evening, a review pass cost 9 to 67 cents in inference at list price, and in their first round both models independently caught something none of the other three had: the proposal would have reversed a decision already on record. Worth it as an extra critique from outside the usual labs, with a human deciding what each finding is worth."
+test_score: ""        # no aggregate: each check in test.md guards one promise
+affiliate_url: ""
+repro_pack: false
+published: "2026-11-23"
+last_verified: "2026-11-23"
+pricing_as_of: "2026-11-23"   # docs.fireworks.ai/serverless/pricing and the two model pages
+
+human_time:
+  basis: unavailable  # not tracked; 44 founder messages in the desk session, 11-20 15:37 to 11-21 17:40 PST
+agent_time:
+  basis: unavailable  # Claude Code's time building the worker wasn't measured; model run times are in build-notes
+paid_plans: []        # Fireworks and Brave are pay per use, not plans; costs are in build-notes
+
+featured: false
+meta_line: "2 open models · 9–67¢ a pass"
+tool_summary: "Serverless inference for open-weight models · pay per token"
+tool_verdict: "Served Kimi and DeepSeek from the US at its listed prices, with no prompts or outputs kept by default on Chat Completions and caching that worked without being asked; a review pass cost 9 to 67 cents in inference. The US routes are missing from its model list, a requested JSON schema came back as plain JSON mode, and the US region is a product feature, not a contract term."
+accessibility: "Some setup"

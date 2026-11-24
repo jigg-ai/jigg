@@ -18,10 +18,10 @@ From jigg-research issue #3. The page ships without these; each is tracked there
   (400×400), shown at 200px so it stays sharp on 2× screens. A larger original would
   allow a bigger photo and a better link-preview card; it replaces one field,
   `FOUNDER.headshot`, which also feeds `og:image` and the Person `image`.
-- **`sashamatison.com`.** Cloudflare DNS and one redirect rule, executed by the founder.
-  The final 301 to `/about/sasha-matison/` goes on only once that URL returns 200 in
-  production. Afterwards, verify all four http/https × apex/www variants, the
-  certificates and the no-mail records, and post the evidence in the issue.
+- ~~**`sashamatison.com`.**~~ Done 2026-11-10: Cloudflare DNS and one redirect rule (all incoming
+  requests, static 301 to `/about/sasha-matison/`), set up by the founder. All four
+  http/https × apex/www variants verified in one hop with valid certificates, and the no-mail
+  records in place (jigg-research#3).
 - **GitHub `smatison` in the Person's `sameAs`**, once the reciprocal links are approved.
 - **The career rows are copied from LinkedIn, not linked.** Re-check them whenever either
   changes.
@@ -42,9 +42,8 @@ From jigg-research issue #3. The page ships without these; each is tracked there
 
 The build log says these are untested or open. Each is a promise to come back:
 
-- **The update after Grappling X (Nov 14).** The log says it gets one: how the squad view and the
-  shared links did on a real competition day, and more competitions. Recheck `last_verified`
-  then.
+- ~~**The update after Grappling X (Nov 14).**~~ Done 2026-11-23: "Update, November 23" in the post,
+  with corrections where the November 6 text no longer holds, and `last_verified` moved to that day.
 - **Real phones.** Safari on iPhone, Chrome on Android, and links opened inside WhatsApp and
   Instagram (Send…, copying, the link preview). A screen reader too.
 - **The search guard** collects more than the 2% target on every attack path in the sweep test.

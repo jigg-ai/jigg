@@ -7,6 +7,22 @@ Two surfaces, two voices (CONTEXT §4). The rules under "Both" apply everywhere.
   explains that a human directs the AI tools.
 - Honest over polished. Show the mistakes, retries, and dead ends — that's what
   makes "anyone can build real things with AI" credible.
+- **Every build serves the business** (founder, 2026-11-23). A build isn't a side
+  experiment: it shows a prospective client how Jigg.AI works, and it should leave the
+  value proposition stronger. So, for each one:
+  - Say what it shows about the work: which service it backs, and what stayed with a
+    human versus what the AI did.
+  - **Transparency is selective, never misleading.** Show the issues that reveal judgment:
+    a problem caught, fixed, and fed back into the process, with what changed afterwards.
+    Leave out what would harm clients or the business without helping a reader: security
+    thresholds, private strategy and rankings, verbatim exchanges between agents, competitor
+    commentary, and operational detail that adds risk but no understanding.
+  - Never leave out a fact whose absence makes the rest untrue, and never let an old claim
+    stand once it no longer holds. Being caught out is the real risk to the business.
+  - Say plainly what the build does, including a risk taken on purpose: never hidden,
+    never dressed up. A build log doesn't have to elaborate every decision. The reasoning
+    behind a product decision and its next steps can stay internal, and a short statement
+    is often the right one.
 - Lead with a self-contained summary (the citation hook): what it is, whether it's
   worth it, the one caveat.
 - Fair to tools: separate tool limitations from my own setup mistakes.

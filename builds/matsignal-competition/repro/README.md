@@ -19,14 +19,19 @@ how it was tested.
 - **The search guard's thresholds and the sweep test's per-path numbers**, for the same reason.
 - **Any real entry.** No real athlete appears in this build log, its images or this folder.
 
-## The image on the build page
+## The images on the build page
 
-`site/public/img/matsignal/shared-and-owner-phone.jpg` shows MatSignal on a phone (390 px wide),
-running locally with a **made-up competition** ("Example Grappling Open") and **made-up athletes**
-(Sample Academy), created for the screenshots and deleted afterwards. That is why the shared link in
-it points at the local server. What was done to it:
+`site/public/img/matsignal/competition-day-light.jpg` and `competition-day-dark.jpg` show
+MatSignal on a phone (390 px wide) as it was on November 23, in its light and dark themes. It ran
+locally, on a database holding only **made-up competitions** ("Demo Winter Open", "Demo Fall Cup")
+and **made-up athletes** (Demo Academy), from MatSignal's own demo script for screenshots. What
+was done to them:
 
-- each screen cropped from the browser's screenshot, and the scrollbar strip on the right edge
-  trimmed (12 px);
-- the two screens set side by side, 24 px apart, on MatSignal's own background colour;
+- each screen captured in headless Chrome at twice the pixel density, once per theme, and cropped
+  to the same height;
+- the two screens set side by side, each with MatSignal's own page margins, and scaled to 1,200 px
+  wide;
 - nothing else changed: no retouching, no edited text.
+
+The November 6 image, a shared link and the owner's squad in the dark-only design MatSignal had
+then, was replaced on November 23. It's in this repository's history.

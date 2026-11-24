@@ -85,7 +85,7 @@ const PAGE_REVISED = new Map(
   [
     ['/', '2026-10-27'],          // studio homepage
     ['/builds/', '2026-10-26'],   // journal links (Subscribe, Tools) added to the archive
-    ['/services/', '2026-10-27'],
+    ['/services/', '2026-11-23'],  // MatSignal added as product-delivery evidence
     ['/about/', '2026-11-09'],    // founder blurb shortened, links the founder page
     ['/about/sasha-matison/', '2026-11-09'],
     ['/contact/', '2026-10-27'],

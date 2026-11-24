@@ -152,3 +152,58 @@ Two things this number is not:
   failing cleanly when the server refuses a request. Noted in test.md.
 - Screenshots for the log found a live bug. Taking them at phone width should be a step of its
   own, before launch rather than after.
+
+## After publishing: November 6–23 (update written 2026-11-23)
+
+The post promised an update after Grappling X on November 14, and it's in the post as "Update,
+November 23". The facts behind it come from MatSignal's private repository: the engagement
+readout of November 19, the decision files, the pull requests and the commit log. They also come
+from the live site's public sitemap and `/api/events`, read on November 23. Search Console figures
+come from MatSignal's own report of that morning.
+
+- **Nov 11:** one search box across teams. Anonymous daily usage counts.
+- **Nov 12–14:** match lists ("Up next") and results with medals, for the competition day. On
+  Nov 13 the participants bookmark arrived without athletes, because Smoothcomp had started
+  loading them by script; pasting the page worked instead. WhatsApp showed stale link previews,
+  fixed by changing a link's ending with its preview.
+- **Nov 14, Grappling X:** the one shared link was opened 25 times from Nov 13 to 18 by browsers
+  that don't own it, 12 on the day, from about 6 browsers new to MatSignal. "Copy to my squad":
+  0. New squads after Nov 11: 2.
+- **Nov 15:** SEO strategy v1.0 after three review rounds; IBJJF competition pages published.
+- **Nov 16–17:** GrokBot (Grok) starts reading Smoothcomp on orders from MatSignal; first batch
+  329 competitions in 17 orders. Founder decisions: everyone in an adult or master bracket is
+  listed whatever their age, and every competition page is indexed, with no names on indexed
+  pages.
+- **Nov 18:** MatSignalBot reads IBJJF's calendar daily. Cloudflare lists it as a verified bot.
+  The Atlanta Fall Open's IBJJF lists are deleted under the three-day rule, lost for good.
+- **Nov 19:** founder decisions on Smoothcomp access: GrokBot stays the main path, and
+  Smoothcomp isn't asked yet. MatSignalBot's own Smoothcomp test stays small and supervised.
+  UX v02.
+- **Nov 20:** an IBJJF layout change stores New Jersey Fall Open's list (825 entries) as empty,
+  the day before its event. Counting fixed: before this, every browser holding a squad counted as
+  new.
+- **Nov 20–22:** the growth review on matsignal#21, by Grok, Claude, Gemini, Kimi and DeepSeek
+  (build #6 covers Kimi and DeepSeek).
+- **Nov 23:** IBJJF reader fixed and lists re-read; nothing deleted after an event any more;
+  earlier list versions kept for recovery; IBJJF bracket data read for followed athletes only,
+  under MatSignalBot's name.
+
+**Numbers on Nov 23:**
+- 263 competitions (242 Smoothcomp, 21 IBJJF) holding 16,122 entries.
+- 261 competition pages in the sitemap.
+- Of 228 upcoming competitions, 106 show stale lists.
+- GrokBot reads about 70–100 competitions a day, against about 206 due.
+- Search Console: 70 indexed (44 on Nov 21, 62 on Nov 22), 192 never crawled, 2 clicks and 98
+  impressions over 28 days (impressions from Nov 16), average position 8.3.
+- Usage since the Nov 20 counting fix (to Nov 23 17:16 UTC): 0 squads started, 1 competition link
+  created and 1 opened by another browser (both New Jersey, possibly the founder on a second
+  device), 8 competition-page views, 8 home visits, 0 visits from search. Quieter than the
+  Nov 13–19 week around Grappling X. Source: the MatSignal session's production counts, SELECT
+  only, aggregates.
+- About 470 commits since publishing, 594 on the product's main branch in all.
+
+**Conflict noted:** the post counted 102 commits for Oct 30 – Nov 6, but the branch now shows 123
+authored by the end of Nov 6. The difference is probably that evening's later commits. Not
+re-measured.
+
+**Time:** neither my time nor the agents' time since Nov 6 was tracked.
