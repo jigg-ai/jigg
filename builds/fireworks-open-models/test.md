@@ -30,7 +30,7 @@ written down. Running them against its records after the fact is noted wherever 
 | 8 | Reviews delivered and posted unedited, with their source | **Pass** | Four comments on the review issue (2026-11-21 and 22 UTC), each with its commit and a note that only relative links were changed. |
 | 9 | At least one finding no other reviewer made | **Pass** | Both models independently found that the proposal's automatic deindexing would reverse a founder decision from 2026-11-17. None of the comments by Grok, Claude or Gemini raises it. Others are listed in the post. |
 | 10 | Factual accuracy of what they asserted about the code | **Pass, spot-checked** | DeepSeek's file-and-line citations were spot-checked at the commit it read, and were accurate. Errors found are in the post: two self-corrections by DeepSeek, one misattributed finding number, and Kimi blaming the wrong cause for a stop. |
-| 11 | A finding acted on | **Open** | The founder decisions on the proposal are still open. Carried forward to the harness build. |
+| 11 | A finding acted on | **Open** | The founder decisions on the proposal are still open. Carried forward. |
 
 ## Not checked
 

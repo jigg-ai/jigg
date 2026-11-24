@@ -1,8 +1,7 @@
 # Build notes: open-weight models on Fireworks (build #6)
 
-The running journal for the first open-weight models in Jigg.AI's process. This is step one of
-a sequence: connect open models and put them to real work under the same rules as the other
-reviewers. The AI-harness build comes next and consolidates findings across review rounds.
+The running journal for the first open-weight models in Jigg.AI's process. This step: connect
+open models and put them to real work under the same rules as the other reviewers.
 
 Times are PST. The worker and the run records are in private repositories, and the review
 files are in MatSignal's private repository, so this file names commits and run IDs without
@@ -27,8 +26,8 @@ linking them.
   5. no excluded site is opened;
   6. at least one finding that no other reviewer made.
 
-  Whether a finding gets acted on is tracked but isn't required for this step; that's the
-  harness build's measure.
+  Whether a finding gets acted on is tracked but isn't required for this step; it's
+  carried forward.
 - **Checks:** set when the build was defined on 2026-11-23, and run that day against the run
   records and the review issue. The first review round (November 20–21) happened before the
   checks were written down. They're run against its records after the fact, and this says so.

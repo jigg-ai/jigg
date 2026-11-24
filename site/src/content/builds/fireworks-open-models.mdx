@@ -6,7 +6,7 @@ built_with: ["Claude Opus 5.5"]
 stack: ["Kimi K3.1 Pro", "DeepSeek V4.1 Flash", "Brave Search API", "Slack", "GitHub"]
 runs_on_site: false
 status: "verified"
-summary: "Kimi K3.1 Pro and DeepSeek V4.1 Flash, two open-weight models served by Fireworks AI from the US, are the first open models in Jigg.AI's process. Their first job was reviewing a growth proposal for MatSignal (build #5), after Claude, Grok and Gemini had. Setup took an evening, a review pass cost 9 to 67 cents in inference at list price, and in this one round both models independently caught something none of the other three had: the proposal would have reversed a decision already on record. Worth it as an extra critique from outside the usual labs, with a human deciding what each finding is worth. The caveats: nothing they found has been acted on yet, and this is one review round, the first step toward the AI-harness build that comes next."
+summary: "Kimi K3.1 Pro and DeepSeek V4.1 Flash, two open-weight models served by Fireworks AI from the US, are now part of Jigg.AI's review process: the first open models in it, alongside Claude, Grok, Gemini and ChatGPT. Their first job was reviewing a growth proposal for MatSignal (build #5), after Claude, Grok and Gemini had. Setup took an evening, a review pass cost 9 to 67 cents in inference at list price, and in their first round both models independently caught something none of the other three had: the proposal would have reversed a decision already on record. Worth it as an extra critique from outside the usual labs, with a human deciding what each finding is worth."
 repro_pack: false
 published: 2026-11-23
 last_verified: 2026-11-23
@@ -16,7 +16,7 @@ human_time:
 agent_time:
   basis: unavailable
 featured: false
-meta_line: "1 review round · 9–67¢ a pass"
+meta_line: "2 open models · 9–67¢ a pass"
 tool_summary: "Serverless inference for open-weight models · pay per token"
 tool_verdict: "Served Kimi and DeepSeek from the US at its listed prices, with no prompts or outputs kept by default on Chat Completions and caching that worked without being asked; a review pass cost 9 to 67 cents in inference. The US routes are missing from its model list, a requested JSON schema came back as plain JSON mode, and the US region is a product feature, not a contract term."
 accessibility: "Some setup"
@@ -28,14 +28,14 @@ import StatTiles from '../../components/post/StatTiles.astro';
 import ToolVerdict from '../../components/post/ToolVerdict.astro';
 
 <ShortVersion>
-Two open-weight models, **Kimi K3.1 Pro** and **DeepSeek V4.1 Flash**, served by Fireworks AI
-from the US, are the first open models in Jigg.AI's process. Their first job was reviewing a
-growth proposal for [MatSignal](/builds/matsignal/), after Claude, Grok and Gemini had. Setup took
-an evening, and **a review pass cost 9 to 67 cents in inference** at Fireworks' list prices. In
-this one round, both models independently caught something none of the other three reviewers had:
-the proposal would have reversed a decision already on record. Worth it, as an extra critique
-from outside the usual labs, with a human deciding what each finding is worth. The caveats: **nothing they found has been acted on yet**, and this is one review
-round. It's the first step toward the AI-harness build that comes next.
+Two open-weight models, **Kimi K3.1 Pro** and **DeepSeek V4.1 Flash**, served by
+Fireworks AI from the US, are now part of Jigg.AI's review process: the
+first open models in it, alongside Claude, Grok, Gemini and ChatGPT. Their first job was reviewing
+a growth proposal for [MatSignal](/builds/matsignal/), after Claude, Grok and Gemini had. Setup
+took an evening, and **a review pass cost 9 to 67 cents in inference** at Fireworks' list prices.
+In their first round, both models independently caught something none of the other three
+reviewers had: the proposal would have reversed a decision already on record. Worth it, as an
+extra critique from outside the usual labs, with a human deciding what each finding is worth.
 </ShortVersion>
 
 ## Why reviewers from other labs
@@ -77,9 +77,6 @@ terms say.
   and a run stopped by its cap can resume. The cap is mine to set, in chat, with an amount.
 - **Assignments arrive through Slack**, and each review comes back as a commit, posted unedited
   in the issue with its source link.
-
-The architecture around this, approvals, budgets and lanes, is the subject of the next build,
-the harness. This one is about getting two open models to do real work under these rules.
 
 ## The first round: MatSignal's growth proposal
 
@@ -228,11 +225,9 @@ November 20 to the evening of November 21.
 
 ## What happens next
 
-The next build is an experiment of its own: the AI harness this worker belongs to, with
-assignments, approvals, budgets and lanes for every model, open or not. It's where findings from
-rounds like this one get consolidated and counted: how many were verified, accepted and
-implemented, and how many were false alarms. The number that matters is how often a review from
-another lab changes what gets built.
+Kimi and DeepSeek stay on as reviewers, next to the closed models. What counts from here is how
+often a review from another lab changes what gets built: findings verified, accepted and
+implemented, and false alarms.
 
 ## Reproduce this
 
