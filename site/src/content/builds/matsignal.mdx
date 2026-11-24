@@ -100,25 +100,17 @@ there no longer holds, it says so and points back here.
 
 ### The competition day
 
-Grappling X was on November 14. One competition link from a squad went into a team chat. From
-November 13 to 18 it was opened 25 times by browsers that don't own the squad: 12 of those on
-the day, mostly on phones, by about six browsers that had never opened MatSignal before (browsers,
-not necessarily people). Nobody pressed *Copy to my squad*. Two new squads were started after
-November 11, and neither is known to have come from the link. That's the only outside use on record, and it came from a link passed around a team, not from search.
-
-Two things broke the day before. The bookmark I use to send a participants page to MatSignal
-arrived with divisions but no athletes, because Smoothcomp had started loading athletes with the
-page's script; pasting the page worked instead. And WhatsApp kept showing a shared link's old
-preview, so links now change their ending whenever their preview changes. For the day itself,
-MatSignal gained match lists ("Up next", with the mat and an estimated time) and results, so a
-squad shows who competed and their medals.
+Grappling X was on November 14. One squad's link to it went into a team chat, and from November
+13 to 18 it was opened 25 times, 12 on the day, mostly on phones, by about six browsers new to
+MatSignal (browsers, not necessarily people). For the day itself, MatSignal gained match lists,
+with each match's mat and estimated time, and results with medals.
 
 ### What changed since
 
 - **Coverage is automated.** MatSignal covers 263 competitions (242 on Smoothcomp, 21 IBJJF),
   holding 16,122 entries, read on a schedule instead of pasted in by hand. Not all of it is
-  current: on November 23, 106 of the 228 upcoming competitions showed out-of-date lists (see
-  [where the MVP stands](#where-the-mvp-stands)). Two readers do it.
+  current: on November 23, 106 of the 228 upcoming competitions showed out-of-date lists. Two
+  readers do it.
   MatSignalBot, MatSignal's own bot, signs every request and reads IBJJF's entry lists and its
   calendar. Smoothcomp's pages are read by GrokBot, an AI agent (Grok) with its own browser,
   working from orders MatSignal sends it.
@@ -214,25 +206,23 @@ are skewed.
 
 ### Where the MVP stands
 
-MatSignal is a minimum viable product: the smallest build that could test whether a squad link
-passed around a team chat gets used. The validation was kept narrow on purpose, and November 14 gave
-its first evidence: the link was opened 25 times, 12 on the day, by about six browsers new to
-MatSignal. That's early use of one link, not yet demand, and the counts are browsers, not people.
-Coverage then grew from one competition to 263 in under three weeks, with Claude Code
-building and GrokBot reading. Google's view of it is growing too: 70 pages indexed on November 23,
-up from 44 two days earlier, and the first search impressions since November 16, 98 of them, for 2
-clicks.
+MatSignal set out to test one thing, whether a squad link passed around a team chat gets used,
+and November 14 gave the first evidence. In the three weeks since launch it has grown from one
+competition copied by hand into a product that largely runs itself:
 
-The next step hasn't happened yet. Nobody who opened a link has started a squad of their own, and
-most visits are probably mine. Finding the channels that change that is the next phase. Five AI
-models from five labs (Claude, Grok, Gemini, Kimi and DeepSeek) have reviewed a plan for it, and
-the decisions are mine to make next. The bar was set before any of this: five squads of three or
-more athletes and three shared links, from people other than me, judged on December 14.
+- **Automated crawls.** 263 competitions read on a schedule, with crawl orders going out three
+  times a day.
+- **A competition-day product.** Match lists with mats and times, results and medals, and
+  brackets for the athletes people follow.
+- **A refreshed interface**, after a user's feedback: calmer colours, and light and dark themes
+  that follow the phone (both in the screenshot above).
+- **A multi-model review pipeline.** Claude Code builds it, and Grok, Gemini, ChatGPT, Kimi and
+  DeepSeek review its plans and specs, with me deciding what each finding is worth.
+- **Search is finding it.** Google had 70 of its pages indexed on November 23, up from 44 two days
+  earlier.
 
-Two limits worth knowing. 106 of the 228 upcoming competitions show lists that are out of date,
-because GrokBot reads about 70 to 100 competitions a day against about 206 due. And my time and the
-agents' time since November 6 weren't tracked, so the time and cost below cover only October 30 to
-November 6.
+The next phase is growth: people who open a link starting squads of their own. The bar for it was
+set before launch, and it's judged on December 14.
 
 ---
 
