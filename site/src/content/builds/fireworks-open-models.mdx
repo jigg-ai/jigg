@@ -6,7 +6,7 @@ built_with: ["Claude Opus 5.5"]
 stack: ["Kimi K3.1 Pro", "DeepSeek V4.1 Flash", "Brave Search API", "Slack", "GitHub"]
 runs_on_site: false
 status: "verified"
-summary: "Kimi K3.1 Pro and DeepSeek V4.1 Flash, two open-weight models served by Fireworks AI from the US, are the first open models in Jigg.AI's process. Their first job was reviewing a growth proposal for MatSignal (build #5), after Claude, Grok and Gemini had. Setup took an evening, a review pass cost between 9 and 67 cents at list price, and both models independently caught something none of the other three had: the proposal would have reversed a decision already on record. Worth it as a second and third opinion from outside the usual labs. The caveats: nothing they found has been acted on yet, and this is one review round, the first step toward the AI-harness build that comes next."
+summary: "Kimi K3.1 Pro and DeepSeek V4.1 Flash, two open-weight models served by Fireworks AI from the US, are the first open models in Jigg.AI's process. Their first job was reviewing a growth proposal for MatSignal (build #5), after Claude, Grok and Gemini had. Setup took an evening, a review pass cost 9 to 67 cents in inference at list price, and in this one round both models independently caught something none of the other three had: the proposal would have reversed a decision already on record. Worth it as an extra critique from outside the usual labs, with a human deciding what each finding is worth. The caveats: nothing they found has been acted on yet, and this is one review round, the first step toward the AI-harness build that comes next."
 repro_pack: false
 published: 2026-11-23
 last_verified: 2026-11-23
@@ -18,7 +18,7 @@ agent_time:
 featured: false
 meta_line: "1 review round · 9–67¢ a pass"
 tool_summary: "Serverless inference for open-weight models · pay per token"
-tool_verdict: "Served Kimi and DeepSeek from the US at its listed prices, with no data kept by default and caching that worked without being asked; a review pass cost 9 to 67 cents. The US routes are missing from its model list, a requested JSON schema came back as plain JSON mode, and the US region is a product feature, not a contract term."
+tool_verdict: "Served Kimi and DeepSeek from the US at its listed prices, with no prompts or outputs kept by default on Chat Completions and caching that worked without being asked; a review pass cost 9 to 67 cents in inference. The US routes are missing from its model list, a requested JSON schema came back as plain JSON mode, and the US region is a product feature, not a contract term."
 accessibility: "Some setup"
 ---
 
@@ -31,10 +31,10 @@ import ToolVerdict from '../../components/post/ToolVerdict.astro';
 Two open-weight models, **Kimi K3.1 Pro** and **DeepSeek V4.1 Flash**, served by Fireworks AI
 from the US, are the first open models in Jigg.AI's process. Their first job was reviewing a
 growth proposal for [MatSignal](/builds/matsignal/), after Claude, Grok and Gemini had. Setup took
-an evening, and **a review pass cost between 9 and 67 cents** at Fireworks' list prices. Both
-models independently caught something none of the other three reviewers had: the proposal would
-have reversed a decision already on record. Worth it, as a second and third opinion from outside
-the usual labs. The caveats: **nothing they found has been acted on yet**, and this is one review
+an evening, and **a review pass cost 9 to 67 cents in inference** at Fireworks' list prices. In
+this one round, both models independently caught something none of the other three reviewers had:
+the proposal would have reversed a decision already on record. Worth it, as an extra critique
+from outside the usual labs, with a human deciding what each finding is worth. The caveats: **nothing they found has been acted on yet**, and this is one review
 round. It's the first step toward the AI-harness build that comes next.
 </ShortVersion>
 
@@ -46,11 +46,17 @@ MatSignal, its plans and specs have gone out for independent review to models fr
 Grok, Gemini and ChatGPT, on the theory that a model is worst at catching its own kind of
 mistake.
 
+That isn't a second accountable engineer. It's an independent critique channel that defends
+against one model's blind spots, with a human adjudicating every finding, and it doesn't replace
+expert review of a high-risk change, such as a security review. This round reviewed a growth
+proposal, not production code.
+
 Those are all closed models from large US labs. Kimi (from Moonshot AI) and DeepSeek are
 open-weight models from Chinese labs, built by different teams, and other providers can host
 them. Adding
 them tests two things: whether reviewers that different add findings the others miss, and whether
-they can run under the same rules as the rest, with the data staying where I say it stays.
+they can run under the same rules as the rest, with their data handled the way the provider's
+terms say.
 
 ## How it's set up
 
@@ -166,14 +172,15 @@ cache, 83% cheaper. From choosing Fireworks to Kimi's first posted review took a
 
 The checks were set for this step: does each model run on Fireworks under the worker's rules,
 at the price Fireworks lists, and does it produce findings that hold up. They were run on
-November 23 against the run records and the review issue.
+November 23 against the run records and the review issue. Of the 11 checks, 9 pass, 1 failed
+and was fixed, and 1 is open. The tiles show eight of them; the test record has all 11.
 
 <StatTiles variant="metric" stats={[
   { value: "Pass", label: "Both models answer on the US routes", tone: "ok" },
   { value: "Pass", label: "Prices in the worker match Fireworks' list", tone: "ok" },
   { value: "Fail", label: "Metered cost matched list price (first run 2×, fixed)" },
-  { value: "Pass", label: "No run spent past its cap", tone: "ok" },
-  { value: "Pass", label: "First passes written blind", tone: "ok" },
+  { value: "Pass", label: "No run spent past its approved budget, summed across resumes", tone: "ok" },
+  { value: "Pass", label: "First passes written blind (by design)", tone: "ok" },
   { value: "Pass", label: "No excluded site opened", tone: "ok" },
   { value: "Pass", label: "Findings no other reviewer had", tone: "ok" },
   { value: "Open", label: "A finding acted on" },
@@ -191,33 +198,40 @@ first pass), the issue's comments on a second pass, and the text of any page Dee
 Both secret scans of the repository came back clean before its copy was made, and no list of
 athletes was among the files read.
 
-Fireworks' terms say open-model inference isn't logged or stored without opting in, the data is
-held "only in volatile memory", and nothing trains on it without explicit opt-in. Two limits, said
-plainly: the US-only routing is a product feature, not a promise in Fireworks' terms of service,
+The worker calls one Fireworks API, Chat Completions. For open-model requests there, Fireworks'
+terms say prompts and outputs aren't stored without opting in, the data is held "only in volatile
+memory", and nothing trains on it without explicit opt-in; usage metadata is still logged. Its
+other APIs differ: the Responses API stores data when `store` is on, its default, and the Batch
+API isn't zero-retention. The worker uses neither. A secret scan isn't a full confidentiality
+review either, and none of this clears client code to be sent anywhere: on client work, which
+providers see the code is agreed with the client first. Two more limits, said plainly: the US-only routing is a product feature, not a promise in Fireworks' terms of service,
 and prompt caches last "several minutes" by Fireworks' current account, where my notes from
 November 20 said hours.
 
 ## Time and cost
 
 <StatTiles variant="fact" stats={[
-  { value: "9–67¢", label: "A review pass, at list price" },
-  { value: "~$1.40", label: "All Fireworks charges, at list price (about $2.17 as metered)" },
+  { value: "9–67¢", label: "Inference per review pass, at list price" },
+  { value: "~$1.40", label: "All Fireworks usage, recomputed at list prices" },
   { value: "$2.50 / $12.50", label: "Kimi, US route, per million tokens in / out" },
   { value: "$0.45 / $1.80", label: "DeepSeek, US route, per million tokens in / out" },
 ]} />
 
-The Fireworks totals cover both hand tests, a research test and every review run, including
-the one that stopped short, and they aren't reconciled against Fireworks' bill yet. DeepSeek's web
-searches added 3.5 cents through Brave. The models' own working time was short: Kimi's first pass
+Three numbers, kept apart: about $1.40 is the recorded usage recomputed at Fireworks' list prices;
+about $2.17 is what my worker's meter first recorded, before its overcharge was fixed; and what
+Fireworks actually billed isn't reconciled yet. They cover both hand tests, a research test and
+every review run, including the one that stopped short. They're inference only: the setup,
+retries, 3.5 cents of Brave searches and my own time come on top. The models' own working time was short: Kimi's first pass
 ran for 2 minutes 22 seconds, DeepSeek's two passes for about 3 and 2 minutes. My time wasn't
 tracked: what's on record is 44 messages in the session that set this up, from the afternoon of
 November 20 to the evening of November 21.
 
 ## What happens next
 
-The next build is the AI harness this worker belongs to: assignments, approvals, budgets and
-lanes for every model, open or not. It's where the findings from rounds like this one get
-consolidated, and where the number that matters here gets measured: how often a review from
+The next build is an experiment of its own: the AI harness this worker belongs to, with
+assignments, approvals, budgets and lanes for every model, open or not. It's where findings from
+rounds like this one get consolidated and counted: how many were verified, accepted and
+implemented, and how many were false alarms. The number that matters is how often a review from
 another lab changes what gets built.
 
 ## Reproduce this
@@ -233,8 +247,9 @@ setup above and the record:
 ## The tool
 
 <ToolVerdict tool="Fireworks AI" toolSummary="Serverless inference for open-weight models · pay per token">
-Fireworks did what it says: it served Kimi K3.1 Pro and DeepSeek V4.1 Flash from the US, at
-exactly the prices it lists, behind one API key, with no data kept by default. Prompt caching
+Fireworks did what it says: it served Kimi K3.1 Pro and DeepSeek V4.1 Flash from the US, at the
+prices it lists as far as the run records show (the bill isn't reconciled yet), behind one API
+key, with no prompts or outputs kept by default on the API the worker uses. Prompt caching
 worked without being asked, which matters when every review re-reads the same files. Every bug in
 this log that cost money was in my own worker, not in Fireworks.
 

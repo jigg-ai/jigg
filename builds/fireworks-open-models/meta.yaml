@@ -13,7 +13,7 @@ built_with: ["Claude Opus 5.5"]   # Claude Code built the worker
 stack: ["Kimi K3.1 Pro", "DeepSeek V4.1 Flash", "Brave Search API", "Slack", "GitHub"]
 runs_on_site: false
 status: verified
-summary: "Kimi K3.1 Pro and DeepSeek V4.1 Flash, two open-weight models served by Fireworks AI from the US, are the first open models in Jigg.AI's process. Their first job was reviewing a growth proposal for MatSignal (build #5), after Claude, Grok and Gemini had. Setup took an evening, a review pass cost between 9 and 67 cents at list price, and both models independently caught something none of the other three had: the proposal would have reversed a decision already on record. Worth it as a second and third opinion from outside the usual labs. The caveats: nothing they found has been acted on yet, and this is one review round, the first step toward the AI-harness build that comes next."
+summary: "Kimi K3.1 Pro and DeepSeek V4.1 Flash, two open-weight models served by Fireworks AI from the US, are the first open models in Jigg.AI's process. Their first job was reviewing a growth proposal for MatSignal (build #5), after Claude, Grok and Gemini had. Setup took an evening, a review pass cost 9 to 67 cents in inference at list price, and in this one round both models independently caught something none of the other three had: the proposal would have reversed a decision already on record. Worth it as an extra critique from outside the usual labs, with a human deciding what each finding is worth. The caveats: nothing they found has been acted on yet, and this is one review round, the first step toward the AI-harness build that comes next."
 test_score: ""        # no aggregate: each check in test.md guards one promise
 affiliate_url: ""
 repro_pack: false
@@ -30,5 +30,5 @@ paid_plans: []        # Fireworks and Brave are pay per use, not plans; costs ar
 featured: false
 meta_line: "1 review round · 9–67¢ a pass"
 tool_summary: "Serverless inference for open-weight models · pay per token"
-tool_verdict: "Served Kimi and DeepSeek from the US at its listed prices, with no data kept by default and caching that worked without being asked; a review pass cost 9 to 67 cents. The US routes are missing from its model list, a requested JSON schema came back as plain JSON mode, and the US region is a product feature, not a contract term."
+tool_verdict: "Served Kimi and DeepSeek from the US at its listed prices, with no prompts or outputs kept by default on Chat Completions and caching that worked without being asked; a review pass cost 9 to 67 cents in inference. The US routes are missing from its model list, a requested JSON schema came back as plain JSON mode, and the US region is a product feature, not a contract term."
 accessibility: "Some setup"
