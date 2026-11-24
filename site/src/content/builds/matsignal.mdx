@@ -7,7 +7,7 @@ built_with: ["Claude Opus 5.5"]
 stack: ["Cloudflare Workers", "Cloudflare D1", "Cloudflare Access"]
 runs_on_site: false
 status: "verified"
-summary: "MatSignal is a free tool for jiu-jitsu teams: keep a squad, see who from it is entered at upcoming competitions, and post one competition's link in the team chat. It's the first build in this journal that is a product rather than a page, with its own subdomain, its own private repository, its own infrastructure and real people's names in it. Claude Code took it from a problem I have myself to live in four working days and about 4 h 50 min of agent time, and it's worth it for that, as long as a human keeps the decisions about data and has every change reviewed. Updated November 23: MatSignal is an MVP, built to test one thing first, whether a squad link passed around a team chat gets used. It did: on a competition day, one link drew about six browsers new to MatSignal. Coverage is automated now, 263 competitions instead of one copied by hand. The next step, people who open a link starting squads of their own, hasn't happened yet, and finding the channels for it is the next phase."
+summary: "MatSignal is a free tool for jiu-jitsu teams: keep a squad, see who from it is entered at upcoming competitions, and post one competition's link in the team chat. It's the first build in this journal that is a product rather than a page, with its own subdomain, its own private repository, its own infrastructure and real people's names in it. Claude Code took it from a problem I have myself to live in four working days and about 4 h 50 min of agent time, and it's worth it for that, as long as a human keeps the decisions about data and has every change reviewed. Updated November 23: MatSignal is an MVP, built to test one thing first, whether a squad link passed around a team chat gets used. The first evidence came on a competition day, when one link was opened by about six browsers new to MatSignal: early use, not yet demand. Coverage is automated now, 263 competitions instead of one copied by hand, though many upcoming lists are out of date. The next step, people who open a link starting squads of their own, hasn't happened yet, and finding the channels for it is the next phase."
 repro_pack: false
 published: 2026-11-06
 last_verified: 2026-11-23
@@ -41,9 +41,10 @@ people's names in it. Claude Code took it from a problem I have myself to live i
 days and **about 4 h 50 min of agent time**. Worth it, with one condition: a human keeps the
 decisions about data and has every change reviewed. Its own tests caught its worst bug, and
 independent reviews caught more. **Updated November 23:** MatSignal is an MVP, built to test one thing first: whether a
-squad link passed around a team chat gets used. It did. On a competition day one link drew about six
-browsers new to MatSignal. Coverage is automated now, **263 competitions** instead of one copied by
-hand. The next step, people who open a link starting squads of their own, hasn't happened yet, and
+squad link passed around a team chat gets used. The first evidence came on a competition day, when
+one link was opened by about six browsers new to MatSignal: early use, not yet demand. Coverage is
+automated now, **263 competitions** instead of one copied by hand, though on November 23 the lists of
+106 of the 228 upcoming ones were out of date. The next step, people who open a link starting squads of their own, hasn't happened yet, and
 finding the channels for it is the next phase. [The update](#update-november-23) has the rest, including
 where MatSignal no longer does what this log first said, and [how the work ran](#how-the-work-ran)
 shows who did what.
@@ -100,9 +101,9 @@ there no longer holds, it says so and points back here.
 
 Grappling X was on November 14. One competition link from a squad went into a team chat. From
 November 13 to 18 it was opened 25 times by browsers that don't own the squad: 12 of those on
-the day, mostly on phones, by about six browsers that had never opened MatSignal before. Nobody
-pressed *Copy to my squad*, and two new squads were started after November 11. That's the only
-outside use on record, and it came from a link passed around a team, not from search.
+the day, mostly on phones, by about six browsers that had never opened MatSignal before (browsers,
+not necessarily people). Nobody pressed *Copy to my squad*. Two new squads were started after
+November 11, and neither is known to have come from the link. That's the only outside use on record, and it came from a link passed around a team, not from search.
 
 Two things broke the day before. The bookmark I use to send a participants page to MatSignal
 arrived with divisions but no athletes, because Smoothcomp had started loading athletes with the
@@ -114,7 +115,9 @@ squad shows who competed and their medals.
 ### What changed since
 
 - **Coverage is automated.** MatSignal covers 263 competitions (242 on Smoothcomp, 21 IBJJF),
-  holding 16,122 entries, read on a schedule instead of pasted in by hand. Two readers do it.
+  holding 16,122 entries, read on a schedule instead of pasted in by hand. Not all of it is
+  current: on November 23, 106 of the 228 upcoming competitions showed out-of-date lists (see
+  [where the MVP stands](#where-the-mvp-stands)). Two readers do it.
   MatSignalBot, MatSignal's own bot, signs every request and reads IBJJF's entry lists and its
   calendar. Smoothcomp's pages are read by GrokBot, an AI agent (Grok) with its own browser,
   working from orders MatSignal sends it.
@@ -156,9 +159,10 @@ down as a decision before it starts:
    took knowingly. MatSignal will ask IBJJF once it has traction, and stops at once if IBJJF says
    no.
 
-The common thread: every new way of reading is a written decision before it runs, with its
-reasoning and its limits. And MatSignalBot, the reader MatSignal runs itself, says who it is on
-every request and stays below the pace of a person.
+The common thread: each new way of reading is a written decision before it runs. The rules differ
+by reader. MatSignalBot, the reader MatSignal runs itself, says who it is on every request, stays
+below the pace of a person and stops at a refusal until someone has looked. GrokBot works to its
+own operating rules, which this log doesn't cover.
 
 ### Where the November 6 text no longer holds
 
@@ -183,7 +187,9 @@ every request and stays below the pace of a person.
 Around November 20 IBJJF changed the layout of its entry lists, and the reader stored New Jersey
 Fall Open's list, 825 entries, as empty the day before the event. I first read the empty page as
 a passing blip. It wasn't, and the real fix came on November 23. On both days of its event, New
-Jersey's pages had no list to show, and the copy of the list from November 19 is gone.
+Jersey's pages had no list to show, and the copy of the list from November 19 is gone. Two
+safeguards came out of it: an empty read no longer replaces a list (the last good one is kept,
+and pages say what happened), and a few earlier versions of every list are now kept for recovery.
 </ProcessStep>
 
 <ProcessStep result="fail" title="The three-day rule deleted two competitions for good" tag="my-setup">
@@ -215,9 +221,10 @@ are skewed.
 ### Where the MVP stands
 
 MatSignal is a minimum viable product: the smallest build that could test whether a squad link
-passed around a team chat gets used. The validation was kept narrow on purpose, and on November 14
-it got its answer: the link was opened 25 times, 12 on the day, by about six browsers new to
-MatSignal. Coverage then grew from one competition to 263 in under three weeks, with Claude Code
+passed around a team chat gets used. The validation was kept narrow on purpose, and November 14 gave
+its first evidence: the link was opened 25 times, 12 on the day, by about six browsers new to
+MatSignal. That's early use of one link, not yet demand, and the counts are browsers, not people.
+Coverage then grew from one competition to 263 in under three weeks, with Claude Code
 building and GrokBot reading. Google's view of it is growing too: 70 pages indexed on November 23,
 up from 44 two days earlier, and the first search impressions since November 16, 98 of them, for 2
 clicks.
@@ -233,6 +240,11 @@ because GrokBot reads about 70 to 100 competitions a day against about 206 due. 
 agents' time since November 6 weren't tracked, so the time and cost below cover only October 30 to
 November 6.
 
+---
+
+**Original launch record, November 6.** Everything below is MatSignal as it was published on
+November 6, kept as a historical snapshot. Where it no longer holds, a note says so.
+
 ## The problem it started from
 
 I train jiu-jitsu, and on most competition weekends some of my teammates are entered somewhere.
@@ -245,6 +257,8 @@ Written down, the questions were small: who from my squad is entered, at which c
 which divisions, and what changed since I last looked. On the day: in what order they fight and
 on which mat. Afterwards: results. **MatSignal answers the first set today.** The competition-day
 and results parts aren't built.
+
+*Since changed: match lists and results were built for November 14. See [the November 23 update](#update-november-23).*
 
 ## What it does today
 
@@ -440,6 +454,9 @@ No single score: what matters here is a set of checks that each guard one promis
 
 **Not tested yet:** real phones (Safari, Chrome, and links opened inside WhatsApp or Instagram),
 a screen reader, and a competition day.
+
+*Since changed: a competition day has happened, on real phones. A screen reader is still untested.
+See [the November 23 update](#update-november-23).*
 
 ## Time and cost
 
