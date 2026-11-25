@@ -26,7 +26,7 @@ The website uses Astro and Markdown/MDX content. The [build index](site/src/page
 - **[Open-weight models in the review process](https://jigg.ai/builds/fireworks-open-models/)** — multi-model review with enforced reviewer isolation, a per-run cost cap, and a human adjudicating every finding. It's an independent critique channel, not a second accountable engineer, and its first round reviewed a growth proposal, not production code. [Build records](builds/fireworks-open-models/).
 - **[Public build journal](https://jigg.ai/builds/)** — every build, with test results where they exist, limitations and verification status.
 
-Build records distinguish what was planned, attempted, tested and verified. Some checks may remain incomplete or not run; read the individual records rather than assuming every experiment has production-grade validation.
+Each build record separates what was planned, tried, tested and verified, including any check that wasn't run.
 
 ## Run the website locally
 
@@ -43,8 +43,8 @@ npm run dev
 
 ## Who is accountable?
 
-Jigg.AI is led by [Sasha Matison, Founder & Principal Engineer](https://jigg.ai/about/sasha-matison/). His career history is documented there; studio-authored and AI-assisted implementation in this repository should not be misrepresented as individual commits on his personal GitHub account.
+Jigg.AI is led by [Sasha Matison](https://jigg.ai/about/sasha-matison/), Founder & Principal Engineer, who is responsible for engineering direction and delivery.
 
 **[Engineering services](https://jigg.ai/services/) · [Discuss a project](https://jigg.ai/contact/) · [Build journal](https://jigg.ai/builds/)**
 
-_Publicly readable source is not automatically open-source licensed; check individual files and applicable rights before reuse._
+_The source is public to read, but it has no open-source license._
