@@ -22,7 +22,7 @@ The website uses Astro and Markdown/MDX content. The [build index](site/src/page
 
 - **[The Jigg.AI website](https://jigg.ai/)** — the running artifact; [website build notes](builds/website/build-notes.md) and [site brief](site/BRIEF.md) show its initial objectives and implementation record.
 - **[Public build journal](https://jigg.ai/builds/)** — the published record of projects, test results where available, limitations and verification status.
-- **[MatSignal](https://matsignal.jigg.ai/)** — a separate product experiment. Its public [project records](builds/matsignal/) describe scope and testing; **its application source is not provided in this repository**. Do not interpret the presence of a demo or acceptance-test plan as evidence of customer adoption or completed validation.
+- **[MatSignal](https://matsignal.jigg.ai/)** — a separate product experiment. Its public [project records](builds/matsignal-competition/) describe scope and testing; **its application source is not provided in this repository**. Do not interpret the presence of a demo or acceptance-test plan as evidence of customer adoption or completed validation.
 
 Build records distinguish what was planned, attempted, tested and verified. Some checks may remain incomplete or not run; read the individual records rather than assuming every experiment has production-grade validation.
 
