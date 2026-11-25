@@ -21,14 +21,16 @@ The website uses Astro and Markdown/MDX content. The [build index](site/src/page
 ## See the work
 
 - **[The Jigg.AI website](https://jigg.ai/)** — the running artifact; [website build notes](builds/website/build-notes.md) and [site brief](site/BRIEF.md) show its initial objectives and implementation record.
-- **[Public build journal](https://jigg.ai/builds/)** — the published record of projects, test results where available, limitations and verification status.
-- **[MatSignal](https://matsignal.jigg.ai/)** — a separate product experiment. Its public [project records](builds/matsignal-competition/) describe scope and testing; **its application source is not provided in this repository**. Do not interpret the presence of a demo or acceptance-test plan as evidence of customer adoption or completed validation.
+- **[MatSignal](https://matsignal.jigg.ai/)** — product development, infrastructure and iterative delivery: a live MVP for jiu-jitsu teams, taken from a real problem to a product in four working days. Its [build records](builds/matsignal-competition/) cover scope and testing; the application source is private. It has early use, and demand isn't proven yet.
+- **[Signup hardening](https://jigg.ai/builds/buttondown-hardening/)** — security engineering for a public signup endpoint after bots found it: layered controls that fail closed when a check can't run. 12 of 13 planned acceptance checks passed, 1 was skipped on purpose, none failed. [Build records](builds/buttondown-hardening/).
+- **[Open-weight models in the review process](https://jigg.ai/builds/fireworks-open-models/)** — multi-model review with enforced reviewer isolation, a per-run cost cap, and a human adjudicating every finding. It's an independent critique channel, not a second accountable engineer, and its first round reviewed a growth proposal, not production code. [Build records](builds/fireworks-open-models/).
+- **[Public build journal](https://jigg.ai/builds/)** — every build, with test results where they exist, limitations and verification status.
 
-Build records distinguish what was planned, attempted, tested and verified. Some checks may remain incomplete or not run; read the individual records rather than assuming every experiment has production-grade validation.
+Each build record separates what was planned, tried, tested and verified, including any check that wasn't run.
 
 ## Run the website locally
 
-The website project is in `site/`. Its npm lockfile and scripts are committed here.
+You need Node.js 22, the version Netlify builds with (`NODE_VERSION` in [`netlify.toml`](netlify.toml)), and npm. The website project is in `site/`, with its lockfile committed.
 
 ```bash
 git clone https://github.com/jigg-ai/jigg.git
@@ -37,12 +39,12 @@ npm ci
 npm run dev
 ```
 
-To compile the site locally, run `npm run build` from `site/`. This describes the repository's documented development commands; it does not claim a successful build in your environment.
+`npm run dev` serves the site at `http://localhost:4321`. The contact form and the newsletter signup are Netlify serverless functions ([`site/netlify/functions/`](site/netlify/functions/)), so they run only on Netlify, in Deploy Previews and production. `npm run build` compiles the static site into `site/dist/`.
 
 ## Who is accountable?
 
-Jigg.AI is led by [Sasha Matison, Founder & Principal Engineer](https://jigg.ai/about/sasha-matison/). His career history is documented there; studio-authored and AI-assisted implementation in this repository should not be misrepresented as individual commits on his personal GitHub account.
+Jigg.AI is led by [Sasha Matison](https://jigg.ai/about/sasha-matison/), Founder & Principal Engineer, who is responsible for engineering direction and delivery.
 
 **[Engineering services](https://jigg.ai/services/) · [Discuss a project](https://jigg.ai/contact/) · [Build journal](https://jigg.ai/builds/)**
 
-_Publicly readable source is not automatically open-source licensed; check individual files and applicable rights before reuse._
+_The source is public to read, but it has no open-source license._
