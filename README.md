@@ -30,7 +30,7 @@ Build records distinguish what was planned, attempted, tested and verified. Some
 
 ## Run the website locally
 
-The website project is in `site/`. Its npm lockfile and scripts are committed here.
+You need Node.js 22, the version Netlify builds with (`NODE_VERSION` in [`netlify.toml`](netlify.toml)), and npm. The website project is in `site/`, with its lockfile committed.
 
 ```bash
 git clone https://github.com/jigg-ai/jigg.git
@@ -39,7 +39,7 @@ npm ci
 npm run dev
 ```
 
-To compile the site locally, run `npm run build` from `site/`. This describes the repository's documented development commands; it does not claim a successful build in your environment.
+`npm run dev` serves the site at `http://localhost:4321`. The contact form and the newsletter signup are Netlify serverless functions ([`site/netlify/functions/`](site/netlify/functions/)), so they run only on Netlify, in Deploy Previews and production. `npm run build` compiles the static site into `site/dist/`.
 
 ## Who is accountable?
 
